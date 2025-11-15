@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "titulo": "Hacer CRUD con Python incluyendo men\u00fa interactivo",
+        "completada": true
+    },
+    {
+        "id": 2,
+        "titulo": "Corroborar el funcionamiento del gestor de tareas",
+        "completada": true
+    },
+    {
+        "id": 3,
+        "titulo": "Configurar colores en el gestor de tareas",
+        "completada": false
+    }
+]
