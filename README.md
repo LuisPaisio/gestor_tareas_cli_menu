@@ -13,11 +13,18 @@ Más adelante se planea integrar con **Flask** para una versión web.
 - Persistencia en archivo JSON
 - Mensajes en color usando `colorama`
 
-## 📦 Requisitos
-- Python 3.10 o superior
-- Librerías listadas en `requirements.txt`
+## 📂 Estructura del proyecto
+   ```bash
+   gestor-tareas-cli/
+   │
+   ├── gestor.py          # Archivo principal con menú
+   ├── tareas.py          # Funciones para CRUD de tareas
+   ├── tareas.json        # Archivo de persistencia
+   ├── requirements.txt   # Dependencias
+   └── README.md          # Documentación
+   ```
 
-## 🔧 Instalación
+## 🛠️ Instalación
 1. Clonar el repositorio:
    ```bash
    git clone https://github.com/tuusuario/gestor-tareas-cli.git
@@ -34,18 +41,15 @@ Más adelante se planea integrar con **Flask** para una versión web.
    pip install -r requirements.txt
    ```
 
-## ▶️ Uso
+## 🧪 Uso
    ```bash
    python gestor.py
    ```
 
-## 📂 Estructura del proyecto
-   ```bash
-   gestor-tareas-cli/
-   │
-   ├── gestor.py          # Archivo principal con menú
-   ├── tareas.py          # Funciones para CRUD de tareas
-   ├── tareas.json        # Archivo de persistencia
-   ├── requirements.txt   # Dependencias
-   └── README.md          # Documentación
-   ```
+## 📦 Requisitos
+- Python 3.10 o superior
+- Librerías listadas en `requirements.txt`
+
+## 📌 Autor
+- Luis — [Linkedin](https:www.linkedin.com/in/luis-paisio)
+- Proyecto desarrollado como parte de su portfolio técnico.
