@@ -2,10 +2,10 @@ import json
 import os
 from colorama import Fore, Style
 import datetime
-from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_habito, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida
+from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida
 
 #cargo documento de tareas
-ARCHIVO_TAREAS = "tareas.json"
+ARCHIVO_TAREAS = "json\\tareas.json"
 def cargar_tareas():
     if os.path.exists(ARCHIVO_TAREAS):
         try:
@@ -27,7 +27,7 @@ def guardar_tareas(tareas):
 
 #----------------------------------------------------------------
 #cargo documento de usuarios
-ARCHIVO_USUARIOS = "usuarios.json"
+ARCHIVO_USUARIOS = "json\\usuarios.json"
 def cargar_usuarios():
     if os.path.exists(ARCHIVO_USUARIOS):
         try:
