@@ -58,7 +58,7 @@ def nueva_tarea(usuario):
         tareas = cargar_tareas()
         
         ultimo_id = []
-        for tarea in tareas: #Busco el último ID usado.
+        for tarea in tareas: #Obtengo el último ID usado.
             ultimo_id.append(tarea["id"])
         
         if ultimo_id: #Si la lista no está vacía.
