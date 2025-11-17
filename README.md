@@ -1,10 +1,11 @@
-# 🧠 Gestor de Tareas CLI
+# 🧠 Gestor de Tareas CLI + login básico integrado
 
 Gestor de tareas simple con menú integrado, desarrollado en Python.  
 Permite crear, listar, editar, marcar como completas o incompletas y eliminar tareas desde la consola.  
 Más adelante se planea integrar con **Flask** para una versión web.
 
 ## 🚀 Características
+- Registrase, Iniciar Sesión o Eliminar Cuenta
 - Crear nuevas tareas
 - Listar tareas existentes
 - Editar tareas por ID
@@ -17,7 +18,10 @@ Más adelante se planea integrar con **Flask** para una versión web.
    ```bash
    gestor-tareas-cli/
    │
-   ├── gestor.py          # Archivo principal con menú
+   ├── menu_login.py      # Archivo principal con menú login
+   ├── login.py
+   ├── usuarios.json
+   ├── menu_tareas.py     # Archivo con menú de tareas
    ├── tareas.py          # Funciones para CRUD de tareas
    ├── tareas.json        # Archivo de persistencia
    ├── requirements.txt   # Dependencias
