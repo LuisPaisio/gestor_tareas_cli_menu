@@ -1,0 +1,12 @@
+[
+    {
+        "id_usuario": 1,
+        "usuario": "prueba",
+        "contrase\u00f1a": "prueba"
+    },
+    {
+        "id_usuario": 2,
+        "usuario": "luis",
+        "contrase\u00f1a": "1234"
+    }
+]
