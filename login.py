@@ -3,7 +3,7 @@ import os
 from colorama import Fore, Style
 
 #cargo documento de usuarios
-ARCHIVO_USUARIOS = "usuarios.json"
+ARCHIVO_USUARIOS = "json\\usuarios.json"
 def cargar_usuarios():
     if os.path.exists(ARCHIVO_USUARIOS):
         try:
@@ -25,7 +25,7 @@ def guardar_usuarios(usuarios):
 
 #----------------------------------------------------------------
 #cargo documento de tareas
-ARCHIVO_TAREAS = "tareas.json"
+ARCHIVO_TAREAS = "json\\tareas.json"
 def cargar_tareas():
     if os.path.exists(ARCHIVO_TAREAS):
         try:

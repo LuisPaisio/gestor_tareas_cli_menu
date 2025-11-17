@@ -5,7 +5,7 @@ from colorama import Fore, Style
 #Funciones para la gestión de xp y coins de los usuarios.
 #----------------------------------------------------------------
 #cargo documento de usuarios
-ARCHIVO_USUARIOS = "usuarios.json"
+ARCHIVO_USUARIOS = "json\\usuarios.json"
 def cargar_usuarios():
     if os.path.exists(ARCHIVO_USUARIOS):
         try:
