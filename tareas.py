@@ -200,6 +200,15 @@ def editar_tarea(usuario):
             if tarea["id_usuario"] == usuario["id_usuario"]:
                 tareas_usuario.append(tarea)
         
+        # Ordenar igual que en ver_tareas()
+        tareas_usuario.sort(
+            key=lambda x: (
+                x['tipo'],
+                datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
+                if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
+            )
+        )
+        
         tarea_a_editar = None
         if 1 <= seleccion <= len(tareas_usuario): #Busco la tarea a editar entre las tareas del usuario actual.
             tarea_a_editar = tareas_usuario[seleccion - 1]
