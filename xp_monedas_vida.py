@@ -1,5 +1,7 @@
 #Funciones para la gestión de xp y coins de los usuarios.
 
+habito_negativo = False  #La defino para que simplemente no me tire error por ahora.
+
 # Defino el monto de XP en una función para facilitar futuros cambios, según tareas que sean hábitos, diarias o pendientes.
 def xp_habito():
     return 10  #XP por completar un hábito
