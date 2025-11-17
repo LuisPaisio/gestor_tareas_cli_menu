@@ -4,35 +4,5 @@
         "titulo": "Prueba de tarea",
         "completada": false,
         "id_usuario": 1
-    },
-    {
-        "id": 2,
-        "titulo": "Controlar Agregar Tarea",
-        "completada": true,
-        "id_usuario": 2
-    },
-    {
-        "id": 3,
-        "titulo": "Controlar Ver Tareas",
-        "completada": true,
-        "id_usuario": 2
-    },
-    {
-        "id": 4,
-        "titulo": "Controlar Editar Tarea",
-        "completada": true,
-        "id_usuario": 2
-    },
-    {
-        "id": 5,
-        "titulo": "Controlar Eliminar Tarea",
-        "completada": true,
-        "id_usuario": 2
-    },
-    {
-        "id": 6,
-        "titulo": "Controlar Marcar como Completada o Incompleta",
-        "completada": true,
-        "id_usuario": 2
     }
 ]
