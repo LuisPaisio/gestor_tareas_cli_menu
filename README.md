@@ -34,14 +34,14 @@ Más adelante se planea integrar con **Flask** para una versión web.
    git clone https://github.com/tuusuario/gestor-tareas-cli.git
    cd gestor-tareas-cli
    ```
-   ```bash
 2. Crear y activar un entorno virtual:
+   ```bash
    python -m venv venv
    source venv/bin/activate   # Linux/Mac
    venv\Scripts\activate      # Windows
    ```
+4. Instalar dependencias:
    ```bash
-3. Instalar dependencias:
    pip install -r requirements.txt
    ```
 
