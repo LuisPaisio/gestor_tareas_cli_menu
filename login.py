@@ -103,3 +103,4 @@ def eliminar_usuario():
                 return True
         print(Fore.RED + "\nNombre de usuario o contraseña incorrectos. No se pudo eliminar la cuenta." + Style.RESET_ALL)
         return None
+    
