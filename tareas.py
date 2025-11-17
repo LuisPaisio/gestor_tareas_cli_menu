@@ -61,10 +61,16 @@ def nueva_tarea(usuario):
         for tarea in tareas: #Busco el último ID usado.
             ultimo_id.append(tarea["id"])
         
-        nueva = {"id": ultimo_id[0] + 1, "titulo": titulo, "completada": False, "id_usuario": usuario["id_usuario"]}
-        tareas.append(nueva)
-        guardar_tareas(tareas)
-        print(f"Tarea '{titulo}' agregada exitosamente.")
+        if ultimo_id: #Si la lista no está vacía.
+            nueva = {"id": max(ultimo_id)+1, "titulo": titulo, "completada": False, "id_usuario": usuario["id_usuario"]}
+            tareas.append(nueva)
+            guardar_tareas(tareas)
+            print(f"Tarea '{titulo}' agregada exitosamente.")
+        else: #Si la lista está vacía.
+            nueva = {"id": 1, "titulo": titulo, "completada": False, "id_usuario": usuario["id_usuario"]}
+            tareas.append(nueva)
+            guardar_tareas(tareas)
+            print(f"Tarea '{titulo}' agregada exitosamente.")
     
 #Veo tareas
 def ver_tareas(usuario):

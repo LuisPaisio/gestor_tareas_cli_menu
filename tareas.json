@@ -7,32 +7,32 @@
     },
     {
         "id": 2,
-        "titulo": "Controlar agregar tarea",
-        "completada": false,
+        "titulo": "Controlar Agregar Tarea",
+        "completada": true,
         "id_usuario": 2
     },
     {
-        "id": 2,
+        "id": 3,
         "titulo": "Controlar Ver Tareas",
-        "completada": false,
+        "completada": true,
         "id_usuario": 2
     },
     {
-        "id": 2,
+        "id": 4,
         "titulo": "Controlar Editar Tarea",
-        "completada": false,
+        "completada": true,
         "id_usuario": 2
     },
     {
-        "id": 2,
+        "id": 5,
         "titulo": "Controlar Eliminar Tarea",
-        "completada": false,
+        "completada": true,
         "id_usuario": 2
     },
     {
-        "id": 2,
+        "id": 6,
         "titulo": "Controlar Marcar como Completada o Incompleta",
-        "completada": false,
+        "completada": true,
         "id_usuario": 2
     }
 ]
