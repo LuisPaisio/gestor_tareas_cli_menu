@@ -7,52 +7,44 @@
     },
     {
         "id": 2,
-        "titulo": "asd",
-        "completada": false,
-        "tipo": 3,
-        "dias_semana": [],
-        "fecha_vencimiento": null,
-        "xp_reward": 0,
-        "coin_reward": 0,
-        "vida_restar": 0,
-        "id_usuario": 2
-    },
-    {
-        "id": 3,
-        "titulo": "Prueba Fecha",
-        "completada": false,
-        "tipo": 3,
-        "dias_semana": [],
-        "fecha_vencimiento": "18-11-2025",
-        "xp_reward": 0,
-        "coin_reward": 0,
-        "vida_restar": 0,
-        "id_usuario": 2
-    },
-    {
-        "id": 4,
-        "titulo": "Prueba Habito",
-        "completada": false,
+        "titulo": "Prueba COINS y XP de Usuario",
+        "completada": true,
         "tipo": 1,
         "dias_semana": [
             "todos"
         ],
         "fecha_vencimiento": null,
-        "xp_reward": 0,
-        "coin_reward": 0,
+        "xp_reward": 10,
+        "coin_reward": 5,
         "vida_restar": 0,
         "id_usuario": 2
     },
     {
-        "id": 5,
-        "titulo": "Prueba Fecha Antigua",
+        "id": 3,
+        "titulo": "Prueba Cambio de lugar de la Funci\u00f3n",
         "completada": false,
+        "tipo": 2,
+        "dias_semana": [
+            "Lunes",
+            "Jueves",
+            "Domingo"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 20,
+        "coin_reward": 10,
+        "vida_restar": 0,
+        "id_usuario": 2
+    },
+    {
+        "id": 4,
+        "titulo": "Prueba para restar vida",
+        "completada": true,
         "tipo": 3,
         "dias_semana": [],
-        "fecha_vencimiento": "31-12-2025",
-        "xp_reward": 0,
-        "coin_reward": 0,
-        "vida_restar": 0,
+        "fecha_vencimiento": "21-11-2025",
+        "xp_reward": 30,
+        "coin_reward": 15,
+        "vida_restar": 3,
         "id_usuario": 2
     }
 ]

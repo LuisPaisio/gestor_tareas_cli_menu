@@ -11,8 +11,8 @@
         "id_usuario": 2,
         "usuario": "luis",
         "contrase\u00f1a": "1234",
-        "xp_usuario": 0,
-        "coin_usuario": 0,
-        "vida_usuario": 50
+        "xp_usuario": 90,
+        "coin_usuario": 45,
+        "vida_usuario": 47
     }
 ]
