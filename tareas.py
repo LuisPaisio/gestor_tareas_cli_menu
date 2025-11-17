@@ -2,7 +2,7 @@ import json
 import os
 from colorama import Fore, Style
 import datetime
-from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida
+from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_habito, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida
 
 #cargo documento de tareas
 ARCHIVO_TAREAS = "json\\tareas.json"
@@ -231,7 +231,16 @@ def eliminar_tarea(usuario):
         for tarea in tareas[:]: #Filtro las tareas del usuario actual.
             if tarea["id_usuario"] == usuario["id_usuario"]:
                 tareas_usuario.append(tarea)
-                
+        
+        # Ordenar igual que en ver_tareas()
+        tareas_usuario.sort(
+            key=lambda x: (
+                x['tipo'],
+                datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
+                if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
+            )
+        )
+        
         tarea_a_eliminar = None 
         if 1 <= seleccion <= len(tareas_usuario): #Busco la tarea a eliminar entre las tareas del usuario actual.
             tarea_a_eliminar = tareas_usuario[seleccion - 1]
@@ -261,6 +270,15 @@ def marcar_completada(usuario):
         for tarea in tareas[:]: #Filtro las tareas del usuario actual.
             if tarea["id_usuario"] == usuario["id_usuario"]:
                 tareas_usuario.append(tarea)
+        
+        # Ordenar igual que en ver_tareas()
+        tareas_usuario.sort(
+            key=lambda x: (
+                x['tipo'],
+                datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
+                if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
+            )
+        )
         
         tarea_a_marcar = None
         if 1 <= seleccion <= len(tareas_usuario): #Busco la tarea a marcar entre las tareas del usuario actual.
@@ -292,6 +310,15 @@ def marcar_incompleta(usuario):
         for tarea in tareas[:]: #Filtro las tareas del usuario actual.
             if tarea["id_usuario"] == usuario["id_usuario"]:
                 tareas_usuario.append(tarea)
+        
+        # Ordenar igual que en ver_tareas()
+        tareas_usuario.sort(
+            key=lambda x: (
+                x['tipo'],
+                datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
+                if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
+            )
+        )
         
         tarea_a_marcar = None
         if 1 <= seleccion <= len(tareas_usuario):
