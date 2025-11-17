@@ -1,17 +1,38 @@
 [
     {
         "id": 1,
-        "titulo": "Hacer CRUD con Python incluyendo men\u00fa interactivo",
-        "completada": true
+        "titulo": "Prueba de tarea",
+        "completada": false,
+        "id_usuario": 1
     },
     {
         "id": 2,
-        "titulo": "Corroborar el funcionamiento del gestor de tareas",
-        "completada": true
+        "titulo": "Controlar agregar tarea",
+        "completada": false,
+        "id_usuario": 2
     },
     {
-        "id": 3,
-        "titulo": "Configurar colores en el gestor de tareas",
-        "completada": false
+        "id": 2,
+        "titulo": "Controlar Ver Tareas",
+        "completada": false,
+        "id_usuario": 2
+    },
+    {
+        "id": 2,
+        "titulo": "Controlar Editar Tarea",
+        "completada": false,
+        "id_usuario": 2
+    },
+    {
+        "id": 2,
+        "titulo": "Controlar Eliminar Tarea",
+        "completada": false,
+        "id_usuario": 2
+    },
+    {
+        "id": 2,
+        "titulo": "Controlar Marcar como Completada o Incompleta",
+        "completada": false,
+        "id_usuario": 2
     }
 ]
