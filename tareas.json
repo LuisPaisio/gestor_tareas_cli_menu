@@ -4,5 +4,55 @@
         "titulo": "Prueba de tarea",
         "completada": false,
         "id_usuario": 1
+    },
+    {
+        "id": 2,
+        "titulo": "asd",
+        "completada": false,
+        "tipo": 3,
+        "dias_semana": [],
+        "fecha_vencimiento": null,
+        "xp_reward": 0,
+        "coin_reward": 0,
+        "vida_restar": 0,
+        "id_usuario": 2
+    },
+    {
+        "id": 3,
+        "titulo": "Prueba Fecha",
+        "completada": false,
+        "tipo": 3,
+        "dias_semana": [],
+        "fecha_vencimiento": "18-11-2025",
+        "xp_reward": 0,
+        "coin_reward": 0,
+        "vida_restar": 0,
+        "id_usuario": 2
+    },
+    {
+        "id": 4,
+        "titulo": "Prueba Habito",
+        "completada": false,
+        "tipo": 1,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 0,
+        "coin_reward": 0,
+        "vida_restar": 0,
+        "id_usuario": 2
+    },
+    {
+        "id": 5,
+        "titulo": "Prueba Fecha Antigua",
+        "completada": false,
+        "tipo": 3,
+        "dias_semana": [],
+        "fecha_vencimiento": "31-12-2025",
+        "xp_reward": 0,
+        "coin_reward": 0,
+        "vida_restar": 0,
+        "id_usuario": 2
     }
 ]

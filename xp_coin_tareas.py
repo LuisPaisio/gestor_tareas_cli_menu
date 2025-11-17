@@ -1,0 +1,1 @@
+#valor de XP y COINS por tarea completada

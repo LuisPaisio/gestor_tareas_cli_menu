@@ -1,6 +1,7 @@
 import json
 import os
 from colorama import Fore, Style
+import datetime
 
 #cargo documento de tareas
 ARCHIVO_TAREAS = "tareas.json"
@@ -49,28 +50,98 @@ def guardar_usuarios(usuarios):
 #Creo nueva tarea
 def nueva_tarea(usuario):
     titulo = input("Ingresa el título de la nueva tarea | 0 (cero) cancelar: ")
+    
     if titulo == "0":
         cancelar = input("¿Deseas cancelar la operación? (s/n): ")
         if cancelar.lower() == 's':
             print(Fore.YELLOW + f"\nOperación cancelada." + Style.RESET_ALL)
             return
+        elif cancelar.lower() == 'n':
+            nueva_tarea(usuario) #Vuelvo a llamar a la función para que el usuario pueda ingresar un título.
+        else:
+            print(Fore.RED + "⚠️ Opción no válida. La tarea no se creará." + Style.RESET_ALL)
+            return
+    elif titulo == "":
+        print(Fore.RED + "⚠️ El título de la tarea no puede estar vacío. La tarea no se creará." + Style.RESET_ALL)
+        return
+    elif titulo.isspace():
+        print(Fore.RED + "⚠️ El título de la tarea no puede estar vacío. La tarea no se creará." + Style.RESET_ALL)
+        return
     else:
         tareas = cargar_tareas()
+        
+        tipo_tarea = int(input("Ingresa el tipo de tarea. Hábito(1), Diaria(2), Pendiente(3): "))
+        dias_semana = []
+        fecha_vencimiento = None
+        fecha_str = None
+        
+        if tipo_tarea == 1: 
+            dias_semana.append("todos") #Los hábitos se repiten todos los días.
+        
+        elif tipo_tarea == 2: #Las diarias se repiten ciertos días de la semana.
+            while True:
+                try:
+                    dias_seleccionado = input("selecciona los días de la semana (Lunes(1), Martes(2), Miércoles(3), Jueves(4), Viernes(5), Sábado(6), Domingo(7), Listo(0)): ")
+                    if dias_seleccionado == "1":
+                        dias_semana.append("Lunes")
+                    elif dias_seleccionado == "2":
+                        dias_semana.append("Martes")
+                    elif dias_seleccionado == "3":
+                        dias_semana.append("Miercoles")
+                    elif dias_seleccionado == "4":
+                        dias_semana.append("Jueves")
+                    elif dias_seleccionado == "5":
+                        dias_semana.append("Viernes")
+                    elif dias_seleccionado == "6":
+                        dias_semana.append("Sabado")
+                    elif dias_seleccionado == "7":
+                        dias_semana.append("Domingo")
+                    elif dias_seleccionado == "0":
+                        break
+                    else:
+                        print(Fore.RED + "⚠️ Día no válido. La tarea no se creará." + Style.RESET_ALL)
+                        return
+                except ValueError:
+                    print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
+        
+        
+        elif tipo_tarea == 3: #Las pendientes tienen una fecha de vencimiento o no.
+            poner_fecha = input("¿Deseas poner una fecha de vencimiento? (s/n): ").lower() #Si no se pone, queda como tarea pendiente sin fecha.
+            try:
+                if poner_fecha == "n": #No pongo fecha de vencimiento.
+                    fecha_vencimiento = None
+                elif poner_fecha == "s":#Pongo fecha de vencimiento.
+                    fecha_vencimiento = input("Ingresa la fecha de vencimiento (DD-MM-AAAA): ")
+                    try:
+                        fecha_vencimiento = datetime.datetime.strptime(fecha_vencimiento, "%d-%m-%Y").date() #Valido formato de fecha.
+                        fecha_str = fecha_vencimiento.strftime("%d-%m-%Y") #Vuelvo a convertir la fecha a string para guardarla en el JSON.
+                    except ValueError:
+                        print(Fore.RED + "⚠️ Formato de fecha inválido. La tarea no se creará." + Style.RESET_ALL)
+                        return
+                else:
+                    print(Fore.RED + "⚠️ Opción no válida. La tarea no se creará." + Style.RESET_ALL)
+                    return
+            except ValueError:
+                print(Fore.RED + "⚠️ Entrada inválida. La tarea no se creará." + Style.RESET_ALL)
+                return
+        else:
+            print(Fore.RED + "⚠️ Tipo de tarea no válido. La tarea no se creará." + Style.RESET_ALL)
+            return
         
         ultimo_id = []
         for tarea in tareas: #Obtengo el último ID usado.
             ultimo_id.append(tarea["id"])
         
         if ultimo_id: #Si la lista no está vacía.
-            nueva = {"id": max(ultimo_id)+1, "titulo": titulo, "completada": False, "id_usuario": usuario["id_usuario"]}
+            nueva = {"id": max(ultimo_id)+1, "titulo": titulo, "completada": False, "tipo": tipo_tarea, "dias_semana":dias_semana, "fecha_vencimiento": fecha_str, "xp_reward": 0, "coin_reward": 0, "vida_restar": 0, "id_usuario": usuario["id_usuario"]}
             tareas.append(nueva)
             guardar_tareas(tareas)
-            print(f"Tarea '{titulo}' agregada exitosamente.")
+            print(Fore.YELLOW + f"Tarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
         else: #Si la lista está vacía.
-            nueva = {"id": 1, "titulo": titulo, "completada": False, "id_usuario": usuario["id_usuario"]}
+            nueva = {"id": 1, "titulo": titulo, "completada": False, "tipo":"", "dias_semana":"", "fecha_vencimiento": None, "xp_reward": 0, "coin_reward": 0, "id_usuario": usuario["id_usuario"]}
             tareas.append(nueva)
             guardar_tareas(tareas)
-            print(f"Tarea '{titulo}' agregada exitosamente.")
+            print(Fore.YELLOW + f"Tarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
     
 #Veo tareas
 def ver_tareas(usuario):
@@ -85,11 +156,28 @@ def ver_tareas(usuario):
         return
 
     print("\nLista de Tareas:\n")
+    
+    tareas_usuario.sort(
+        key=lambda x: (
+            x['tipo'],
+            datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
+            if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
+        )
+    )
+    
+    
     for contador, tarea in enumerate(tareas_usuario, start=1): #Muestro solo las tareas del usuario actual y enumero la lista.
         estado = Fore.RED + "Incompleta" + Style.RESET_ALL
         if tarea["completada"]:
             estado = Fore.GREEN + "Completada" + Style.RESET_ALL
-        print(f"{contador}. {tarea["titulo"]} - {estado}")
+        if tarea["fecha_vencimiento"] is None:
+            tarea["fecha_vencimiento"] = "Sin fecha"
+        if tarea["dias_semana"] == []:
+            tarea["dias_semana"] = ["No aplica"]
+        #identifico el nombre del tipo de tarea
+        tipos = {1: "Hábito", 2: "Tarea Diaria", 3: "Tarea Pendiente"}
+        tipo_nombre = tipos.get(tarea["tipo"], "Desconocido")
+        print(f"{contador}. {tarea["titulo"]} - {estado} | {tipo_nombre} | Días: {', '.join(tarea['dias_semana'])} | Vencimiento: {tarea['fecha_vencimiento']}")
 
 def editar_tarea(usuario):
     ver_tareas(usuario)

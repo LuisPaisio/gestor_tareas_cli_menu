@@ -74,7 +74,7 @@ def register():
             if usuario["usuario"] == user:
                 print(Fore.RED + "\nEl nombre de usuario ya existe. Por favor, elige otro." + Style.RESET_ALL)
                 return None
-        nuevo_usuario = {"id_usuario":max(ultimo_id) + 1, "usuario": user, "contraseña": password}
+        nuevo_usuario = {"id_usuario":max(ultimo_id) + 1, "usuario": user, "contraseña": password, "xp_usuario": 0, "coin_usuario": 0, "vida_usuario":50}
         usuarios.append(nuevo_usuario)
         guardar_usuarios(usuarios)
         print(Fore.GREEN + f"\n¡Registro exitoso!" + Style.RESET_ALL)

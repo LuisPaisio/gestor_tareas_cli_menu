@@ -2,11 +2,17 @@
     {
         "id_usuario": 1,
         "usuario": "prueba",
-        "contrase\u00f1a": "prueba"
+        "contrase\u00f1a": "prueba",
+        "xp_usuario": 0,
+        "coin_usuario": 0,
+        "vida_usuario": 50
     },
     {
         "id_usuario": 2,
         "usuario": "luis",
-        "contrase\u00f1a": "1234"
+        "contrase\u00f1a": "1234",
+        "xp_usuario": 0,
+        "coin_usuario": 0,
+        "vida_usuario": 50
     }
 ]
