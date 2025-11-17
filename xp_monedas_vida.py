@@ -3,7 +3,7 @@ import os
 from colorama import Fore, Style
 
 #Funciones para la gestión de xp y coins de los usuarios.
-
+#----------------------------------------------------------------
 #cargo documento de usuarios
 ARCHIVO_USUARIOS = "usuarios.json"
 def cargar_usuarios():
@@ -24,7 +24,7 @@ def cargar_usuarios():
 def guardar_usuarios(usuarios):
     with open(ARCHIVO_USUARIOS, "w") as archivo_usuarios:
         json.dump(usuarios, archivo_usuarios, indent=4)
-
+#----------------------------------------------------------------
 # Defino el monto de XP en una función para facilitar futuros cambios, según tareas que sean hábitos, diarias o pendientes.
 def xp_habito():
     return 10  #XP por completar un hábito
@@ -34,7 +34,7 @@ def xp_diaria():
 
 def xp_pendiente():
     return 30  #XP por completar una pendiente
-
+#----------------------------------------------------------------
 #Defino el monto de COINS en una función para facilitar futuros cambios, según tareas que sean hábitos, diarias o pendientes.
 def coin_habito():
     return 5
@@ -44,15 +44,8 @@ def coin_diaria():
 
 def coin_pendiente():
     return 15
-
-#Defino la vida que se resta al usuario por no completar tareas, según sean Hábito, Diaria o Pendiente.
-def vida_habito():
-    if habito_negativo: #Tengo que definir habito_negativo en la función donde se use. Estará en Tareas.py
-        return 5
-    else:
-        return 0
-
-def vida_diaria(): #Resto vida por no completar una diaria pasada las 00:00hs.
+#----------------------------------------------------------------
+def vida_diaria(): #Resto vida por no completar una diaria pasada las 00:00hs. | Ésto debería ser una función programada que pasadas las 00:00hs revise las diarias no completadas y reste la vida correspondiente de la tarea segun sea habito, diaria o pendiente.
     return 2
 
 def vida_pendiente(): #Resto vida por no completar una pendiente pasada su fecha de vencimiento.
