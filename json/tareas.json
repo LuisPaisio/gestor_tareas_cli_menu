@@ -64,5 +64,20 @@
         "vida_restar": 5,
         "habito": null,
         "id_usuario": 2
+    },
+    {
+        "id": 6,
+        "titulo": "Prueba Habito",
+        "completada": false,
+        "tipo": 1,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "+",
+        "id_usuario": 2
     }
 ]
