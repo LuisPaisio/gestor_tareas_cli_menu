@@ -46,18 +46,14 @@ def coin_pendiente():
     return 15
 #--------------------------------------------------------
 #Defino la vida que se resta al usuario por no completar tareas, según sean Hábito, Diaria o Pendiente.
-habito_negativo = True  #Variable de ejemplo, debe definirse en Tareas.py
-def vida_habito():
-    if habito_negativo: #Tengo que definir habito_negativo en la función donde se use. Estará en Tareas.py
-        return 5
-    else:
-        return 0
-
-def vida_diaria(): #Resto vida por no completar una diaria pasada las 00:00hs.
+def vida_habito(): #Resto vida por no completar un hábito.
     return 2
 
-def vida_pendiente(): #Resto vida por no completar una pendiente pasada su fecha de vencimiento.
+def vida_diaria(): #Resto vida por no completar una diaria pasada las 00:00hs.
     return 3
+
+def vida_pendiente(): #Resto vida por no completar una pendiente pasada su fecha de vencimiento.
+    return 5
 #--------------------------------------------------------
 #Sumo XP y Coins al usuario
 def sumar_xp_coins(usuario, xp, coins):
@@ -81,6 +77,8 @@ def restar_vida(usuario, vida):
             guardar_usuarios(usuarios)
             print(Fore.RED + f"\nHas perdido {vida} puntos de vida. Vida actual: {usr['vida_usuario']}/50" + Style.RESET_ALL)
             break
+
+#Función para definir si un habito es negativo o positivo
 
 """Todas las tareas dan XP y monedas al completarse.
 

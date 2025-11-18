@@ -7,7 +7,7 @@
     },
     {
         "id": 2,
-        "titulo": "Prueba COINS y XP de Usuario",
+        "titulo": "Prueba Agregar Habito, y poner positivo o negativo",
         "completada": true,
         "tipo": 1,
         "dias_semana": [
@@ -16,33 +16,53 @@
         "fecha_vencimiento": null,
         "xp_reward": 10,
         "coin_reward": 5,
-        "vida_restar": 0,
+        "vida_restar": 2,
+        "habito": "+",
+        "id_usuario": 2
+    },
+    {
+        "id": 3,
+        "titulo": "Prueba Agregar Habito, y poner positivo o negativo",
+        "completada": true,
+        "tipo": 1,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "-",
         "id_usuario": 2
     },
     {
         "id": 4,
-        "titulo": "Prueba para restar vida",
+        "titulo": "Prueba Tarea Diaria",
         "completada": true,
-        "tipo": 3,
-        "dias_semana": [],
-        "fecha_vencimiento": "21-11-2025",
-        "xp_reward": 30,
-        "coin_reward": 15,
+        "tipo": 2,
+        "dias_semana": [
+            "Lunes",
+            "Miercoles",
+            "Sabado"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 20,
+        "coin_reward": 10,
         "vida_restar": 3,
+        "habito": null,
         "id_usuario": 2
     },
     {
         "id": 5,
-        "titulo": "Prueba Cambiando Los JSON de Lugar",
+        "titulo": "Prueba Tarea Pendiente",
         "completada": true,
-        "tipo": 1,
-        "dias_semana": [
-            "todos"
-        ],
+        "tipo": 3,
+        "dias_semana": [],
         "fecha_vencimiento": null,
-        "xp_reward": 10,
-        "coin_reward": 5,
+        "xp_reward": 30,
+        "coin_reward": 15,
         "vida_restar": 5,
+        "habito": null,
         "id_usuario": 2
     }
 ]
