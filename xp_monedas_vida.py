@@ -5,7 +5,7 @@ from colorama import Fore, Style
 #Funciones para la gestión de xp y coins de los usuarios.
 #--------------------------------------------------------
 #cargo documento de usuarios
-ARCHIVO_USUARIOS = "usuarios.json"
+ARCHIVO_USUARIOS = "json\\usuarios.json"
 def cargar_usuarios():
     if os.path.exists(ARCHIVO_USUARIOS):
         try:
@@ -66,19 +66,62 @@ def sumar_xp_coins(usuario, xp, coins):
             print(Fore.GREEN + f"\n¡Felicidades! Has ganado {xp} XP y {coins} coins." + Style.RESET_ALL)
             break
 
+#Sumo XP y Coins al usuario por hábito positivo
+def sumar_xp_coins_habito(usuario, xp, coins):
+    usuarios = cargar_usuarios()
+    for usr in usuarios:
+        if usr["id_usuario"] == usuario["id_usuario"]:
+            usr["xp_usuario"] += xp
+            usr["coin_usuario"] += coins
+            guardar_usuarios(usuarios)
+            print(" Has sumado" + Fore.YELLOW + f" {xp} XP" + Style.RESET_ALL +  " y " + Fore.YELLOW + f" {coins} " + Style.RESET_ALL + "coins.")
+            break
+
 #Función para restar vida al usuario
 def restar_vida(usuario, vida):
     usuarios = cargar_usuarios()
     for usr in usuarios:
         if usr["id_usuario"] == usuario["id_usuario"]:
             usr["vida_usuario"] -= vida
-            if usr["vida_usuario"] < 0:
+            if usr["vida_usuario"] <= 0:
                 usr["vida_usuario"] = 0  #La vida no puede ser negativa.
+                print (Fore.RED + f"Tu vida llegó a 0." + Style.RESET_ALL)
+                #Penalizaciones.
+                xp_perdido = 15
+                coins_perdidos = 10
+                usr["xp_usuario"] = max(0, usr["xp_usuario"] - xp_perdido)
+                usr["coin_usuario"] = max(0, usr["coin_usuario"] - coins_perdidos)
+                print (Fore.YELLOW + f"Has perdido {xp_perdido} XP, {coins_perdidos} y todo lo que tenías equipado." + Style.RESET_ALL)
+                print (Fore.YELLOW + f"Tu salud ha sido restaurada {usr["vida_usuario"]}" + Style.RESET_ALL)
+                #Restauro la vida.
+                usr["vida_usuario"] = 50
+                return #Retorno para que no siga con el siguiente print.
             guardar_usuarios(usuarios)
             print(Fore.RED + f"\nHas perdido {vida} puntos de vida. Vida actual: {usr['vida_usuario']}/50" + Style.RESET_ALL)
             break
 
-#Función para definir si un habito es negativo o positivo
+#Función para restar vida al usuario por hábito negativo
+def restar_vida_habito(usuario, vida):
+    usuarios = cargar_usuarios()
+    for usr in usuarios:
+        if usr["id_usuario"] == usuario["id_usuario"]:
+            usr["vida_usuario"] -= vida
+            if usr["vida_usuario"] <= 0:
+                usr["vida_usuario"] = 0  #La vida no puede ser negativa.
+                print (Fore.RED + f"Tu vida llegó a 0." + Style.RESET_ALL)
+                #Penalizaciones.
+                xp_perdido = 15
+                coins_perdidos = 10
+                usr["xp_usuario"] = max(0, usr["xp_usuario"] - xp_perdido)
+                usr["coin_usuario"] = max(0, usr["coin_usuario"] - coins_perdidos)
+                print (Fore.YELLOW + f"Has perdido {xp_perdido} XP, {coins_perdidos} y todo lo que tenías equipado." + Style.RESET_ALL)
+                print (Fore.YELLOW + f"Tu salud ha sido restaurada {usr["vida_usuario"]}" + Style.RESET_ALL)
+                #Restauro la vida.
+                usr["vida_usuario"] = 50
+                return #Retorno para que no siga con el siguiente print.
+            guardar_usuarios(usuarios)
+            print(Fore.RED + f"\nHas perdido {vida} puntos de vida. Vida actual: {usr['vida_usuario']}/50" + Style.RESET_ALL)
+            break
 
 """Todas las tareas dan XP y monedas al completarse.
 
