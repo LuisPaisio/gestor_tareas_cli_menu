@@ -2,7 +2,7 @@ import json
 import os
 from colorama import Fore, Style
 import datetime
-from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_habito, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida
+from xp_monedas_vida import xp_habito, xp_diaria, xp_pendiente, coin_habito, coin_diaria, coin_pendiente, vida_habito, vida_diaria, vida_pendiente, sumar_xp_coins, restar_vida, sumar_xp_coins_habito, restar_vida_habito
 
 #cargo documento de tareas
 ARCHIVO_TAREAS = "json\\tareas.json"
@@ -202,9 +202,9 @@ def ver_tareas(usuario):
         tipo_nombre = tipos.get(tarea["tipo"], "Desconocido")
         if tarea["tipo"] == 1:
             if tarea["habito"] == "+":
-                print(f"{contador}. {tarea['titulo']} - {estado} | {tipo_nombre} | {tarea['habito']} Positivo")
+                print(f"{contador}. {tarea['titulo']} | {tipo_nombre} | {tarea['habito']} Positivo")
             else:
-                print(f"{contador}. {tarea['titulo']} - {estado} | {tipo_nombre} | {tarea['habito']} Negativo")
+                print(f"{contador}. {tarea['titulo']} | {tipo_nombre} | {tarea['habito']} Negativo")
         elif tarea["tipo"] == 2:
             print(f"{contador}. {tarea['titulo']} - {estado} | {tipo_nombre} | Días: {', '.join(tarea['dias_semana'])}")
         else:
@@ -290,7 +290,7 @@ def eliminar_tarea(usuario):
         print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
         
 #Marcar tarea como completada
-def marcar_completada(usuario):
+def marcar_tarea(usuario):
     ver_tareas(usuario)
     try:
         seleccion = int(input("\nIngresa el ID de la tarea que deseas marcar como completada | 0 (cero) cancelar: "))
@@ -315,80 +315,58 @@ def marcar_completada(usuario):
         if 1 <= seleccion <= len(tareas_usuario): #Busco la tarea a marcar entre las tareas del usuario actual.
             tarea_a_marcar = tareas_usuario[seleccion - 1]
         
-        
         if seleccion == 0:
                 cancelar = input("¿Deseas cancelar la operación? (s/n): ")
                 if cancelar.lower() == 's':
                     print(Fore.YELLOW + f"\nOperación cancelada." + Style.RESET_ALL)
                     return
                 elif cancelar.lower() == 'n':
-                    marcar_completada(usuario) #Vuelvo a llamar a la función para que el usuario pueda ingresar un ID.
+                    marcar_tarea(usuario) #Vuelvo a llamar a la función para que el usuario pueda ingresar un ID.
                     return
                 else:
                     print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
-                    return
+                return
 
-        if tarea_a_marcar["completada"] == False: #Solo marco como completada si no lo está ya.
-            if tarea_a_marcar:
+        if not tarea_a_marcar:
+            print(Fore.RED + "⚠️ Tarea no encontrada." + Style.RESET_ALL)
+            return
+        
+        if tarea_a_marcar["tipo"] == 1:
+            opcion = tarea_a_marcar['habito']
+            
+            if opcion == "+":
+                sumar_xp_coins_habito(usuario, tarea_a_marcar['xp_reward'], tarea_a_marcar['coin_reward']) #Sumo XP y coins al usuario según la tarea completada.
+                print(Fore.GREEN + f"\n¡Hábito positivo registrado!" + Style.RESET_ALL)
+            elif opcion == "-":
+                restar_vida_habito(usuario, tarea_a_marcar['vida_restar']) #Resto vida al usuario según la tarea incompleta.
+                print(Fore.RED + f"\nHábito negativo registrado." + Style.RESET_ALL)
+            else:
+                print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
+            return
+
+        if tarea_a_marcar["tipo"] == 3:
+            if not tarea_a_marcar["completada"]:
                 tarea_a_marcar["completada"] = True
                 guardar_tareas(tareas)
                 print(f"\nTarea" + Fore.YELLOW + f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
                 sumar_xp_coins(usuario, tarea_a_marcar['xp_reward'], tarea_a_marcar['coin_reward']) #Sumo XP y coins al usuario según la tarea completada.
             else:
-                print(Fore.RED + "⚠️ Tarea no encontrada." + Style.RESET_ALL)
-        else: #Printeo mensaje si la tarea ya estaba completada.
-            print(f"\nLa tarea" + Fore.YELLOW +  f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "ya está marcada como completada." + Fore.YELLOW + " Seleccione otra." + Style.RESET_ALL) 
-            return
-    except ValueError:
-        print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
-
-#Marcar tarea como incompleta
-def marcar_incompleta(usuario):
-    ver_tareas(usuario)
-    try:
-        seleccion = int(input("\nIngresa el ID de la tarea que deseas marcar como incompleta | 0 (cero) cancelar: "))
-        tareas = cargar_tareas()
+                print(f"\nLa tarea" + Fore.YELLOW +  f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "ya está marcada como completada." + Fore.YELLOW + " Seleccione otra." + Style.RESET_ALL)
+            return 
         
-        tareas_usuario = [] 
-        for tarea in tareas[:]: #Filtro las tareas del usuario actual.
-            if tarea["id_usuario"] == usuario["id_usuario"]:
-                tareas_usuario.append(tarea)
-        
-        # Ordenar igual que en ver_tareas()
-        tareas_usuario.sort(
-            key=lambda x: (
-                x['tipo'],
-                datetime.datetime.strptime(x['fecha_vencimiento'], "%d-%m-%Y")
-                if x['tipo'] == 3 and x['fecha_vencimiento'] not in (None, "Sin fecha") else datetime.datetime.max
-            )
-        )
-        
-        tarea_a_marcar = None
-        if 1 <= seleccion <= len(tareas_usuario):
-            tarea_a_marcar = tareas_usuario[seleccion - 1]
-        
-        if seleccion == 0:
-                cancelar = input("¿Deseas cancelar la operación? (s/n): ")
-                if cancelar.lower() == 's':
-                    print(Fore.YELLOW + f"\nOperación cancelada." + Style.RESET_ALL)
-                    return
-                elif cancelar.lower() == 'n':
-                    marcar_incompleta(usuario) #Vuelvo a llamar a la función para que el usuario pueda ingresar un ID.
-                    return
-                else:
-                    print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
-                    return
-
-        if tarea_a_marcar["completada"] == True: #Solo marco como incompleta si ya está completada.
-            if tarea_a_marcar:
+        if tarea_a_marcar["tipo"] == 2:
+            if not tarea_a_marcar["completada"]:
+                tarea_a_marcar["completada"] = True
+                guardar_tareas(tareas)
+                print(f"\nTarea" + Fore.YELLOW + f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
+                sumar_xp_coins(usuario, tarea_a_marcar['xp_reward'], tarea_a_marcar['coin_reward']) #Sumo XP y coins al usuario según la tarea completada.   
+            else:
                 tarea_a_marcar["completada"] = False
                 guardar_tareas(tareas)
-                print(f"Tarea" + Fore.YELLOW + f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "marcada como " + Fore.RED + "incompleta." + Style.RESET_ALL)
+                print(f"\nTarea" + Fore.YELLOW + f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "marcada como " + Fore.RED + "incompleta." + Style.RESET_ALL)
                 restar_vida(usuario, tarea_a_marcar['vida_restar']) #Resto vida al usuario según la tarea incompleta.
-            else:
-                print(Fore.RED + "⚠️ Tarea no encontrada." + Style.RESET_ALL)
-        else: #Printeo mensaje si la tarea ya estaba incompleta.
-            print(f"\nLa tarea" + Fore.YELLOW +  f" {tarea_a_marcar['titulo']} " + Style.RESET_ALL + "ya está marcada como incompleta." + Fore.YELLOW + " Seleccione otra." + Style.RESET_ALL) 
             return
+        
     except ValueError:
         print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
+

@@ -7,8 +7,8 @@
     },
     {
         "id": 2,
-        "titulo": "Prueba Agregar Habito, y poner positivo o negativo",
-        "completada": true,
+        "titulo": "prueba habito",
+        "completada": false,
         "tipo": 1,
         "dias_semana": [
             "todos"
@@ -22,8 +22,8 @@
     },
     {
         "id": 3,
-        "titulo": "Prueba Agregar Habito, y poner positivo o negativo",
-        "completada": true,
+        "titulo": "prueba habito negativo",
+        "completada": false,
         "tipo": 1,
         "dias_semana": [
             "todos"
@@ -37,13 +37,13 @@
     },
     {
         "id": 4,
-        "titulo": "Prueba Tarea Diaria",
-        "completada": true,
+        "titulo": "Tarea Diaria",
+        "completada": false,
         "tipo": 2,
         "dias_semana": [
             "Lunes",
-            "Miercoles",
-            "Sabado"
+            "Martes",
+            "Miercoles"
         ],
         "fecha_vencimiento": null,
         "xp_reward": 20,
@@ -63,21 +63,6 @@
         "coin_reward": 15,
         "vida_restar": 5,
         "habito": null,
-        "id_usuario": 2
-    },
-    {
-        "id": 6,
-        "titulo": "Prueba Habito",
-        "completada": false,
-        "tipo": 1,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": null,
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
         "id_usuario": 2
     }
 ]
