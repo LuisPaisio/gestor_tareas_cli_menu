@@ -9,7 +9,7 @@ En el futuro se planea integrar con **Flask** para una versión web.
 
 ## 🚀 Características
 - Sistema de usuarios:
-  - Registrarse, iniciar sesión y eliminar cuenta (`GestorUsuarios`)
+- Registrarse, iniciar sesión y eliminar cuenta (`GestorUsuarios`)
 - Gestión de tareas por usuario (`GestorTareas`)
 - Tareas como objetos (`Tarea`) con atributos y métodos
 - Crear nuevas tareas
