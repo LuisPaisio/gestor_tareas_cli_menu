@@ -13,7 +13,7 @@
         "dias_semana": [
             "todos"
         ],
-        "fecha_vencimiento": null,
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 10,
         "coin_reward": 5,
         "vida_restar": 2,
@@ -28,7 +28,7 @@
         "dias_semana": [
             "todos"
         ],
-        "fecha_vencimiento": null,
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 10,
         "coin_reward": 5,
         "vida_restar": 2,
@@ -37,15 +37,15 @@
     },
     {
         "id": 4,
-        "titulo": "Tarea Diaria",
-        "completada": false,
+        "titulo": "Tarea Diaria Clase",
+        "completada": true,
         "tipo": 2,
         "dias_semana": [
             "Lunes",
             "Martes",
             "Miercoles"
         ],
-        "fecha_vencimiento": null,
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 20,
         "coin_reward": 10,
         "vida_restar": 3,
@@ -57,8 +57,10 @@
         "titulo": "Prueba Tarea Pendiente",
         "completada": true,
         "tipo": 3,
-        "dias_semana": [],
-        "fecha_vencimiento": null,
+        "dias_semana": [
+            "No aplica"
+        ],
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 30,
         "coin_reward": 15,
         "vida_restar": 5,

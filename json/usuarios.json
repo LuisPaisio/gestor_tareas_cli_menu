@@ -2,18 +2,20 @@
     {
         "id_usuario": 1,
         "usuario": "prueba",
-        "contrase\u00f1a": "prueba",
+        "contraseña": "prueba",
         "xp_usuario": 0,
         "coin_usuario": 0,
-        "vida_usuario": 50
+        "vida_usuario": 50,
+        "nivel_usuario": 1,
+        "contador_50": 0
     },
     {
         "id_usuario": 2,
         "usuario": "luis",
-        "contrase\u00f1a": "1234",
-        "xp_usuario": 100,
-        "coin_usuario": 50,
-        "vida_usuario": 39,
+        "contraseña": "1234",
+        "xp_usuario": 95,
+        "coin_usuario": 45,
+        "vida_usuario": 50,
         "nivel_usuario": 1,
         "contador_50": 0
     }
