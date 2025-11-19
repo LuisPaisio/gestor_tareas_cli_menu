@@ -7,7 +7,7 @@ from constantes_tareas import (
     coin_habito, coin_diaria, coin_pendiente,
     vida_habito, vida_diaria, vida_pendiente
 )
-from tareas import Tarea   # 👈 importamos la clase
+from tareas import Tarea   # importamos la clase
 
 ARCHIVO_TAREAS = os.path.join("json", "tareas.json")  # más portable
 
