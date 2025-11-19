@@ -53,9 +53,9 @@
         "id_usuario": 2
     },
     {
-        "id": 5,
-        "titulo": "Prueba Tarea Pendiente",
-        "completada": true,
+        "id": 6,
+        "titulo": "Prueba Pendiente sin Fecha",
+        "completada": false,
         "tipo": 3,
         "dias_semana": [
             "No aplica"
@@ -66,5 +66,50 @@
         "vida_restar": 5,
         "habito": null,
         "id_usuario": 2
+    },
+    {
+        "id": 7,
+        "titulo": "Prueba Pendiente Fecha",
+        "completada": false,
+        "tipo": 3,
+        "dias_semana": [
+            "No aplica"
+        ],
+        "fecha_vencimiento": "25-11-2025",
+        "xp_reward": 30,
+        "coin_reward": 15,
+        "vida_restar": 5,
+        "habito": null,
+        "id_usuario": 2
+    },
+    {
+        "id": 8,
+        "titulo": "Prueba Habito Negativo Usuario Nuevo",
+        "completada": false,
+        "tipo": 1,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "-",
+        "id_usuario": 3
+    },
+    {
+        "id": 9,
+        "titulo": "Habito Positivo",
+        "completada": false,
+        "tipo": 1,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "+",
+        "id_usuario": 3
     }
 ]

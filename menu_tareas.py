@@ -9,37 +9,37 @@ def menu_tareas(usuario, gestor_usuarios):
 
     while True:
         try:
-            tarea = int(input(
+            opcion = int(input(
                 "\n1. Nueva Tarea\n"
                 "2. Ver Tareas\n"
                 "3. Editar Tarea\n"
                 "4. Eliminar Tarea\n"
                 "5. Marcar Tarea\n"
                 "6. Salir\n"
-                "Ingresa el número de la tarea que deseas realizar: "
+                "Ingresa el número de la opción que deseas realizar: "
             ))
 
-            if tarea == 1:
+            if opcion == 1:
                 print(Fore.YELLOW + "\nHas seleccionado: Nueva Tarea" + Style.RESET_ALL)
                 gestor.nueva_tarea()
 
-            elif tarea == 2:
+            elif opcion == 2:
                 print(Fore.YELLOW + "\nHas seleccionado: Ver Tareas" + Style.RESET_ALL)
                 gestor.ver_tareas()
 
-            elif tarea == 3:
+            elif opcion == 3:
                 print(Fore.YELLOW + "\nHas seleccionado: Editar Tarea" + Style.RESET_ALL)
                 gestor.editar_tarea()
 
-            elif tarea == 4:
+            elif opcion == 4:
                 print(Fore.YELLOW + "\nHas seleccionado: Eliminar Tarea" + Style.RESET_ALL)
                 gestor.eliminar_tarea()
 
-            elif tarea == 5:
+            elif opcion == 5:
                 print(Fore.YELLOW + "\nHas seleccionado: Marcar Tarea" + Style.RESET_ALL)
                 gestor.marcar_tarea()
 
-            elif tarea == 6:
+            elif opcion == 6:
                 print(Fore.YELLOW + "\nSaliendo del Gestor de Tareas. ¡Hasta luego!" + Style.RESET_ALL)
                 break
 
