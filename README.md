@@ -1,31 +1,44 @@
-# 🧠 Gestor de Tareas CLI + login básico integrado
+# 🧠 Gestor de Tareas CLI (Orientado a Objetos) + Login integrado
 
-Gestor de tareas simple con menú integrado, desarrollado en Python.  
-Permite crear, listar, editar, marcar como completas o incompletas y eliminar tareas desde la consola.  
-Más adelante se planea integrar con **Flask** para una versión web.
+Gestor de tareas en consola desarrollado en **Python**, con sistema de usuarios y persistencia en JSON.  
+Implementa un enfoque **orientado a objetos** con clases `Usuario`, `GestorUsuarios`, `Tarea` y `GestorTareas`.  
+Permite crear, listar, editar, marcar como completas/incompletas y eliminar tareas desde la consola.  
+En el futuro se planea integrar con **Flask** para una versión web.
+
+---
 
 ## 🚀 Características
-- Registrase, Iniciar Sesión o Eliminar Cuenta
+- Sistema de usuarios:
+  - Registrarse, iniciar sesión y eliminar cuenta (`GestorUsuarios`)
+- Gestión de tareas por usuario (`GestorTareas`)
+- Tareas como objetos (`Tarea`) con atributos y métodos
 - Crear nuevas tareas
-- Listar tareas existentes
-- Editar tareas por ID
-- Marcar como completas o incompletas por ID
-- Eliminar tareas por ID
-- Persistencia en archivo JSON
+- Listar tareas existentes con estado y vencimiento
+- Editar tareas por ID visual
+- Marcar como completas o incompletas
+- Eliminar tareas
+- Persistencia en archivo JSON con conversión objeto ↔ diccionario (`to_dict()` / `from_dict()`)
 - Mensajes en color usando `colorama`
 
+---
+
 ## 📂 Estructura del proyecto
-   ```bash
-   gestor-tareas-cli/
-   │
-   ├── menu_login.py      # Archivo principal con menú login
-   ├── login.py
-   ├── usuarios.json
-   ├── menu_tareas.py     # Archivo con menú de tareas
-   ├── tareas.py          # Funciones para CRUD de tareas
-   ├── tareas.json        # Archivo de persistencia
-   ├── requirements.txt   # Dependencias
-   └── README.md          # Documentación
+```bash
+gestor-tareas-cli/
+│
+├── menu_login.py          # Menú principal: login/registro/eliminar cuenta
+├── menu_tareas.py         # Menú de tareas (CRUD y marcado)
+├── gestor_usuarios.py     # Clase GestorUsuarios: manejo de usuarios
+├── usuario.py             # Clase Usuario: atributos y métodos del usuario
+├── gestor_tareas.py       # Clase GestorTareas: lógica de tareas
+├── tareas.py              # Clase Tarea: definición y métodos
+├── json/
+│   ├── usuarios.json      # Persistencia de usuarios
+│   ├── tareas.json        # Persistencia de tareas
+│   └── recompensas.json   # Persistencia de recompensas (aún no implementado)
+├── requirements.txt       # Dependencias
+└── README.md              # Documentación
+
    ```
 
 ## 🛠️ Instalación
@@ -47,7 +60,7 @@ Más adelante se planea integrar con **Flask** para una versión web.
 
 ## 🧪 Uso
    ```bash
-   python gestor.py
+   python menu_login.py
    ```
 
 ## 📦 Requisitos
