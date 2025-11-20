@@ -5,7 +5,7 @@ def menu_tareas(usuario, gestor_usuarios):
     print(Fore.GREEN + f"\n¡Bienvenido al Gestor de Tareas, {usuario.usuario}!" + Style.RESET_ALL)
 
     # ahora pasamos usuario y gestor_usuarios al constructor
-    gestor = GestorTareas(usuario, gestor_usuarios)
+    gestor = GestorTareas(usuario, gestor_usuarios) #El gestor_usuario se lo paso principalmente para cuando se marca una tarea, actualizar el usuario, es decir, su xp, coins, vida, etc.
 
     while True:
         try:

@@ -9,7 +9,7 @@ ARCHIVO_TAREAS = "json\\tareas.json"
 class GestorUsuarios:
     def __init__(self):
         # Carga inicial de usuarios
-        self.usuarios = self.cargar_usuarios()
+        self.usuarios = self.cargar_usuarios() #Se asigna a self.usuarios la lista de objetos Usuarios que se obtuvo de return [Usuario.from_dict(u) for u in data]
 
     # -------------------------------
     # Manejo de usuarios
@@ -21,8 +21,8 @@ class GestorUsuarios:
                     contenido = archivo.read().strip()
                     if not contenido:
                         return []
-                    data = json.loads(contenido)
-                    return [Usuario.from_dict(u) for u in data]
+                    data = json.loads(contenido) #Convierte el texto del JSON en una lista de diccionarios.
+                    return [Usuario.from_dict(u) for u in data] #list comprehension | Recorro cada elemento u dentro de data. | El metodo Usuario.from_dict(u) convierte el diccionario en un objeto Usuario.
             except json.JSONDecodeError:
                 print(Fore.RED + "⚠️ El archivo de usuarios está corrupto o vacío. Se iniciará una lista nueva." + Style.RESET_ALL)
                 return []
@@ -50,7 +50,7 @@ class GestorUsuarios:
         for usuario in self.usuarios:
             if usuario.usuario == user and usuario.contraseña == password:
                 print(Fore.GREEN + f"\n¡Inicio de sesión exitoso!" + Style.RESET_ALL)
-                return usuario
+                return usuario #De ésta forma se devuelve toda la información del usuario, pero ya no como lista, sino como objeto Usuario.
         print(Fore.RED + "\nNombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
         return None
 

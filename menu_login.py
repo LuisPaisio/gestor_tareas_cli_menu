@@ -6,17 +6,11 @@ def main():
     print(Fore.YELLOW + f"\n¡Bienvenido al Gestor de Tareas!" + Style.RESET_ALL)
     print(Fore.YELLOW + "Inicia sesión o regístrate para continuar." + Style.RESET_ALL)
 
-    gestor = GestorUsuarios()  # instanciamos el gestor de usuarios
+    gestor = GestorUsuarios()  # instanciamos el gestor de usuarios, ya tenemos la lista de usuarios cargados en el JSON
 
     while True:
         try:
-            opcion = int(input(
-                "\n1. Iniciar Sesión\n"
-                "2. Registrarse\n"
-                "3. Cancelar\n"
-                "4. Eliminar Cuenta\n"
-                "Ingresa el número de la opción que deseas realizar: "
-            ))
+            opcion = int(input("\n1. Iniciar Sesión\n""2. Registrarse\n""3. Cancelar\n""4. Eliminar Cuenta\n""Ingresa el número de la opción que deseas realizar: "))
 
             if opcion == 1:
                 print(Fore.YELLOW + "\nHas seleccionado: Iniciar Sesión" + Style.RESET_ALL)

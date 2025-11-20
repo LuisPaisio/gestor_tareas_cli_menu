@@ -15,7 +15,7 @@ class GestorTareas:
     def __init__(self, usuario, gestor_usuarios):
         self.usuario = usuario
         self.gestor_usuarios = gestor_usuarios
-        self.tareas = self.cargar_tareas()
+        self.tareas = self.cargar_tareas() #Se asigna a self.tareas la lista de objetos Tarea que se obtuvo de return [Tarea.from_dict(t) for t in data]
 
     # -------------------------------
     # Manejo de archivo JSON
@@ -27,8 +27,8 @@ class GestorTareas:
                     contenido = archivo.read().strip()
                     if not contenido:
                         return []
-                    data = json.loads(contenido)
-                    return [Tarea.from_dict(t) for t in data]  # 👈 objetos
+                    data = json.loads(contenido) #Convierte el texto del JSON en una lista de diccionarios.
+                    return [Tarea.from_dict(t) for t in data]  #list comprehension | Recorro cada elemento t dentro de data. | El metodo Tarea.from_dict(t) convierte el diccionario en un objeto Tarea.
             except json.JSONDecodeError:
                 print(Fore.RED + "⚠️ El archivo de tareas está corrupto o vacío. Se iniciará una lista nueva." + Style.RESET_ALL)
                 return []
@@ -81,7 +81,7 @@ class GestorTareas:
                     continue
                 habito = tipo_habito
                 dias_semana.append("todos")
-                xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito()
+                xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito() #Estas son las funciones que están en constantes_tareas.py
 
             elif tipo_tarea == 2:
                 xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria()
@@ -89,7 +89,11 @@ class GestorTareas:
                     dias_seleccionado = input("Selecciona días (1=Lunes ... 7=Domingo, 0=Listo): ")
                     mapa = {"1":"Lunes","2":"Martes","3":"Miercoles","4":"Jueves","5":"Viernes","6":"Sabado","7":"Domingo"}
                     if dias_seleccionado in mapa:
-                        dias_semana.append(mapa[dias_seleccionado])
+                        dia = mapa[dias_seleccionado]
+                        if dia not in dias_semana:
+                            dias_semana.append(mapa[dias_seleccionado]) #Acumula en una lista todos los elegidos hasta que el usuario ponga 0.
+                        else:
+                            print(Fore.YELLOW + f"⚠️ El día {dia} ya fue seleccionado." + Style.RESET_ALL)
                     elif dias_seleccionado == "0":
                         break
                     else:
