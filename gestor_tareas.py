@@ -15,7 +15,7 @@ class GestorTareas:
     def __init__(self, usuario, gestor_usuarios):
         self.usuario = usuario
         self.gestor_usuarios = gestor_usuarios
-        self.tareas = self.cargar_tareas() #Se asigna a self.tareas la lista de objetos Tarea que se obtuvo de return [Tarea.from_dict(t) for t in data]
+        self.tareas = self.cargar_tareas() #Se asigna a self.tareas la lista de objetos Tarea que se obtuvo de return [Tarea.from_dict(t) for t in data] | Cabe resaltar que son todas las tareas y no solo la del usuario logueado.
 
     # -------------------------------
     # Manejo de archivo JSON
@@ -36,7 +36,7 @@ class GestorTareas:
 
     def guardar_tareas(self):
         with open(ARCHIVO_TAREAS, "w", encoding="utf-8") as archivo:
-            json.dump([t.to_dict() for t in self.tareas], archivo, indent=4, ensure_ascii=False)
+            json.dump([t.to_dict() for t in self.tareas], archivo, indent=4, ensure_ascii=False) #convierte cada objeto Tarea en diccionario to_dict(), porque self.tareas tiene todas las tareas.
         self.tareas = self.cargar_tareas()
 
     def tareas_usuario(self):
@@ -84,7 +84,7 @@ class GestorTareas:
                 xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito() #Estas son las funciones que están en constantes_tareas.py
 
             elif tipo_tarea == 2:
-                xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria()
+                xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria() #Estas son las funciones que están en constantes_tareas.py
                 while True:
                     dias_seleccionado = input("Selecciona días (1=Lunes ... 7=Domingo, 0=Listo): ")
                     mapa = {"1":"Lunes","2":"Martes","3":"Miercoles","4":"Jueves","5":"Viernes","6":"Sabado","7":"Domingo"}
@@ -100,7 +100,7 @@ class GestorTareas:
                         print(Fore.RED + "⚠️ Día no válido." + Style.RESET_ALL)
 
             elif tipo_tarea == 3:
-                xp_tarea, coin_tarea, life_restar = xp_pendiente(), coin_pendiente(), vida_pendiente()
+                xp_tarea, coin_tarea, life_restar = xp_pendiente(), coin_pendiente(), vida_pendiente() #Estas son las funciones que están en constantes_tareas.py
                 poner_fecha = input("¿Deseas poner una fecha de vencimiento? (s/n): ").lower()
                 if poner_fecha == "s":
                     fecha_vencimiento = input("Ingresa la fecha (DD-MM-AAAA): ")
@@ -120,8 +120,8 @@ class GestorTareas:
                 continue
 
             # Crear tarea como objeto
-            ultimo_id = max([t.id for t in self.tareas], default=0)
-            nueva = Tarea(
+            ultimo_id = max([t.id for t in self.tareas], default=0) #Crea una lista con todos los ID de esas tareas y devuelve el mayor con max.
+            nueva = Tarea( #Se instancia el objeto Tarea con todos sus atributos
                 id=ultimo_id + 1,
                 titulo=titulo,
                 tipo=tipo_tarea,
@@ -135,14 +135,14 @@ class GestorTareas:
                 completada=False
             )
 
-            self.tareas.append(nueva)
+            self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.
             self.guardar_tareas()
             print(Fore.YELLOW + f"Tarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
             return
 
     def ver_tareas(self):
         # Filtrar tareas del usuario actual
-        tareas_usuario = [t for t in self.tareas if t.id_usuario == self.usuario.id_usuario]
+        tareas_usuario = [t for t in self.tareas if t.id_usuario == self.usuario.id_usuario] #Genera una lista con las tareas del usuario logueado.
 
         if not tareas_usuario:
             print("\nNo hay tareas disponibles.")
@@ -152,12 +152,12 @@ class GestorTareas:
 
         # Ordenar por tipo y fecha de vencimiento (si aplica)
         tareas_usuario.sort(
-            key=lambda x: (
-                x.tipo,
-                datetime.datetime.strptime(x.fecha_vencimiento, "%d-%m-%Y")
-                if x.tipo == 3 and x.fecha_vencimiento not in (None, "Sin fecha") else datetime.datetime.max
+            key=lambda x: ( #Define la "Clave de ordenamiento" para cada tarea x | En ésta parte también abre un () para indicar que todo lo que se ordene aquí adentro sea una Tupla.
+                x.tipo, #Primer criterio de ordenamiento, es un atributo del objeto Tarea (si es tipo 1, 2 o 3)
+                datetime.datetime.strptime(x.fecha_vencimiento, "%d-%m-%Y") #Segundo criterio, pero solo se aplica si x.tipo == 3
+                if x.tipo == 3 and x.fecha_vencimiento not in (None, "Sin fecha") else datetime.datetime.max #si no se cumple usa datetime.datetime.max que devuelve una fecha 9999 para que las que no tienen fecha se pongan al final.
             )
-        )
+        ) #Devolvería para la primer tarea = (1, datetime.max) y para la segunda tarea = (3, datetime.datetime(2025,11,20))
 
         for contador, tarea in enumerate(tareas_usuario, start=1):
             estado = Fore.GREEN + "Completada" + Style.RESET_ALL if tarea.completada else Fore.RED + "Incompleta" + Style.RESET_ALL
