@@ -10,7 +10,8 @@
         "coin_reward": 0,
         "vida_restar": 0,
         "habito": null,
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 2,
@@ -25,7 +26,8 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "+",
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 3,
@@ -40,7 +42,8 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "-",
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 4,
@@ -57,7 +60,8 @@
         "coin_reward": 10,
         "vida_restar": 3,
         "habito": null,
-        "completada": true
+        "completada": true,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 7,
@@ -72,7 +76,8 @@
         "coin_reward": 15,
         "vida_restar": 5,
         "habito": null,
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 8,
@@ -87,7 +92,8 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "-",
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 9,
@@ -102,7 +108,8 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "+",
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
     },
     {
         "id": 10,
@@ -119,6 +126,41 @@
         "coin_reward": 10,
         "vida_restar": 3,
         "habito": null,
-        "completada": false
+        "completada": false,
+        "fecha_creacion": "19-11-2025"
+    },
+    {
+        "id": 11,
+        "titulo": "Prueba de agregar tarea con fecha creacion now",
+        "tipo": 2,
+        "id_usuario": 2,
+        "dias_semana": [
+            "Lunes",
+            "Miercoles",
+            "Jueves"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 20,
+        "coin_reward": 10,
+        "vida_restar": 3,
+        "habito": null,
+        "completada": false,
+        "fecha_creacion": "21-11-2025"
+    },
+    {
+        "id": 12,
+        "titulo": "Prueba agregando otra tarea con fecha hoy",
+        "tipo": 1,
+        "id_usuario": 2,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "+",
+        "completada": false,
+        "fecha_creacion": "21-11-2025"
     }
 ]
