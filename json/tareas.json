@@ -2,14 +2,21 @@
     {
         "id": 1,
         "titulo": "Prueba de tarea",
-        "completada": false,
-        "id_usuario": 1
+        "tipo": null,
+        "id_usuario": 1,
+        "dias_semana": [],
+        "fecha_vencimiento": null,
+        "xp_reward": 0,
+        "coin_reward": 0,
+        "vida_restar": 0,
+        "habito": null,
+        "completada": false
     },
     {
         "id": 2,
         "titulo": "prueba habito",
-        "completada": false,
         "tipo": 1,
+        "id_usuario": 2,
         "dias_semana": [
             "todos"
         ],
@@ -18,13 +25,13 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "+",
-        "id_usuario": 2
+        "completada": false
     },
     {
         "id": 3,
         "titulo": "prueba habito negativo",
-        "completada": false,
         "tipo": 1,
+        "id_usuario": 2,
         "dias_semana": [
             "todos"
         ],
@@ -33,13 +40,13 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "-",
-        "id_usuario": 2
+        "completada": false
     },
     {
         "id": 4,
         "titulo": "Tarea Diaria Clase",
-        "completada": true,
         "tipo": 2,
+        "id_usuario": 2,
         "dias_semana": [
             "Lunes",
             "Martes",
@@ -50,28 +57,13 @@
         "coin_reward": 10,
         "vida_restar": 3,
         "habito": null,
-        "id_usuario": 2
-    },
-    {
-        "id": 6,
-        "titulo": "Prueba Pendiente sin Fecha",
-        "completada": false,
-        "tipo": 3,
-        "dias_semana": [
-            "No aplica"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 30,
-        "coin_reward": 15,
-        "vida_restar": 5,
-        "habito": null,
-        "id_usuario": 2
+        "completada": true
     },
     {
         "id": 7,
         "titulo": "Prueba Pendiente Fecha",
-        "completada": false,
         "tipo": 3,
+        "id_usuario": 2,
         "dias_semana": [
             "No aplica"
         ],
@@ -80,13 +72,13 @@
         "coin_reward": 15,
         "vida_restar": 5,
         "habito": null,
-        "id_usuario": 2
+        "completada": false
     },
     {
         "id": 8,
         "titulo": "Prueba Habito Negativo Usuario Nuevo",
-        "completada": false,
         "tipo": 1,
+        "id_usuario": 3,
         "dias_semana": [
             "todos"
         ],
@@ -95,13 +87,13 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "-",
-        "id_usuario": 3
+        "completada": false
     },
     {
         "id": 9,
         "titulo": "Habito Positivo",
-        "completada": false,
         "tipo": 1,
+        "id_usuario": 3,
         "dias_semana": [
             "todos"
         ],
@@ -110,6 +102,23 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "+",
-        "id_usuario": 3
+        "completada": false
+    },
+    {
+        "id": 10,
+        "titulo": "Prueba de creación de tarea con Fecha de creación NOW",
+        "tipo": 2,
+        "id_usuario": 2,
+        "dias_semana": [
+            "Lunes",
+            "Miercoles",
+            "Viernes"
+        ],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 20,
+        "coin_reward": 10,
+        "vida_restar": 3,
+        "habito": null,
+        "completada": false
     }
 ]
