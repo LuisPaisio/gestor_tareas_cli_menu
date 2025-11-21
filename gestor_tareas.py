@@ -133,7 +133,7 @@ class GestorTareas:
                 coin_reward=coin_tarea,
                 vida_restar=life_restar,
                 habito=habito,
-                completada=False
+                completada=False,
                 fecha_creacion=fecha_creacion
             )
 
