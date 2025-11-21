@@ -16,6 +16,7 @@ class Tarea:
         self.vida_restar = vida_restar
         self.habito = habito
         self.completada = completada
+        self.fecha_creacion = datetime.datetime.now().strftime("%d-%m-%Y")
 
     # -------------------------------
     # Métodos de acción sobre la tarea

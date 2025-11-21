@@ -73,7 +73,6 @@ class GestorTareas:
                 continue
 
             dias_semana, fecha_vencimiento, fecha_str, habito = [], None, None, None
-            fecha_creacion = datetime.now().strftime("%d-%m-%Y")
 
             if tipo_tarea == 1:
                 tipo_habito = input("¿Es un hábito positivo o negativo? (+/-): ")
@@ -134,7 +133,6 @@ class GestorTareas:
                 vida_restar=life_restar,
                 habito=habito,
                 completada=False,
-                fecha_creacion=fecha_creacion
             )
 
             self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.
