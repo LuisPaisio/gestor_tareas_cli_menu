@@ -44,11 +44,6 @@ class Usuario:
         self.coin_usuario += coins
         print(Fore.GREEN + f"\n¡Felicidades! Has ganado {xp} XP y {coins} coins." + Style.RESET_ALL)
 
-    def sumar_xp_coins_habito(self, xp, coins):
-        self.xp_usuario += xp
-        self.coin_usuario += coins
-        print(" Has sumado" + Fore.YELLOW + f" {xp} XP" + Style.RESET_ALL + " y " + Fore.YELLOW + f" {coins} " + Style.RESET_ALL + "coins.")
-
     def restar_vida(self, vida):
         self.vida_usuario -= vida
         if self.vida_usuario <= 0:
@@ -63,5 +58,12 @@ class Usuario:
         else:
             print(Fore.RED + f"\nHas perdido {vida} puntos de vida. Vida actual: {self.vida_usuario}/50" + Style.RESET_ALL)
 
-    def restar_vida_habito(self, vida):
-        self.restar_vida(vida)
+    def ganar_recompensas(self,tarea):
+        pass
+    
+    def calcular_xp(self, tarea):
+        pass
+    
+    def calcular_coins(self, tarea):
+        pass
+    

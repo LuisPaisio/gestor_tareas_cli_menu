@@ -73,6 +73,7 @@ class GestorTareas:
                 continue
 
             dias_semana, fecha_vencimiento, fecha_str, habito = [], None, None, None
+            fecha_creacion = datetime.now().strftime("%d-%m-%Y")
 
             if tipo_tarea == 1:
                 tipo_habito = input("¿Es un hábito positivo o negativo? (+/-): ")
@@ -133,6 +134,7 @@ class GestorTareas:
                 vida_restar=life_restar,
                 habito=habito,
                 completada=False
+                fecha_creacion=fecha_creacion
             )
 
             self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.
@@ -305,11 +307,11 @@ class GestorTareas:
                 if tarea_a_marcar.tipo == 1:
                     opcion = tarea_a_marcar.habito
                     if opcion == "+":
-                        self.usuario.sumar_xp_coins_habito(tarea_a_marcar.xp_reward, tarea_a_marcar.coin_reward)
+                        self.usuario.sumar_xp_coins(tarea_a_marcar.xp_reward, tarea_a_marcar.coin_reward)
                         self.gestor_usuarios.actualizar_usuario(self.usuario)
                         print(Fore.GREEN + "\n¡Hábito positivo registrado!" + Style.RESET_ALL)
                     elif opcion == "-":
-                        self.usuario.restar_vida_habito(tarea_a_marcar.vida_restar)
+                        self.usuario.restar_vida(tarea_a_marcar.vida_restar)
                         self.gestor_usuarios.actualizar_usuario(self.usuario)
                         print(Fore.RED + "\nHábito negativo registrado." + Style.RESET_ALL)
                     else:
