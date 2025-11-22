@@ -15,13 +15,14 @@
         "dificultad": null
     },
     {
-        "id": 3,
-        "titulo": "Prueba Agregar Tarea diaria para ver si se vence mañana",
+        "id": 2,
+        "titulo": "Prueba tarea diaria para ver si vence mañana",
         "tipo": 2,
         "id_usuario": 2,
         "dias_semana": [
             "lunes",
-            "domingo"
+            "jueves",
+            "sabado"
         ],
         "fecha_vencimiento": "Sin fecha",
         "xp_reward": 20,
@@ -30,14 +31,16 @@
         "habito": null,
         "completada": false,
         "fecha_creacion": "22-11-2025",
-        "dificultad": "intermedia"
+        "dificultad": "dificil"
     },
     {
-        "id": 4,
-        "titulo": "Prueba Agregar Tarea con vencimiento para mañana",
+        "id": 3,
+        "titulo": "Prueba Tarea Pendiente para ver que pasa cuando vence",
         "tipo": 3,
         "id_usuario": 2,
-        "dias_semana": [],
+        "dias_semana": [
+            "No aplica"
+        ],
         "fecha_vencimiento": "24-11-2025",
         "xp_reward": 30,
         "coin_reward": 15,
@@ -45,6 +48,23 @@
         "habito": null,
         "completada": false,
         "fecha_creacion": "22-11-2025",
-        "dificultad": "dificil"
+        "dificultad": "intermedia"
+    },
+    {
+        "id": 4,
+        "titulo": "Prueba sin Fecha",
+        "tipo": 3,
+        "id_usuario": 2,
+        "dias_semana": [
+            "No aplica"
+        ],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 30,
+        "coin_reward": 15,
+        "vida_restar": 5,
+        "habito": null,
+        "completada": false,
+        "fecha_creacion": "22-11-2025",
+        "dificultad": "facil"
     }
 ]
