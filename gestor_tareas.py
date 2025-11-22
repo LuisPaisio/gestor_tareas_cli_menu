@@ -87,7 +87,7 @@ class GestorTareas:
                 xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria() #Estas son las funciones que están en constantes_tareas.py
                 while True:
                     dias_seleccionado = input("Selecciona días (1=Lunes ... 7=Domingo, 0=Listo): ")
-                    mapa = {"1":"Lunes","2":"Martes","3":"Miercoles","4":"Jueves","5":"Viernes","6":"Sabado","7":"Domingo"}
+                    mapa = {"1":"lunes","2":"martes","3":"miercoles","4":"jueves","5":"viernes","6":"sabado","7":"domingo"}
                     if dias_seleccionado in mapa:
                         dia = mapa[dias_seleccionado]
                         if dia not in dias_semana:
@@ -156,7 +156,7 @@ class GestorTareas:
 
             self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.
             self.guardar_tareas()
-            print(Fore.YELLOW + f"Tarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
+            print(Fore.YELLOW + f"\nTarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
             return
 
     def ver_tareas(self):
@@ -361,9 +361,9 @@ class GestorTareas:
                 elif tarea_a_marcar.tipo == 3:
                     if not tarea_a_marcar.completada:
                         tarea_a_marcar.completar(self.usuario)
-                        print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
+                        print(f"\nTarea " + Fore.YELLOW + f"{tarea_a_marcar.titulo}" + Style.RESET_ALL + " marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
                     else:
-                        print(f"\nLa tarea {tarea_a_marcar.titulo} ya está marcada como completada.")
+                        print(Fore.YELLOW + f"\nLa tarea {tarea_a_marcar.titulo} ya está marcada como completada." + Style.RESET_ALL)
 
                 # --- Diaria ---
                 elif tarea_a_marcar.tipo == 2:
@@ -371,11 +371,11 @@ class GestorTareas:
                         # completar() ya valida si corresponde el día
                         tarea_a_marcar.completar(self.usuario)
                         if tarea_a_marcar.completada:  # solo imprime si realmente se completó
-                            print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
+                            print(f"\nTarea " + Fore.YELLOW + f"{tarea_a_marcar.titulo}" + Style.RESET_ALL + " marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
                     else:
                         tarea_a_marcar.fallar(self.usuario, por_medianoche=False)  # penalización leve
                         tarea_a_marcar.marcar_incompleta()
-                        print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.RED + "incompleta." + Style.RESET_ALL)
+                        print(f"\nTarea " + Fore.YELLOW + f"{tarea_a_marcar.titulo}" + Style.RESET_ALL + " marcada como " + Fore.RED + "incompleta." + Style.RESET_ALL)
 
                 # Guardar cambios y actualizar usuario
                 self.guardar_tareas()
