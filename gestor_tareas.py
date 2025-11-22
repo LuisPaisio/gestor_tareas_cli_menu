@@ -12,7 +12,7 @@ from tareas import Tarea   # importamos la clase
 ARCHIVO_TAREAS = os.path.join("json", "tareas.json")  # más portable
 
 class GestorTareas:
-    def __init__(self, usuario, gestor_usuarios):
+    def __init__(self, usuario=None, gestor_usuarios=None):
         self.usuario = usuario
         self.gestor_usuarios = gestor_usuarios
         self.tareas = self.cargar_tareas() #Se asigna a self.tareas la lista de objetos Tarea que se obtuvo de return [Tarea.from_dict(t) for t in data] | Cabe resaltar que son todas las tareas y no solo la del usuario logueado.
@@ -118,7 +118,25 @@ class GestorTareas:
             else:
                 print(Fore.RED + "⚠️ Tipo de tarea no válido." + Style.RESET_ALL)
                 continue
-
+            
+            #Consultando dificultad de la tarea
+            dificultad = int(input("Seleccione la dificultad de la tarea (1)Facil, (2)Intermedia, (3)Dificil: "))
+            dificultad_tarea = None
+            
+            try:
+                if dificultad == 1:
+                    dificultad_tarea = "facil"
+                elif dificultad == 2:
+                    dificultad_tarea = "intermedia"
+                elif dificultad == 3:
+                    dificultad_tarea = "dificil"
+                else:
+                    print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
+                    continue
+            except:
+                print(Fore.RED + "⚠️ Tipo de dificultad no válido." + Style.RESET_ALL)
+                continue
+            
             # Crear tarea como objeto
             ultimo_id = max([t.id for t in self.tareas], default=0) #Crea una lista con todos los ID de esas tareas y devuelve el mayor con max.
             nueva = Tarea( #Se instancia el objeto Tarea con todos sus atributos
@@ -133,6 +151,7 @@ class GestorTareas:
                 vida_restar=life_restar,
                 habito=habito,
                 completada=False,
+                dificultad=dificultad_tarea
             )
 
             self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.

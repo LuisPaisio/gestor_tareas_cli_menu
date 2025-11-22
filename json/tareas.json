@@ -11,11 +11,29 @@
         "vida_restar": 0,
         "habito": null,
         "completada": false,
-        "fecha_creacion": "19-11-2025"
+        "fecha_creacion": "19-11-2025",
+        "dificultad": null
     },
     {
         "id": 2,
-        "titulo": "prueba habito",
+        "titulo": "Prueba agregar nueva tarea",
+        "tipo": 2,
+        "id_usuario": 2,
+        "dias_semana": [
+            "Lunes"
+        ],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 20,
+        "coin_reward": 10,
+        "vida_restar": 3,
+        "habito": null,
+        "completada": false,
+        "fecha_creacion": "22-11-2025",
+        "dificultad": null
+    },
+    {
+        "id": 3,
+        "titulo": "Prueba Agregar atributo dificultad",
         "tipo": 1,
         "id_usuario": 2,
         "dias_semana": [
@@ -27,11 +45,12 @@
         "vida_restar": 2,
         "habito": "+",
         "completada": false,
-        "fecha_creacion": "19-11-2025"
+        "fecha_creacion": "22-11-2025",
+        "dificultad": null
     },
     {
-        "id": 3,
-        "titulo": "prueba habito negativo",
+        "id": 4,
+        "titulo": "Prueba de agregar dificultad a tarea",
         "tipo": 1,
         "id_usuario": 2,
         "dias_semana": [
@@ -41,13 +60,14 @@
         "xp_reward": 10,
         "coin_reward": 5,
         "vida_restar": 2,
-        "habito": "-",
+        "habito": "+",
         "completada": false,
-        "fecha_creacion": "19-11-2025"
+        "fecha_creacion": "22-11-2025",
+        "dificultad": "facil"
     },
     {
-        "id": 4,
-        "titulo": "Tarea Diaria Clase",
+        "id": 5,
+        "titulo": "Segunda Prueba de Agregar Tarea con Dificultad",
         "tipo": 2,
         "id_usuario": 2,
         "dias_semana": [
@@ -55,112 +75,45 @@
             "Martes",
             "Miercoles"
         ],
-        "fecha_vencimiento": "Sin fecha",
+        "fecha_vencimiento": null,
         "xp_reward": 20,
         "coin_reward": 10,
         "vida_restar": 3,
         "habito": null,
-        "completada": true,
-        "fecha_creacion": "19-11-2025"
+        "completada": false,
+        "fecha_creacion": "22-11-2025",
+        "dificultad": "intermedia"
+    },
+    {
+        "id": 6,
+        "titulo": "Prueba",
+        "tipo": 1,
+        "id_usuario": 2,
+        "dias_semana": [
+            "todos"
+        ],
+        "fecha_vencimiento": null,
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "+",
+        "completada": false,
+        "fecha_creacion": "22-11-2025",
+        "dificultad": "dificil"
     },
     {
         "id": 7,
-        "titulo": "Prueba Pendiente Fecha",
+        "titulo": "Prueba 3",
         "tipo": 3,
         "id_usuario": 2,
-        "dias_semana": [
-            "No aplica"
-        ],
-        "fecha_vencimiento": "25-11-2025",
+        "dias_semana": [],
+        "fecha_vencimiento": null,
         "xp_reward": 30,
         "coin_reward": 15,
         "vida_restar": 5,
         "habito": null,
         "completada": false,
-        "fecha_creacion": "19-11-2025"
-    },
-    {
-        "id": 8,
-        "titulo": "Prueba Habito Negativo Usuario Nuevo",
-        "tipo": 1,
-        "id_usuario": 3,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "-",
-        "completada": false,
-        "fecha_creacion": "19-11-2025"
-    },
-    {
-        "id": 9,
-        "titulo": "Habito Positivo",
-        "tipo": 1,
-        "id_usuario": 3,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": null,
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
-        "completada": false,
-        "fecha_creacion": "19-11-2025"
-    },
-    {
-        "id": 10,
-        "titulo": "Prueba de creación de tarea con Fecha de creación NOW",
-        "tipo": 2,
-        "id_usuario": 2,
-        "dias_semana": [
-            "Lunes",
-            "Miercoles",
-            "Viernes"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 20,
-        "coin_reward": 10,
-        "vida_restar": 3,
-        "habito": null,
-        "completada": false,
-        "fecha_creacion": "19-11-2025"
-    },
-    {
-        "id": 11,
-        "titulo": "Prueba de agregar tarea con fecha creacion now",
-        "tipo": 2,
-        "id_usuario": 2,
-        "dias_semana": [
-            "Lunes",
-            "Miercoles",
-            "Jueves"
-        ],
-        "fecha_vencimiento": null,
-        "xp_reward": 20,
-        "coin_reward": 10,
-        "vida_restar": 3,
-        "habito": null,
-        "completada": false,
-        "fecha_creacion": "21-11-2025"
-    },
-    {
-        "id": 12,
-        "titulo": "Prueba agregando otra tarea con fecha hoy",
-        "tipo": 1,
-        "id_usuario": 2,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": null,
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
-        "completada": false,
-        "fecha_creacion": "21-11-2025"
+        "fecha_creacion": "22-11-2025",
+        "dificultad": "dificil"
     }
 ]

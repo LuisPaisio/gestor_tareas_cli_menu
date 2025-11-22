@@ -7,6 +7,8 @@ def menu_tareas(usuario, gestor_usuarios):
     # ahora pasamos usuario y gestor_usuarios al constructor
     gestor = GestorTareas(usuario, gestor_usuarios) #El gestor_usuario se lo paso principalmente para cuando se marca una tarea, actualizar el usuario, es decir, su xp, coins, vida, etc.
 
+    usuario.ver_perfil() #Aparece unicamente cuando se inicia el menu_tareas.
+    
     while True:
         try:
             opcion = int(input(
@@ -15,7 +17,8 @@ def menu_tareas(usuario, gestor_usuarios):
                 "3. Editar Tarea\n"
                 "4. Eliminar Tarea\n"
                 "5. Marcar Tarea\n"
-                "6. Salir\n"
+                "6. Estadísticas\n"
+                "7. Salir\n"
                 "Ingresa el número de la opción que deseas realizar: "
             ))
 
@@ -40,6 +43,11 @@ def menu_tareas(usuario, gestor_usuarios):
                 gestor.marcar_tarea()
 
             elif opcion == 6:
+                print(Fore.YELLOW + "\nHas seleccionado: Ver perfil y estadísticas" + Style.RESET_ALL)
+                usuario.editar_perfil()
+                gestor_usuarios.actualizar_usuario(usuario)
+            
+            elif opcion == 7:
                 print(Fore.YELLOW + "\nSaliendo del Gestor de Tareas. ¡Hasta luego!" + Style.RESET_ALL)
                 break
 

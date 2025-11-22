@@ -1,12 +1,14 @@
 from gestor_usuarios import GestorUsuarios
 from menu_tareas import menu_tareas
 from colorama import Fore, Style
+from gestor_tareas import GestorTareas
 
 def main():
     print(Fore.YELLOW + f"\n¡Bienvenido al Gestor de Tareas!" + Style.RESET_ALL)
     print(Fore.YELLOW + "Inicia sesión o regístrate para continuar." + Style.RESET_ALL)
 
     gestor = GestorUsuarios()  # instanciamos el gestor de usuarios, ya tenemos la lista de usuarios cargados en el JSON
+    gestorT = GestorTareas()
 
     while True:
         try:
@@ -31,7 +33,7 @@ def main():
                 break
 
             elif opcion == 4:
-                gestor.eliminar_usuario()
+                gestor.eliminar_usuario(gestorT)
 
             else:
                 print(Fore.RED + "\nOpción no válida, por favor intenta de nuevo." + Style.RESET_ALL)

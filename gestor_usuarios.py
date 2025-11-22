@@ -3,6 +3,7 @@ import os
 from colorama import Fore, Style
 from usuario import Usuario
 
+
 ARCHIVO_USUARIOS = "json\\usuarios.json"
 ARCHIVO_TAREAS = "json\\tareas.json"
 
@@ -76,7 +77,7 @@ class GestorUsuarios:
         print(Fore.GREEN + f"\n¡Registro exitoso!" + Style.RESET_ALL)
         return nuevo_usuario
 
-    def eliminar_usuario(self):
+    def eliminar_usuario(self, gestor_tareas):
         confirmar = input(
             "\nAdvertencia: Esta acción eliminará tu cuenta permanentemente. "
             "Presiona Enter para continuar o N para cancelar: "
@@ -90,6 +91,8 @@ class GestorUsuarios:
 
         for usuario in self.usuarios:
             if usuario.usuario == user and usuario.contraseña == password:
+                #Elimino las tareas del usuario
+                gestor_tareas.eliminar_tareas_de_usuario(usuario.id_usuario)
                 # Elimino usuario
                 self.usuarios.remove(usuario)
                 self.guardar_usuarios()

@@ -7,16 +7,22 @@
         "coin_usuario": 0,
         "vida_usuario": 50,
         "nivel_usuario": 1,
-        "contador_50": 0
+        "contador_50": 0,
+        "descripcion": null,
+        "nombre_publico": null,
+        "foto_perfil": null
     },
     {
         "id_usuario": 2,
         "usuario": "luis",
         "contraseña": "1234",
-        "xp_usuario": 95,
-        "coin_usuario": 45,
+        "xp_usuario": 0,
+        "coin_usuario": 0,
         "vida_usuario": 50,
         "nivel_usuario": 1,
-        "contador_50": 0
+        "contador_50": 0,
+        "descripcion": "Intentando superarme día a día.",
+        "nombre_publico": "GENIUS",
+        "foto_perfil": "https://media.licdn.com/dms/image/v2/C4E03AQGvp0RlMcSA-g/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1543042620443?e=2147483647&v=beta&t=qeiVuzfG_NG7jYof7P97BxG0RdnfPD7FGXAKxdIOFlE"
     }
 ]
