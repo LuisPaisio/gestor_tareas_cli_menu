@@ -368,8 +368,10 @@ class GestorTareas:
                 # --- Diaria ---
                 elif tarea_a_marcar.tipo == 2:
                     if not tarea_a_marcar.completada:
+                        # completar() ya valida si corresponde el día
                         tarea_a_marcar.completar(self.usuario)
-                        print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
+                        if tarea_a_marcar.completada:  # solo imprime si realmente se completó
+                            print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
                     else:
                         tarea_a_marcar.fallar(self.usuario, por_medianoche=False)  # penalización leve
                         tarea_a_marcar.marcar_incompleta()
@@ -383,4 +385,5 @@ class GestorTareas:
             except ValueError:
                 print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
                 continue
+
 
