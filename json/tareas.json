@@ -15,65 +15,13 @@
         "dificultad": null
     },
     {
-        "id": 2,
-        "titulo": "Prueba agregar nueva tarea",
-        "tipo": 2,
-        "id_usuario": 2,
-        "dias_semana": [
-            "Lunes"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 20,
-        "coin_reward": 10,
-        "vida_restar": 3,
-        "habito": null,
-        "completada": false,
-        "fecha_creacion": "22-11-2025",
-        "dificultad": null
-    },
-    {
         "id": 3,
-        "titulo": "Prueba Agregar atributo dificultad",
-        "tipo": 1,
-        "id_usuario": 2,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
-        "completada": true,
-        "fecha_creacion": "22-11-2025",
-        "dificultad": null
-    },
-    {
-        "id": 4,
-        "titulo": "Prueba de agregar dificultad a tarea",
-        "tipo": 1,
-        "id_usuario": 2,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
-        "completada": false,
-        "fecha_creacion": "22-11-2025",
-        "dificultad": "facil"
-    },
-    {
-        "id": 5,
-        "titulo": "Segunda Prueba de Agregar Tarea con Dificultad",
+        "titulo": "Prueba Agregar Tarea diaria para ver si se vence mañana",
         "tipo": 2,
         "id_usuario": 2,
         "dias_semana": [
-            "Lunes",
-            "Martes",
-            "Miercoles"
+            "lunes",
+            "domingo"
         ],
         "fecha_vencimiento": "Sin fecha",
         "xp_reward": 20,
@@ -85,31 +33,12 @@
         "dificultad": "intermedia"
     },
     {
-        "id": 6,
-        "titulo": "Prueba",
-        "tipo": 1,
-        "id_usuario": 2,
-        "dias_semana": [
-            "todos"
-        ],
-        "fecha_vencimiento": "Sin fecha",
-        "xp_reward": 10,
-        "coin_reward": 5,
-        "vida_restar": 2,
-        "habito": "+",
-        "completada": false,
-        "fecha_creacion": "22-11-2025",
-        "dificultad": "dificil"
-    },
-    {
-        "id": 7,
-        "titulo": "Prueba 3",
+        "id": 4,
+        "titulo": "Prueba Agregar Tarea con vencimiento para mañana",
         "tipo": 3,
         "id_usuario": 2,
-        "dias_semana": [
-            "No aplica"
-        ],
-        "fecha_vencimiento": "Sin fecha",
+        "dias_semana": [],
+        "fecha_vencimiento": "24-11-2025",
         "xp_reward": 30,
         "coin_reward": 15,
         "vida_restar": 5,

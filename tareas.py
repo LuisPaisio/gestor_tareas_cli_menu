@@ -1,5 +1,6 @@
 import datetime
 import constantes_tareas
+from colorama import Fore, Style
 
 class Tarea:
     def __init__(self, id, titulo, tipo, id_usuario,
@@ -58,7 +59,6 @@ class Tarea:
 
         # --- Diaria ---
         elif self.tipo == 2:
-            # Validar si corresponde el día
             if self.dias_semana:
                 hoy = datetime.date.today().strftime("%A").lower()
                 mapa_dias = {
@@ -70,9 +70,11 @@ class Tarea:
                     "saturday": "sabado",
                     "sunday": "domingo"
                 }
-                hoy_es = mapa_dias[hoy]
-                if hoy_es not in self.dias_semana:
-                    print(f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es}).")
+                hoy_es = mapa_dias[hoy].lower()
+                dias_normalizados = [d.lower() for d in self.dias_semana]
+
+                if hoy_es not in dias_normalizados:
+                    print(Fore.RED + f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es})." + Style.RESET_ALL)
                     return
 
             xp = int(constantes_tareas.xp_diaria() * mult)
@@ -86,34 +88,53 @@ class Tarea:
             if self.es_vencida():
                 fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
                 dias_tarde = (datetime.date.today() - fecha).days
-                xp += dias_tarde * 2
-                coins += dias_tarde * 1
-                usuario.vida_usuario = min(50, usuario.vida_usuario + dias_tarde)
+                xp += dias_tarde * constantes_tareas.xp_bonus_vencida()
+                coins += dias_tarde * constantes_tareas.coin_bonus_vencida()
+                usuario.vida_usuario = min(constantes_tareas.vida_maxima(), usuario.vida_usuario + dias_tarde)
 
         usuario.sumar_xp_coins(xp, coins)
         self.completada = True
+
     
     def fallar(self, usuario, por_medianoche=False):
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
 
         if self.tipo == 1 and self.habito == "-":  # Hábito negativo
-            usuario.restar_vida(int(constantes_tareas.vida_habito() * mult))
+            vida_perdida = int(constantes_tareas.vida_habito() * mult)
+            usuario.restar_vida(vida_perdida)
+            print(Fore.RED + f"\nHas perdido {vida_perdida} de vida por hábito negativo." + Style.RESET_ALL)
 
         elif self.tipo == 2:  # Diaria
             if por_medianoche:
-                # Penalización fuerte al pasar las 00:00
-                usuario.restar_vida(int(constantes_tareas.vida_diaria() * mult))
-                usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_diaria() * mult))
-                usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_diaria() * mult))
+                vida_perdida = int(constantes_tareas.vida_diaria() * mult)
+                xp_perdido = int(constantes_tareas.xp_diaria() * mult)
+                coins_perdidos = int(constantes_tareas.coin_diaria() * mult)
+
+                usuario.restar_vida(vida_perdida)
+                usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
+                usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
+
+                print(Fore.RED + f"\nHas perdido {vida_perdida} de vida, {xp_perdido} XP y {coins_perdidos} coins por no completar la diaria." + Style.RESET_ALL)
             else:
-                # Penalización leve al desmarcar manualmente
-                usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_diaria() * 0.5 * mult))
-                usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_diaria() * 0.5 * mult))
+                xp_perdido = int(constantes_tareas.xp_diaria() * 0.5 * mult)
+                coins_perdidos = int(constantes_tareas.coin_diaria() * 0.5 * mult)
+
+                usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
+                usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
+
+                print(Fore.RED + f"\nHas perdido {xp_perdido} XP y {coins_perdidos} coins por marcar la diaria como incompleta." + Style.RESET_ALL)
 
         elif self.tipo == 3:  # Pendiente vencida
-            usuario.restar_vida(int(constantes_tareas.vida_pendiente() * mult))
-            usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_pendiente() * mult))
-            usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_pendiente() * mult))
+            vida_perdida = int(constantes_tareas.vida_pendiente() * mult)
+            xp_perdido = int(constantes_tareas.xp_pendiente() * mult)
+            coins_perdidos = int(constantes_tareas.coin_pendiente() * mult)
+
+            usuario.restar_vida(vida_perdida)
+            usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
+            usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
+
+            print(Fore.RED + f"\nHas perdido {vida_perdida} de vida, {xp_perdido} XP y {coins_perdidos} coins por no completar la pendiente." + Style.RESET_ALL)
+
 
     # -------------------------------
     # Conversión a dict/objeto
