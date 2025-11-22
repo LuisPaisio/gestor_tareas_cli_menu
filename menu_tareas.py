@@ -6,7 +6,8 @@ def menu_tareas(usuario, gestor_usuarios):
 
     # ahora pasamos usuario y gestor_usuarios al constructor
     gestor = GestorTareas(usuario, gestor_usuarios) #El gestor_usuario se lo paso principalmente para cuando se marca una tarea, actualizar el usuario, es decir, su xp, coins, vida, etc.
-
+    gestor.verificar_diarias() #Verifico las tareas diarias para ver si están vencidas o no.
+    
     usuario.ver_perfil() #Aparece unicamente cuando se inicia el menu_tareas.
     
     while True:

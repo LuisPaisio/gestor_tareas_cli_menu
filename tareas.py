@@ -1,4 +1,5 @@
 import datetime
+import constantes_tareas
 
 class Tarea:
     def __init__(self, id, titulo, tipo, id_usuario,
@@ -16,7 +17,7 @@ class Tarea:
         self.vida_restar = vida_restar
         self.habito = habito
         self.completada = completada
-        self.fecha_creacion = fecha_creacion or datetime.datetime.now().strftime("%d-%m-%Y")
+        self.fecha_creacion = fecha_creacion or datetime.date.today().strftime("%d-%m-%Y")
         self.dificultad = dificultad
 
     # -------------------------------
@@ -45,6 +46,74 @@ class Tarea:
             except ValueError:
                 return False
         return False
+    
+    def completar(self, usuario):
+        mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
+        xp, coins = 0, 0
+
+        # --- Hábito positivo ---
+        if self.tipo == 1 and self.habito == "+":
+            xp = int(constantes_tareas.xp_habito() * mult)
+            coins = int(constantes_tareas.coin_habito() * mult)
+
+        # --- Diaria ---
+        elif self.tipo == 2:
+            # Validar si corresponde el día
+            if self.dias_semana:
+                hoy = datetime.date.today().strftime("%A").lower()
+                mapa_dias = {
+                    "monday": "lunes",
+                    "tuesday": "martes",
+                    "wednesday": "miercoles",
+                    "thursday": "jueves",
+                    "friday": "viernes",
+                    "saturday": "sabado",
+                    "sunday": "domingo"
+                }
+                hoy_es = mapa_dias[hoy]
+                if hoy_es not in self.dias_semana:
+                    print(f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es}).")
+                    return
+
+            xp = int(constantes_tareas.xp_diaria() * mult)
+            coins = int(constantes_tareas.coin_diaria() * mult)
+
+        # --- Pendiente ---
+        elif self.tipo == 3:
+            xp = int(constantes_tareas.xp_pendiente() * mult)
+            coins = int(constantes_tareas.coin_pendiente() * mult)
+
+            if self.es_vencida():
+                fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
+                dias_tarde = (datetime.date.today() - fecha).days
+                xp += dias_tarde * 2
+                coins += dias_tarde * 1
+                usuario.vida_usuario = min(50, usuario.vida_usuario + dias_tarde)
+
+        usuario.sumar_xp_coins(xp, coins)
+        self.completada = True
+    
+    def fallar(self, usuario, por_medianoche=False):
+        mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
+
+        if self.tipo == 1 and self.habito == "-":  # Hábito negativo
+            usuario.restar_vida(int(constantes_tareas.vida_habito() * mult))
+
+        elif self.tipo == 2:  # Diaria
+            if por_medianoche:
+                # Penalización fuerte al pasar las 00:00
+                usuario.restar_vida(int(constantes_tareas.vida_diaria() * mult))
+                usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_diaria() * mult))
+                usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_diaria() * mult))
+            else:
+                # Penalización leve al desmarcar manualmente
+                usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_diaria() * 0.5 * mult))
+                usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_diaria() * 0.5 * mult))
+
+        elif self.tipo == 3:  # Pendiente vencida
+            usuario.restar_vida(int(constantes_tareas.vida_pendiente() * mult))
+            usuario.xp_usuario = max(0, usuario.xp_usuario - int(constantes_tareas.xp_pendiente() * mult))
+            usuario.coin_usuario = max(0, usuario.coin_usuario - int(constantes_tareas.coin_pendiente() * mult))
 
     # -------------------------------
     # Conversión a dict/objeto

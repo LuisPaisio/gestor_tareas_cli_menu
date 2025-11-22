@@ -284,9 +284,37 @@ class GestorTareas:
             except ValueError:
                 print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
 
+    def verificar_diarias(self):
+        hoy = datetime.date.today().strftime("%d-%m-%Y")
+
+        for tarea in self.tareas:
+            if tarea.tipo == 2:  # Diaria
+                if tarea.fecha_creacion != hoy:
+                    # Si ayer estaba incompleta
+                    if not tarea.completada:
+                        print(f"\nLa diaria '{tarea.titulo}' no fue completada ayer.")
+                        opcion = input("¿Querés marcarla como completada retroactivamente? (s/n): ")
+
+                        if opcion.lower() == "s":
+                            tarea.completar(self.usuario)
+                            print(Fore.GREEN + f"Diaria '{tarea.titulo}' marcada como completada." + Style.RESET_ALL)
+                        elif opcion.lower() == "n":
+                            tarea.fallar(self.usuario, por_medianoche=True)
+                            print(Fore.RED + f"Diaria '{tarea.titulo}' fallida. Se aplicó penalización." + Style.RESET_ALL)
+                        else:
+                            print(Fore.RED + "⚠️ Entrada inválida. Se asumirá como no completada." + Style.RESET_ALL)
+                            tarea.fallar(self.usuario, por_medianoche=True)
+
+                    # Reiniciar para el nuevo día
+                    tarea.completada = False
+                    tarea.fecha_creacion = hoy
+
+        self.guardar_tareas()
+        self.gestor_usuarios.actualizar_usuario(self.usuario)
+
+
     def marcar_tarea(self):
         while True:  # bucle para repetir hasta que se marque o se cancele
-            # Mostrar primero las tareas del usuario
             self.ver_tareas()
             try:
                 seleccion = int(input("\nIngresa el ID de la tarea que deseas marcar como completada | 0 (cero) cancelar: "))
@@ -303,66 +331,56 @@ class GestorTareas:
                     )
                 )
 
-                tarea_a_marcar = None
-                if 1 <= seleccion <= len(tareas_usuario):
-                    tarea_a_marcar = tareas_usuario[seleccion - 1]
-
                 if seleccion == 0:
                     cancelar = input("¿Deseas cancelar la operación? (s/n): ")
                     if cancelar.lower() == 's':
                         print(Fore.YELLOW + "\nOperación cancelada." + Style.RESET_ALL)
-                        return  # salir del método
+                        return
                     else:
                         print(Fore.YELLOW + "\nVolviendo al menú de marcado. Ingresa nuevamente el ID." + Style.RESET_ALL)
-                        continue  # vuelve al inicio del bucle
+                        continue
 
-                if not tarea_a_marcar:
+                if not (1 <= seleccion <= len(tareas_usuario)):
                     print(Fore.RED + "⚠️ Tarea no encontrada." + Style.RESET_ALL)
-                    continue  # vuelve a pedir ID
+                    continue
+
+                tarea_a_marcar = tareas_usuario[seleccion - 1]
 
                 # --- Hábito ---
                 if tarea_a_marcar.tipo == 1:
-                    opcion = tarea_a_marcar.habito
-                    if opcion == "+":
-                        self.usuario.sumar_xp_coins(tarea_a_marcar.xp_reward, tarea_a_marcar.coin_reward)
-                        self.gestor_usuarios.actualizar_usuario(self.usuario)
+                    if tarea_a_marcar.habito == "+":
+                        tarea_a_marcar.completar(self.usuario)
                         print(Fore.GREEN + "\n¡Hábito positivo registrado!" + Style.RESET_ALL)
-                    elif opcion == "-":
-                        self.usuario.restar_vida(tarea_a_marcar.vida_restar)
-                        self.gestor_usuarios.actualizar_usuario(self.usuario)
+                    elif tarea_a_marcar.habito == "-":
+                        tarea_a_marcar.fallar(self.usuario)
                         print(Fore.RED + "\nHábito negativo registrado." + Style.RESET_ALL)
                     else:
                         print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
-                    return
 
                 # --- Pendiente ---
-                if tarea_a_marcar.tipo == 3:
+                elif tarea_a_marcar.tipo == 3:
                     if not tarea_a_marcar.completada:
-                        tarea_a_marcar.completada = True
-                        self.guardar_tareas()
+                        tarea_a_marcar.completar(self.usuario)
                         print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
-                        self.usuario.sumar_xp_coins(tarea_a_marcar.xp_reward, tarea_a_marcar.coin_reward)
-                        self.gestor_usuarios.actualizar_usuario(self.usuario)
                     else:
-                        print(f"\nLa tarea {tarea_a_marcar.titulo} ya está marcada como completada. Seleccione otra.")
-                    return
+                        print(f"\nLa tarea {tarea_a_marcar.titulo} ya está marcada como completada.")
 
                 # --- Diaria ---
-                if tarea_a_marcar.tipo == 2:
+                elif tarea_a_marcar.tipo == 2:
                     if not tarea_a_marcar.completada:
-                        tarea_a_marcar.completada = True
-                        self.guardar_tareas()
+                        tarea_a_marcar.completar(self.usuario)
                         print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.GREEN + "completada." + Style.RESET_ALL)
-                        self.usuario.sumar_xp_coins(tarea_a_marcar.xp_reward, tarea_a_marcar.coin_reward)
-                        self.gestor_usuarios.actualizar_usuario(self.usuario)
                     else:
-                        tarea_a_marcar.completada = False
-                        self.guardar_tareas()
+                        tarea_a_marcar.fallar(self.usuario, por_medianoche=False)  # penalización leve
+                        tarea_a_marcar.marcar_incompleta()
                         print(f"\nTarea {tarea_a_marcar.titulo} marcada como " + Fore.RED + "incompleta." + Style.RESET_ALL)
-                        self.usuario.restar_vida(tarea_a_marcar.vida_restar)
-                        self.gestor_usuarios.actualizar_usuario(self.usuario)
-                    return
+
+                # Guardar cambios y actualizar usuario
+                self.guardar_tareas()
+                self.gestor_usuarios.actualizar_usuario(self.usuario)
+                return
 
             except ValueError:
                 print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
                 continue
+

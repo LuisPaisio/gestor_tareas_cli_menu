@@ -1,3 +1,11 @@
+#Multiplicadores por dificultad
+def multi_dificultad():
+    return{
+        "facil":1,
+        "intermedia":1.5,
+        "dificil":2
+    }
+
 # Valores de XP
 def xp_habito(): return 10
 def xp_diaria(): return 20
