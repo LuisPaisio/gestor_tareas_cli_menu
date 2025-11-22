@@ -3,7 +3,7 @@ from colorama import Fore, Style
 class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=50,
-                nivel_usuario=1, contador_50=0):
+                nivel_usuario=1, contador_50=0, descripcion=None, nombre_publico=None, foto_perfil=None):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -12,6 +12,10 @@ class Usuario:
         self.vida_usuario = vida_usuario
         self.nivel_usuario = nivel_usuario
         self.contador_50 = contador_50
+        self.descripcion = descripcion
+        self.nombre_publico = nombre_publico
+        self.foto_perfil = foto_perfil
+        
 
     def to_dict(self):
         return {
@@ -22,7 +26,10 @@ class Usuario:
             "coin_usuario": self.coin_usuario,
             "vida_usuario": self.vida_usuario,
             "nivel_usuario": self.nivel_usuario,
-            "contador_50": self.contador_50
+            "contador_50": self.contador_50,
+            "descripcion": self.descripcion,
+            "nombre_publico": self.nombre_publico,
+            "foto_perfil": self.foto_perfil
         }
 
     @classmethod
@@ -35,9 +42,52 @@ class Usuario:
             coin_usuario=data.get("coin_usuario", 0),
             vida_usuario=data.get("vida_usuario", 50),
             nivel_usuario=data.get("nivel_usuario", 1),
-            contador_50=data.get("contador_50", 0)
+            contador_50=data.get("contador_50", 0),
+            descripcion=data.get("descripcion"),
+            nombre_publico=data.get("nombre_publico"),
+            foto_perfil=data.get("foto_perfil")
         )
 
+    #metodo para ver perfil
+    def ver_perfil(self):
+        print(Fore.LIGHTYELLOW_EX + "\n--- Perfil del Usuario ---" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Nombre público: {self.nombre_publico or self.usuario}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Salud: {self.vida_usuario}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Nivel: {self.nivel_usuario}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"XP: {self.xp_usuario}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Coin: {self.coin_usuario}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Descripción: {self.descripcion or 'Sin Descripción'}" + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"Foto: {self.foto_perfil or 'Sin Foto'}" + Style.RESET_ALL)
+        
+    def editar_perfil(self):
+        self.ver_perfil()
+        opcion = input("\n¿Desea modificar su perfil?(s/n): ")
+        
+        while True:
+            try:
+                if opcion == "s":
+                    nombre_publico = input("Nombre Público: ")
+                    descripcion = input("Sobre mí: ")
+                    foto = input("Ingresa la URL de la imagen: ")
+        
+                    if nombre_publico.strip():
+                        self.nombre_publico = nombre_publico
+                    if descripcion.strip():
+                        self.descripcion = descripcion
+                    if foto.strip():
+                        self.foto_perfil = foto
+        
+                    print(Fore.GREEN + "\nPerfil actualizado exitosamente" + Style.RESET_ALL)
+                    return
+                elif opcion == "n":
+                    print(Fore.YELLOW + "\nOperación cancelada, volviendo al menú..." + Style.RESET_ALL)
+                    return
+                else:
+                    print(Fore.RED + "\n⚠️ Seleccione una opción válida" + Style.RESET_ALL)
+                    return
+            except:
+                print(Fore.RED + "⚠️ Seleccione una Opción válida" + Style.RESET_ALL)
+    
     # Métodos de XP, Coins y Vida
     def sumar_xp_coins(self, xp, coins):
         self.xp_usuario += xp

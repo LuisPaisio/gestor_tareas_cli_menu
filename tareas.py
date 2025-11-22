@@ -4,7 +4,7 @@ class Tarea:
     def __init__(self, id, titulo, tipo, id_usuario,
                 dias_semana=None, fecha_vencimiento=None,
                 xp_reward=0, coin_reward=0, vida_restar=0,
-                habito=None, completada=False,fecha_creacion=None):
+                habito=None, completada=False, fecha_creacion=None, dificultad=None):
         self.id = id
         self.titulo = titulo
         self.tipo = tipo  # 1=Hábito, 2=Diaria, 3=Pendiente
@@ -17,6 +17,7 @@ class Tarea:
         self.habito = habito
         self.completada = completada
         self.fecha_creacion = fecha_creacion or datetime.datetime.now().strftime("%d-%m-%Y")
+        self.dificultad = dificultad
 
     # -------------------------------
     # Métodos de acción sobre la tarea
@@ -61,7 +62,8 @@ class Tarea:
             "vida_restar": self.vida_restar,
             "habito": self.habito,
             "completada": self.completada,
-            "fecha_creacion": self.fecha_creacion
+            "fecha_creacion": self.fecha_creacion,
+            "dificultad": self.dificultad
         }
 
     @staticmethod
@@ -78,5 +80,6 @@ class Tarea:
             vida_restar=data.get("vida_restar", 0),
             habito=data.get("habito"),
             completada=data.get("completada", False),
-            fecha_creacion=data.get("fecha_creacion")
+            fecha_creacion=data.get("fecha_creacion"),
+            dificultad=data.get("dificultad")
         )
