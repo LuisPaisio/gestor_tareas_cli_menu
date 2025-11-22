@@ -44,7 +44,7 @@
         "coin_reward": 5,
         "vida_restar": 2,
         "habito": "+",
-        "completada": false,
+        "completada": true,
         "fecha_creacion": "22-11-2025",
         "dificultad": null
     },
@@ -75,7 +75,7 @@
             "Martes",
             "Miercoles"
         ],
-        "fecha_vencimiento": null,
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 20,
         "coin_reward": 10,
         "vida_restar": 3,
@@ -92,7 +92,7 @@
         "dias_semana": [
             "todos"
         ],
-        "fecha_vencimiento": null,
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 10,
         "coin_reward": 5,
         "vida_restar": 2,
@@ -106,8 +106,10 @@
         "titulo": "Prueba 3",
         "tipo": 3,
         "id_usuario": 2,
-        "dias_semana": [],
-        "fecha_vencimiento": null,
+        "dias_semana": [
+            "No aplica"
+        ],
+        "fecha_vencimiento": "Sin fecha",
         "xp_reward": 30,
         "coin_reward": 15,
         "vida_restar": 5,
