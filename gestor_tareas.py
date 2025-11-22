@@ -50,7 +50,7 @@ class GestorTareas:
     # Métodos principales
     # -------------------------------
     def nueva_tarea(self):
-        while True:  # bucle para repetir hasta que se cree o se cancele
+        while True:
             titulo = input("Ingresa el título de la nueva tarea | 0 (cero) cancelar: ")
 
             if titulo == "0":
@@ -72,7 +72,7 @@ class GestorTareas:
                 print(Fore.RED + "⚠️ Tipo de tarea inválido." + Style.RESET_ALL)
                 continue
 
-            dias_semana, fecha_vencimiento, fecha_str, habito = [], None, None, None
+            dias_semana, fecha_str, habito = [], None, None
 
             if tipo_tarea == 1:
                 tipo_habito = input("¿Es un hábito positivo o negativo? (+/-): ")
@@ -81,17 +81,17 @@ class GestorTareas:
                     continue
                 habito = tipo_habito
                 dias_semana.append("todos")
-                xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito() #Estas son las funciones que están en constantes_tareas.py
+                xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito()
 
             elif tipo_tarea == 2:
-                xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria() #Estas son las funciones que están en constantes_tareas.py
+                xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria()
                 while True:
                     dias_seleccionado = input("Selecciona días (1=Lunes ... 7=Domingo, 0=Listo): ")
                     mapa = {"1":"lunes","2":"martes","3":"miercoles","4":"jueves","5":"viernes","6":"sabado","7":"domingo"}
                     if dias_seleccionado in mapa:
                         dia = mapa[dias_seleccionado]
                         if dia not in dias_semana:
-                            dias_semana.append(mapa[dias_seleccionado]) #Acumula en una lista todos los elegidos hasta que el usuario ponga 0.
+                            dias_semana.append(dia)
                         else:
                             print(Fore.YELLOW + f"⚠️ El día {dia} ya fue seleccionado." + Style.RESET_ALL)
                     elif dias_seleccionado == "0":
@@ -100,7 +100,7 @@ class GestorTareas:
                         print(Fore.RED + "⚠️ Día no válido." + Style.RESET_ALL)
 
             elif tipo_tarea == 3:
-                xp_tarea, coin_tarea, life_restar = xp_pendiente(), coin_pendiente(), vida_pendiente() #Estas son las funciones que están en constantes_tareas.py
+                xp_tarea, coin_tarea, life_restar = xp_pendiente(), coin_pendiente(), vida_pendiente()
                 poner_fecha = input("¿Deseas poner una fecha de vencimiento? (s/n): ").lower()
                 if poner_fecha == "s":
                     fecha_vencimiento = input("Ingresa la fecha (DD-MM-AAAA): ")
@@ -111,35 +111,34 @@ class GestorTareas:
                         print(Fore.RED + "⚠️ Formato inválido. La tarea no se creará." + Style.RESET_ALL)
                         continue
                 elif poner_fecha == "n":
-                    fecha_vencimiento = None
+                    fecha_str = "Sin fecha"
                 else:
                     print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
                     continue
             else:
                 print(Fore.RED + "⚠️ Tipo de tarea no válido." + Style.RESET_ALL)
                 continue
-            
-            #Consultando dificultad de la tarea
-            dificultad = int(input("Seleccione la dificultad de la tarea (1)Facil, (2)Intermedia, (3)Dificil: "))
-            dificultad_tarea = None
-            
+
+            # Consultando dificultad de la tarea
             try:
-                if dificultad == 1:
-                    dificultad_tarea = "facil"
-                elif dificultad == 2:
-                    dificultad_tarea = "intermedia"
-                elif dificultad == 3:
-                    dificultad_tarea = "dificil"
-                else:
-                    print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
-                    continue
-            except:
+                dificultad = int(input("Seleccione la dificultad de la tarea (1)Facil, (2)Intermedia, (3)Dificil: "))
+            except ValueError:
                 print(Fore.RED + "⚠️ Tipo de dificultad no válido." + Style.RESET_ALL)
                 continue
-            
+
+            if dificultad == 1:
+                dificultad_tarea = "facil"
+            elif dificultad == 2:
+                dificultad_tarea = "intermedia"
+            elif dificultad == 3:
+                dificultad_tarea = "dificil"
+            else:
+                print(Fore.RED + "⚠️ Opción no válida." + Style.RESET_ALL)
+                continue
+
             # Crear tarea como objeto
-            ultimo_id = max([t.id for t in self.tareas], default=0) #Crea una lista con todos los ID de esas tareas y devuelve el mayor con max.
-            nueva = Tarea( #Se instancia el objeto Tarea con todos sus atributos
+            ultimo_id = max([t.id for t in self.tareas], default=0)
+            nueva = Tarea(
                 id=ultimo_id + 1,
                 titulo=titulo,
                 tipo=tipo_tarea,
@@ -154,10 +153,11 @@ class GestorTareas:
                 dificultad=dificultad_tarea
             )
 
-            self.tareas.append(nueva) #En este momento self.tareas contiene todas las tareas anteriores más la nueva.
+            self.tareas.append(nueva)
             self.guardar_tareas()
-            print(Fore.YELLOW + f"\nTarea '{titulo}' agregada exitosamente." + Style.RESET_ALL)
+            print(Fore.YELLOW + f"\nTarea '{titulo}' agregada exitosamente con dificultad {dificultad_tarea}." + Style.RESET_ALL)
             return
+
 
     def ver_tareas(self):
         # Filtrar tareas del usuario actual
