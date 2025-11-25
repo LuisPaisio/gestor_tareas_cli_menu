@@ -37,14 +37,18 @@ Gestor de tareas en consola desarrollado en Python, con sistema de usuarios, tie
 gestor-tareas-cli/
 │
 ├── menu_login.py          # Menú principal: login/registro/eliminar cuenta
-├── menu_tareas.py         # Menú de tareas (CRUD, marcado, tienda)
-├── gestor_usuarios.py     # Clase GestorUsuarios: manejo de usuarios
 ├── usuario.py             # Clase Usuario: atributos y métodos
+├── gestor_usuarios.py     # Clase GestorUsuarios: manejo de usuarios
+├── menu_tareas.py         # Menú de tareas (CRUD, marcado, tienda)
 ├── gestor_tareas.py       # Clase GestorTareas: lógica de tareas
 ├── tareas.py              # Clase Tarea: definición y métodos
+├── constantes_tareas.py   # Valores predeterminados de xp, coin, vida, etc
+├── gestor_inventario.py   # Clase GestorInventario: manejo de inventarios
 ├── inventario.py          # Clase Inventario: manejo de ítems por usuario
+├── menu_tienda.py         # Menú de Tienda
 ├── tienda.py              # Clase Tienda: catálogo, compra y venta
 ├── item.py                # Clase Item: definición de ítems de la tienda
+├── recompensa.py          # Aún no implementado
 ├── json/
 │   ├── usuarios.json      # Persistencia de usuarios
 │   ├── tareas.json        # Persistencia de tareas
