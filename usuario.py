@@ -1,4 +1,6 @@
+from gestor_inventario import GestorInventario
 from colorama import Fore, Style
+
 
 class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
@@ -15,7 +17,8 @@ class Usuario:
         self.descripcion = descripcion
         self.nombre_publico = nombre_publico
         self.foto_perfil = foto_perfil
-        
+
+        self.gestor_inventario = GestorInventario(self) #Siempre asigna un gestor de inventario al usuario.
 
     def to_dict(self):
         return {
@@ -88,6 +91,12 @@ class Usuario:
             except:
                 print(Fore.RED + "⚠️ Seleccione una Opción válida" + Style.RESET_ALL)
     
+    #Metodo para ver inventario
+    def ver_inventario(self, tienda=None, enumerado=False):
+        inventario = self.gestor_inventario.inventario_usuario()
+        print(f"\nInventario de {self.nombre_publico or self.usuario}:")
+        inventario.mostrar(tienda=tienda, enumerado=enumerado)
+    
     # Métodos de XP, Coins y Vida
     def sumar_xp_coins(self, xp, coins):
         self.xp_usuario += xp
@@ -108,12 +117,11 @@ class Usuario:
         else:
             print(Fore.RED + f"\nHas perdido {vida} puntos de vida. Vida actual: {self.vida_usuario}/50" + Style.RESET_ALL)
 
-    def ganar_recompensas(self,tarea):
+    def equipar(self):
         pass
     
-    def calcular_xp(self, tarea):
+    def desequipar(self):
         pass
     
-    def calcular_coins(self, tarea):
+    def usar_item(self):
         pass
-    

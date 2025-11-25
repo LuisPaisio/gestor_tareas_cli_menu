@@ -6,6 +6,20 @@ def multi_dificultad():
         "dificil":2
     }
 
+def xp_bonus_vencida():
+    """Devuelve el XP extra por cada día de atraso al completar una tarea Pendiente vencida."""
+    return 5  # por ejemplo, 5 XP por día de atraso
+
+def coin_bonus_vencida():
+    """Devuelve las coins extra por cada día de atraso al completar una tarea Pendiente vencida."""
+    return 2  # por ejemplo, 2 coins por día de atraso
+
+# constantes_tareas.py
+def vida_maxima():
+    """Devuelve la vida máxima de un usuario."""
+    return 50
+
+
 # Valores de XP
 def xp_habito(): return 10
 def xp_diaria(): return 20

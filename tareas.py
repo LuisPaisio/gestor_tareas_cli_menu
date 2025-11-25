@@ -48,7 +48,7 @@ class Tarea:
                 return False
         return False
     
-    def completar(self, usuario):
+    def completar(self, usuario, retroactivo=False):
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
         xp, coins = 0, 0
 
@@ -59,7 +59,7 @@ class Tarea:
 
         # --- Diaria ---
         elif self.tipo == 2:
-            if self.dias_semana:
+            if self.dias_semana and not retroactivo:
                 hoy = datetime.date.today().strftime("%A").lower()
                 mapa_dias = {
                     "monday": "lunes",
@@ -75,7 +75,7 @@ class Tarea:
 
                 if hoy_es not in dias_normalizados:
                     print(Fore.RED + f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es})." + Style.RESET_ALL)
-                    return
+                    return None
 
             xp = int(constantes_tareas.xp_diaria() * mult)
             coins = int(constantes_tareas.coin_diaria() * mult)
@@ -84,7 +84,6 @@ class Tarea:
         elif self.tipo == 3:
             xp = int(constantes_tareas.xp_pendiente() * mult)
             coins = int(constantes_tareas.coin_pendiente() * mult)
-
             if self.es_vencida():
                 fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
                 dias_tarde = (datetime.date.today() - fecha).days
@@ -95,14 +94,19 @@ class Tarea:
         usuario.sumar_xp_coins(xp, coins)
         self.completada = True
 
-    
+        # En vez de imprimir aquí, devolvemos resultados y tipo
+        return {"xp": xp, "coins": coins, "tipo": self.tipo, "titulo": self.titulo, "retroactivo": retroactivo}
+
+
+
     def fallar(self, usuario, por_medianoche=False):
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
 
         if self.tipo == 1 and self.habito == "-":  # Hábito negativo
             vida_perdida = int(constantes_tareas.vida_habito() * mult)
             usuario.restar_vida(vida_perdida)
-            print(Fore.RED + f"\nHas perdido {vida_perdida} de vida por hábito negativo." + Style.RESET_ALL)
+            self.completada = False
+            return {"vida": vida_perdida, "xp": 0, "coins": 0, "titulo": self.titulo, "tipo": "Hábito negativo"}
 
         elif self.tipo == 2:  # Diaria
             if por_medianoche:
@@ -113,16 +117,16 @@ class Tarea:
                 usuario.restar_vida(vida_perdida)
                 usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
                 usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-
-                print(Fore.RED + f"\nHas perdido {vida_perdida} de vida, {xp_perdido} XP y {coins_perdidos} coins por no completar la diaria." + Style.RESET_ALL)
+                self.completada = False
+                return {"vida": vida_perdida, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Diaria"}
             else:
                 xp_perdido = int(constantes_tareas.xp_diaria() * 0.5 * mult)
                 coins_perdidos = int(constantes_tareas.coin_diaria() * 0.5 * mult)
 
                 usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
                 usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-
-                print(Fore.RED + f"\nHas perdido {xp_perdido} XP y {coins_perdidos} coins por marcar la diaria como incompleta." + Style.RESET_ALL)
+                self.completada = False
+                return {"vida": 0, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Diaria"}
 
         elif self.tipo == 3:  # Pendiente vencida
             vida_perdida = int(constantes_tareas.vida_pendiente() * mult)
@@ -132,8 +136,8 @@ class Tarea:
             usuario.restar_vida(vida_perdida)
             usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
             usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-
-            print(Fore.RED + f"\nHas perdido {vida_perdida} de vida, {xp_perdido} XP y {coins_perdidos} coins por no completar la pendiente." + Style.RESET_ALL)
+            self.completada = False
+            return {"vida": vida_perdida, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Pendiente"}
 
 
     # -------------------------------

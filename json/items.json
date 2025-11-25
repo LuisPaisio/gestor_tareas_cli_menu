@@ -1,0 +1,14 @@
+[
+    {
+    "id_item": 1,
+    "nombre": "Poción de vida",
+    "precio": 50,
+    "descripcion": "Recupera 20 de vida"
+    },
+    {
+    "id_item": 2,
+    "nombre": "Espada básica",
+    "precio": 100,
+    "descripcion": "Aumenta tu ataque"
+    }
+]
