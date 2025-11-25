@@ -1,24 +1,34 @@
 # 🧠 Gestor de Tareas CLI (Orientado a Objetos) + Login integrado
 
-Gestor de tareas en consola desarrollado en **Python**, con sistema de usuarios y persistencia en JSON.  
-Implementa un enfoque **orientado a objetos** con clases `Usuario`, `GestorUsuarios`, `Tarea` y `GestorTareas`.  
-Permite crear, listar, editar, marcar como completas/incompletas y eliminar tareas desde la consola.  
-En el futuro se planea integrar con **Flask** para una versión web.
+Gestor de tareas en consola desarrollado en Python, con sistema de usuarios, tienda, inventario y persistencia en JSON. Implementa un enfoque orientado a objetos con clases Usuario, GestorUsuarios, Tarea, GestorTareas, Inventario y Tienda. Permite crear, listar, editar, marcar como completas/incompletas y eliminar tareas desde la consola, con un sistema de gamificación que otorga recompensas y penalizaciones. En el futuro se planea integrar con Flask para una versión web.
 
 ---
 
 ## 🚀 Características
 - Sistema de usuarios:
-- Registrarse, iniciar sesión y eliminar cuenta (`GestorUsuarios`)
-- Gestión de tareas por usuario (`GestorTareas`)
-- Tareas como objetos (`Tarea`) con atributos y métodos
-- Crear nuevas tareas
-- Listar tareas existentes con estado y vencimiento
-- Editar tareas por ID visual
-- Marcar como completas o incompletas
-- Eliminar tareas
-- Persistencia en archivo JSON con conversión objeto ↔ diccionario (`to_dict()` / `from_dict()`)
-- Mensajes en color usando `colorama`
+- Registro, inicio de sesión y eliminación de cuenta (GestorUsuarios)
+- Estadísticas por usuario: vida, XP y coins
+
+- Gestión de tareas (GestorTareas):
+- Crear, listar, editar, marcar y eliminar tareas
+- Tipos de tareas: hábitos, diarias y pendientes
+- Recompensas por completar y penalizaciones por fallar
+
+- Gamificación:
+- Hábito positivo/negativo con impacto en stats
+- Diarias que vencen cada día y aplican penalización si no se completan
+- Pendientes con fecha de vencimiento
+-  Mensajes claros y consistentes en colores (colorama)
+
+- Inventario y Tienda:
+- Comprar ítems con coins
+- Vender ítems para recuperar parte del valor
+- Persistencia en inventarios.json
+- Catálogo definido en items.json
+
+- Persistencia en JSON:
+- Conversión objeto ↔ diccionario (to_dict() / from_dict())
+- Archivos: usuarios, tareas, inventarios, recompensas
 
 ---
 
@@ -27,18 +37,22 @@ En el futuro se planea integrar con **Flask** para una versión web.
 gestor-tareas-cli/
 │
 ├── menu_login.py          # Menú principal: login/registro/eliminar cuenta
-├── menu_tareas.py         # Menú de tareas (CRUD y marcado)
+├── menu_tareas.py         # Menú de tareas (CRUD, marcado, tienda)
 ├── gestor_usuarios.py     # Clase GestorUsuarios: manejo de usuarios
-├── usuario.py             # Clase Usuario: atributos y métodos del usuario
+├── usuario.py             # Clase Usuario: atributos y métodos
 ├── gestor_tareas.py       # Clase GestorTareas: lógica de tareas
 ├── tareas.py              # Clase Tarea: definición y métodos
+├── inventario.py          # Clase Inventario: manejo de ítems por usuario
+├── tienda.py              # Clase Tienda: catálogo, compra y venta
+├── item.py                # Clase Item: definición de ítems de la tienda
 ├── json/
 │   ├── usuarios.json      # Persistencia de usuarios
 │   ├── tareas.json        # Persistencia de tareas
+│   ├── inventarios.json   # Persistencia de inventarios
+│   ├── items.json         # Catálogo de la tienda
 │   └── recompensas.json   # Persistencia de recompensas (aún no implementado)
 ├── requirements.txt       # Dependencias
 └── README.md              # Documentación
-
    ```
 
 ## 🛠️ Instalación
@@ -62,6 +76,52 @@ gestor-tareas-cli/
    ```bash
    python menu_login.py
    ```
+
+## 🧪 Ejemplo de Uso
+   ```bash
+   === Menú Principal ===
+   1. Iniciar sesión
+   2. Registrarte
+   3. Cancelar
+   4. Eliminar cuenta
+
+   === Menú Tareas ===
+   1. Crear tarea
+   2. Ver tareas
+   3. Editar tarea
+   4. Eliminar tarea
+   5. Marcar tarea
+   6. Perfil y Estadísticas
+   7. Inventario
+   8. Menú Tienda
+   9. Salir
+
+   === Menú Tienda ===
+   1. Ver Catálogo
+   2. Comprar Item
+   3. Vender Item
+   4. Volver al menú anterior
+   ```
+
+## 🗺️ Roadmap
+- Integración con Flask para versión web
+- Migración de persistencia a SQL
+- Sistema de recompensas avanzado (niveles, logros, misiones)
+- Inventario con ítems únicos y efectos en stats
+- Tests unitarios y CI/CD
+
+## 🤝 Contribución
+¡Las contribuciones son bienvenidas!
+
+- Haz un fork del repositorio.
+- Crea una rama (git checkout -b feature/nueva-funcionalidad).
+- Haz commit de tus cambios (git commit -m 'Agrega nueva funcionalidad').
+- Haz push a la rama (git push origin feature/nueva-funcionalidad).
+- Abre un Pull Request.
+
+## 📄 Licencia
+-Este proyecto está bajo la licencia MIT.
+-Puedes usarlo, modificarlo y distribuirlo libremente, siempre mencionando al autor original.
 
 ## 📦 Requisitos
 - Python 3.10 o superior
