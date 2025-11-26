@@ -35,11 +35,17 @@ class GestorInventario:
 
     # --- Operaciones sobre inventario de usuario ---
     def inventario_usuario(self):
-        """Devuelve el Inventario del usuario actual."""
-        for inv in self.inventarios:
-            if inv["id_usuario"] == self.usuario.id_usuario:
-                return Inventario(inv["id_usuario"], inv["items"])
-        return Inventario(self.usuario.id_usuario)
+        """Devuelve el Inventario del usuario actual, siempre la misma instancia."""
+        if not hasattr(self, "_cache_inventario"):
+            for inv in self.inventarios:
+                if inv["id_usuario"] == self.usuario.id_usuario:
+                    self._cache_inventario = Inventario(inv["id_usuario"], inv["items"])
+                    break
+            else:
+                # si no existe, crear vacío
+                self._cache_inventario = Inventario(self.usuario.id_usuario)
+        return self._cache_inventario
+
 
     def actualizar_inventario(self, inventario: Inventario):
         """Actualiza el inventario del usuario en el JSON."""

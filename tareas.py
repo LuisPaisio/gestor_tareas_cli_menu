@@ -1,6 +1,7 @@
 import datetime
 import constantes_tareas
 from colorama import Fore, Style
+from recompensa import Recompensa
 
 class Tarea:
     def __init__(self, id, titulo, tipo, id_usuario,
@@ -48,14 +49,15 @@ class Tarea:
                 return False
         return False
     
-    def completar(self, usuario, retroactivo=False):
+    def completar(self, retroactivo=False):
+        """Genera recompensas al completar la tarea, sin aplicarlas directamente al usuario."""
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
-        xp, coins = 0, 0
+        recompensas = []
 
         # --- Hábito positivo ---
         if self.tipo == 1 and self.habito == "+":
-            xp = int(constantes_tareas.xp_habito() * mult)
-            coins = int(constantes_tareas.coin_habito() * mult)
+            recompensas.append(Recompensa(None, f"XP por hábito {self.titulo}", "xp", int(constantes_tareas.xp_habito() * mult)))
+            recompensas.append(Recompensa(None, f"Coins por hábito {self.titulo}", "coins", int(constantes_tareas.coin_habito() * mult)))
 
         # --- Diaria ---
         elif self.tipo == 2:
@@ -75,10 +77,10 @@ class Tarea:
 
                 if hoy_es not in dias_normalizados:
                     print(Fore.RED + f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es})." + Style.RESET_ALL)
-                    return None
+                    return []
 
-            xp = int(constantes_tareas.xp_diaria() * mult)
-            coins = int(constantes_tareas.coin_diaria() * mult)
+            recompensas.append(Recompensa(None, f"XP diaria {self.titulo}", "xp", int(constantes_tareas.xp_diaria() * mult)))
+            recompensas.append(Recompensa(None, f"Coins diaria {self.titulo}", "coins", int(constantes_tareas.coin_diaria() * mult)))
 
         # --- Pendiente ---
         elif self.tipo == 3:
@@ -89,24 +91,22 @@ class Tarea:
                 dias_tarde = (datetime.date.today() - fecha).days
                 xp += dias_tarde * constantes_tareas.xp_bonus_vencida()
                 coins += dias_tarde * constantes_tareas.coin_bonus_vencida()
-                usuario.vida_usuario = min(constantes_tareas.vida_maxima(), usuario.vida_usuario + dias_tarde)
+                recompensas.append(Recompensa(None, f"Vida extra por pendiente vencida {self.titulo}", "vida", dias_tarde))
 
-        usuario.sumar_xp_coins(xp, coins)
+            recompensas.append(Recompensa(None, f"XP pendiente {self.titulo}", "xp", xp))
+            recompensas.append(Recompensa(None, f"Coins pendiente {self.titulo}", "coins", coins))
+
         self.completada = True
+        return recompensas
 
-        # En vez de imprimir aquí, devolvemos resultados y tipo
-        return {"xp": xp, "coins": coins, "tipo": self.tipo, "titulo": self.titulo, "retroactivo": retroactivo}
-
-
-
-    def fallar(self, usuario, por_medianoche=False):
+    def fallar(self, por_medianoche=False):
+        """Genera penalizaciones al fallar la tarea, sin aplicarlas directamente al usuario."""
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
+        recompensas = []
 
         if self.tipo == 1 and self.habito == "-":  # Hábito negativo
             vida_perdida = int(constantes_tareas.vida_habito() * mult)
-            usuario.restar_vida(vida_perdida)
-            self.completada = False
-            return {"vida": vida_perdida, "xp": 0, "coins": 0, "titulo": self.titulo, "tipo": "Hábito negativo"}
+            recompensas.append(Recompensa(None, f"Penalización hábito negativo {self.titulo}", "vida", -vida_perdida))
 
         elif self.tipo == 2:  # Diaria
             if por_medianoche:
@@ -114,31 +114,27 @@ class Tarea:
                 xp_perdido = int(constantes_tareas.xp_diaria() * mult)
                 coins_perdidos = int(constantes_tareas.coin_diaria() * mult)
 
-                usuario.restar_vida(vida_perdida)
-                usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
-                usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-                self.completada = False
-                return {"vida": vida_perdida, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Diaria"}
+                recompensas.append(Recompensa(None, f"Vida perdida diaria {self.titulo}", "vida", -vida_perdida))
+                recompensas.append(Recompensa(None, f"XP perdida diaria {self.titulo}", "xp", -xp_perdido))
+                recompensas.append(Recompensa(None, f"Coins perdidos diaria {self.titulo}", "coins", -coins_perdidos))
             else:
                 xp_perdido = int(constantes_tareas.xp_diaria() * 0.5 * mult)
                 coins_perdidos = int(constantes_tareas.coin_diaria() * 0.5 * mult)
 
-                usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
-                usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-                self.completada = False
-                return {"vida": 0, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Diaria"}
+                recompensas.append(Recompensa(None, f"XP perdida diaria {self.titulo}", "xp", -xp_perdido))
+                recompensas.append(Recompensa(None, f"Coins perdidos diaria {self.titulo}", "coins", -coins_perdidos))
 
         elif self.tipo == 3:  # Pendiente vencida
             vida_perdida = int(constantes_tareas.vida_pendiente() * mult)
             xp_perdido = int(constantes_tareas.xp_pendiente() * mult)
             coins_perdidos = int(constantes_tareas.coin_pendiente() * mult)
 
-            usuario.restar_vida(vida_perdida)
-            usuario.xp_usuario = max(0, usuario.xp_usuario - xp_perdido)
-            usuario.coin_usuario = max(0, usuario.coin_usuario - coins_perdidos)
-            self.completada = False
-            return {"vida": vida_perdida, "xp": xp_perdido, "coins": coins_perdidos, "titulo": self.titulo, "tipo": "Pendiente"}
+            recompensas.append(Recompensa(None, f"Vida perdida pendiente {self.titulo}", "vida", -vida_perdida))
+            recompensas.append(Recompensa(None, f"XP perdida pendiente {self.titulo}", "xp", -xp_perdido))
+            recompensas.append(Recompensa(None, f"Coins perdidos pendiente {self.titulo}", "coins", -coins_perdidos))
 
+        self.completada = False
+        return recompensas
 
     # -------------------------------
     # Conversión a dict/objeto

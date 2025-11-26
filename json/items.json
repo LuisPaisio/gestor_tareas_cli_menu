@@ -1,14 +1,387 @@
 [
     {
-    "id_item": 1,
-    "nombre": "Poción de vida",
-    "precio": 50,
-    "descripcion": "Recupera 20 de vida"
+        "id_item": 1,
+        "nombre": "Poción de vida pequeña",
+        "descripcion": "Recupera 20 de vida",
+        "precio": 50,
+        "tipo": "consumible"
     },
     {
-    "id_item": 2,
-    "nombre": "Espada básica",
-    "precio": 100,
-    "descripcion": "Aumenta tu ataque"
+        "id_item": 2,
+        "nombre": "Poción de vida grande",
+        "descripcion": "Recupera 50 de vida",
+        "precio": 120,
+        "tipo": "consumible"
+    },
+    {
+        "id_item": 3,
+        "nombre": "Poción de maná",
+        "descripcion": "Recupera 30 de energía mágica",
+        "precio": 90,
+        "tipo": "consumible"
+    },
+    {
+        "id_item": 5,
+        "nombre": "Poción de resistencia",
+        "descripcion": "Reduce el daño recibido por 10 turnos",
+        "precio": 150,
+        "tipo": "consumible"
+    },
+    {
+        "id_item": 6,
+        "nombre": "Espada básica",
+        "descripcion": "Aumenta el daño en combate",
+        "precio": 100,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 7,
+        "nombre": "Espada larga",
+        "descripcion": "Incrementa el daño moderadamente",
+        "precio": 250,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 8,
+        "nombre": "Espada legendaria",
+        "descripcion": "Gran aumento de daño",
+        "precio": 1000,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 9,
+        "nombre": "Daga ligera",
+        "descripcion": "Permite ataques rápidos",
+        "precio": 120,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 10,
+        "nombre": "Martillo de guerra",
+        "descripcion": "Golpes pesados que rompen defensas",
+        "precio": 500,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 11,
+        "nombre": "escudo de madera",
+        "descripcion": "Reduce el daño recibido ligeramente",
+        "precio": 80,
+        "tipo": "equipable",
+        "slot": "escudo"
+    },
+    {
+        "id_item": 12,
+        "nombre": "escudo de hierro",
+        "descripcion": "Defensa sólida contra ataques físicos",
+        "precio": 200,
+        "tipo": "equipable",
+        "slot": "escudo"
+    },
+    {
+        "id_item": 13,
+        "nombre": "escudo reforzado",
+        "descripcion": "Alta resistencia contra golpes",
+        "precio": 400,
+        "tipo": "equipable",
+        "slot": "escudo"
+    },
+    {
+        "id_item": 14,
+        "nombre": "escudo mágico",
+        "descripcion": "Protege contra ataques mágicos",
+        "precio": 600,
+        "tipo": "equipable",
+        "slot": "escudo"
+    },
+    {
+        "id_item": 15,
+        "nombre": "escudo legendario",
+        "descripcion": "Defensa máxima",
+        "precio": 1200,
+        "tipo": "equipable",
+        "slot": "escudo"
+    },
+    {
+        "id_item": 16,
+        "nombre": "Casco de cuero",
+        "descripcion": "Protección básica para la cabeza",
+        "precio": 90,
+        "tipo": "equipable",
+        "slot": "cabeza"
+    },
+    {
+        "id_item": 17,
+        "nombre": "Casco de hierro",
+        "descripcion": "Protección moderada para la cabeza",
+        "precio": 200,
+        "tipo": "equipable",
+        "slot": "cabeza"
+    },
+    {
+        "id_item": 18,
+        "nombre": "Casco reforzado",
+        "descripcion": "Alta defensa para la cabeza",
+        "precio": 400,
+        "tipo": "equipable",
+        "slot": "cabeza"
+    },
+    {
+        "id_item": 19,
+        "nombre": "Casco mágico",
+        "descripcion": "Protección contra ataques mágicos",
+        "precio": 600,
+        "tipo": "equipable",
+        "slot": "cabeza"
+    },
+    {
+        "id_item": 20,
+        "nombre": "Casco legendario",
+        "descripcion": "Defensa máxima para la cabeza",
+        "precio": 1000,
+        "tipo": "equipable",
+        "slot": "cabeza"
+    },
+    {
+        "id_item": 21,
+        "nombre": "Armadura de cuero",
+        "descripcion": "Protección básica para el torso",
+        "precio": 150,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 22,
+        "nombre": "Armadura de hierro",
+        "descripcion": "Defensa moderada para el torso",
+        "precio": 300,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 23,
+        "nombre": "Armadura reforzada",
+        "descripcion": "Alta defensa para el torso",
+        "precio": 600,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 24,
+        "nombre": "Armadura mágica",
+        "descripcion": "Protección contra hechizos",
+        "precio": 800,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 25,
+        "nombre": "Armadura legendaria",
+        "descripcion": "Defensa máxima para el torso",
+        "precio": 1500,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 26,
+        "nombre": "Guantes de cuero",
+        "descripcion": "Mejoran agarre y precisión",
+        "precio": 70,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 27,
+        "nombre": "Guantes de hierro",
+        "descripcion": "Incrementan fuerza de ataque",
+        "precio": 150,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 28,
+        "nombre": "Guantes mágicos",
+        "descripcion": "Mejoran poder mágico",
+        "precio": 300,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 29,
+        "nombre": "Guantes legendarios",
+        "descripcion": "Máxima mejora de habilidades",
+        "precio": 700,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 30,
+        "nombre": "Botas de cuero",
+        "descripcion": "Aumentan velocidad de movimiento",
+        "precio": 100,
+        "tipo": "equipable",
+        "slot": "pies"
+    },
+    {
+        "id_item": 31,
+        "nombre": "Botas de hierro",
+        "descripcion": "Mejoran estabilidad en combate",
+        "precio": 200,
+        "tipo": "equipable",
+        "slot": "pies"
+    },
+    {
+        "id_item": 32,
+        "nombre": "Botas mágicas",
+        "descripcion": "Incrementan agilidad mágica",
+        "precio": 400,
+        "tipo": "equipable",
+        "slot": "pies"
+    },
+    {
+        "id_item": 33,
+        "nombre": "Botas legendarias",
+        "descripcion": "Velocidad máxima",
+        "precio": 800,
+        "tipo": "equipable",
+        "slot": "pies"
+    },
+    {
+        "id_item": 34,
+        "nombre": "Anillo de fuerza",
+        "descripcion": "Incrementa el daño físico",
+        "precio": 250,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+        {
+        "id_item": 35,
+        "nombre": "Anillo de sabiduría",
+        "descripcion": "Incrementa el poder mágico",
+        "precio": 250,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 36,
+        "nombre": "Anillo de resistencia",
+        "descripcion": "Reduce el daño recibido",
+        "precio": 250,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 37,
+        "nombre": "Anillo legendario",
+        "descripcion": "Mejora todas las estadísticas",
+        "precio": 1000,
+        "tipo": "equipable",
+        "slot": "manoizquierda"
+    },
+    {
+        "id_item": 38,
+        "nombre": "Collar de fuerza",
+        "descripcion": "Incrementa el daño físico",
+        "precio": 300,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 39,
+        "nombre": "Collar de sabiduría",
+        "descripcion": "Incrementa el poder mágico",
+        "precio": 300,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 40,
+        "nombre": "Collar de resistencia",
+        "descripcion": "Reduce el daño recibido",
+        "precio": 300,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 41,
+        "nombre": "Collar legendario",
+        "descripcion": "Mejora todas las estadísticas",
+        "precio": 1200,
+        "tipo": "equipable",
+        "slot": "pecho"
+    },
+    {
+        "id_item": 42,
+        "nombre": "Varita mágica básica",
+        "descripcion": "Incrementa el poder de hechizos",
+        "precio": 200,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 43,
+        "nombre": "Varita mágica avanzada",
+        "descripcion": "Gran incremento de poder mágico",
+        "precio": 600,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 44,
+        "nombre": "Báculo de sabiduría",
+        "descripcion": "Aumenta el poder mágico y la defensa",
+        "precio": 900,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 45,
+        "nombre": "Arco de cazador",
+        "descripcion": "Permite ataques a distancia",
+        "precio": 400,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 46,
+        "nombre": "Arco legendario",
+        "descripcion": "Máxima precisión y daño a distancia",
+        "precio": 1200,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 47,
+        "nombre": "Ballesta pesada",
+        "descripcion": "Dispara proyectiles con gran fuerza",
+        "precio": 800,
+        "tipo": "equipable",
+        "slot": "manoderecha"
+    },
+    {
+        "id_item": 48,
+        "nombre": "Poción de invisibilidad",
+        "descripcion": "Te vuelve invisible por 5 turnos",
+        "precio": 500,
+        "tipo": "consumible"
+    },
+    {
+        "id_item": 49,
+        "nombre": "Poción de velocidad",
+        "descripcion": "Aumenta la velocidad de movimiento temporalmente",
+        "precio": 300,
+        "tipo": "consumible"
+    },
+    {
+        "id_item": 50,
+        "nombre": "Poción de experiencia",
+        "descripcion": "Otorga 50 puntos de experiencia",
+        "precio": 400,
+        "tipo": "consumible"
     }
 ]

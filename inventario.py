@@ -1,73 +1,107 @@
+import json
+import os
 from colorama import Fore, Style
+
+ARCHIVO_INVENTARIOS = os.path.join("json", "inventarios.json")
 
 class Inventario:
     def __init__(self, id_usuario, items=None):
-        # items puede ser dict {id_item: cantidad} o {id_item: {nombre, descripcion, cantidad}}
+        """
+        Inventario de un usuario.
+        items es un dict con estructura:
+        {id_item: {"nombre": str, "descripcion": str, "cantidad": int}}
+        """
         self.id_usuario = id_usuario
         self.items = items if items else {}
+        self.enumeracion_items = {}  # mapeo índice → id_item
 
     # --- Métodos CRUD sobre items ---
     def agregar_item(self, item, cantidad=1):
         """Agrega un ítem al inventario."""
         id_item = str(item.id_item)
         if id_item in self.items:
-            datos = self.items[id_item]
-            if isinstance(datos, dict):
-                datos["cantidad"] += cantidad
-            else:
-                self.items[id_item] += cantidad
+            self.items[id_item]["cantidad"] += cantidad
         else:
-            # siempre guardamos como dict enriquecido
             self.items[id_item] = {
                 "nombre": item.nombre,
                 "descripcion": item.descripcion,
-                "cantidad": cantidad
+                "cantidad": cantidad,
+                "tipo": getattr(item, "tipo", None),
+                "slot": getattr(item, "slot", None)
             }
 
     def quitar_item(self, id_item, cantidad=1):
         """Quita unidades de un ítem del inventario."""
         id_item = str(id_item)
         if id_item in self.items:
-            datos = self.items[id_item]
-            if isinstance(datos, dict):
-                datos["cantidad"] -= cantidad
-                if datos["cantidad"] <= 0:
-                    del self.items[id_item]
-            else:
-                self.items[id_item] -= cantidad
-                if self.items[id_item] <= 0:
-                    del self.items[id_item]
+            self.items[id_item]["cantidad"] -= cantidad
+            if self.items[id_item]["cantidad"] <= 0:
+                del self.items[id_item]
 
     def obtener_items(self):
         """Devuelve el dict crudo de items."""
         return self.items
 
+    def existe_item(self, id_item):
+        """Verifica si un ítem existe en el inventario."""
+        return str(id_item) in self.items
+
+    def obtener_item(self, id_item):
+        """Devuelve los datos de un ítem específico."""
+        return self.items.get(str(id_item))
+
+    # --- Persistencia ---
+    def to_dict(self):
+        """Convierte el inventario a dict para guardar en JSON."""
+        return {"id_usuario": self.id_usuario, "items": self.items}
+
+    @staticmethod
+    def from_dict(data):
+        """Crea un inventario desde un dict cargado de JSON."""
+        return Inventario(data["id_usuario"], data.get("items", {}))
+
+    @staticmethod
+    def cargar_inventarios():
+        """Carga todos los inventarios desde el archivo JSON."""
+        if os.path.exists(ARCHIVO_INVENTARIOS):
+            try:
+                with open(ARCHIVO_INVENTARIOS, "r", encoding="utf-8") as archivo:
+                    contenido = archivo.read().strip()
+                    if not contenido:
+                        return []
+                    data = json.loads(contenido)
+                    return [Inventario.from_dict(inv) for inv in data]
+            except json.JSONDecodeError:
+                print(Fore.RED + "⚠️ El archivo de inventarios está corrupto. Se iniciará vacío." + Style.RESET_ALL)
+                return []
+        return []
+
+    @staticmethod
+    def guardar_inventarios(inventarios):
+        """Guarda todos los inventarios en el archivo JSON."""
+        with open(ARCHIVO_INVENTARIOS, "w", encoding="utf-8") as archivo:
+            json.dump([inv.to_dict() for inv in inventarios], archivo, indent=4, ensure_ascii=False)
+
     # --- Mostrar inventario ---
     def mostrar(self, tienda=None, enumerado=True):
-        """Muestra el inventario con estilo similar a ver_tareas."""
         if not self.items:
             print(Fore.YELLOW + "\nInventario vacío." + Style.RESET_ALL)
             return
 
         print(Fore.YELLOW + "\n=== Inventario ===" + Style.RESET_ALL)
 
+        self.enumeracion_items = {}
+
         inventario_lista = []
         for id_item, datos in self.items.items():
-            cantidad = datos["cantidad"] if isinstance(datos, dict) else datos
+            inventario_lista.append((id_item, datos["nombre"], datos["cantidad"], datos["descripcion"]))
 
-            if tienda:
-                item = next((i for i in tienda.items if i.id_item == int(id_item)), None)
-                if item:
-                    inventario_lista.append((item, cantidad))
-            else:
-                inventario_lista.append((id_item, cantidad))
+        inventario_lista.sort(key=lambda x: x[1])  # ordenar por nombre
 
-        inventario_lista.sort(key=lambda x: x[0].nombre if tienda else str(x[0]))
+        for contador, (id_item, nombre, cantidad, descripcion) in enumerate(inventario_lista, start=1):
+            print(f"{contador}. {nombre} - {cantidad} unidades | {descripcion}")
+            self.enumeracion_items[str(contador)] = id_item
 
-        for contador, datos in enumerate(inventario_lista, start=1):
-            if tienda:
-                item, cantidad = datos
-                print(f"{contador}. {item.nombre} - {cantidad} unidades | {item.descripcion}")
-            else:
-                id_item, cantidad = datos
-                print(f"{contador}. Item {id_item} - {cantidad} unidades")
+
+
+
