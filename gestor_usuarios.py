@@ -51,9 +51,14 @@ class GestorUsuarios:
         for usuario in self.usuarios:
             if usuario.usuario == user and usuario.contraseña == password:
                 print(Fore.GREEN + f"\n¡Inicio de sesión exitoso!" + Style.RESET_ALL)
-                return usuario #De ésta forma se devuelve toda la información del usuario, pero ya no como lista, sino como objeto Usuario.
+                
+                # Asignar el gestor central al usuario que inicia sesión
+                usuario.gestor_usuarios = self
+                
+                return usuario  # devolvemos el objeto Usuario ya vinculado al gestor
         print(Fore.RED + "\nNombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
         return None
+
 
     def register(self):
         user = input("Elige un nombre de usuario: ")
@@ -71,6 +76,8 @@ class GestorUsuarios:
         ultimo_id = max([u.id_usuario for u in self.usuarios], default=0)
         nuevo_usuario = Usuario(id_usuario=ultimo_id + 1, usuario=user, contraseña=password)
 
+        nuevo_usuario.gestor_usuarios = self # Asignar el gestor central al usuario
+        
         self.usuarios.append(nuevo_usuario)
         self.guardar_usuarios()
 
