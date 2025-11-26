@@ -84,7 +84,7 @@ class GestorUsuarios:
         print(Fore.GREEN + f"\n¡Registro exitoso!" + Style.RESET_ALL)
         return nuevo_usuario
 
-    def eliminar_usuario(self, gestor_tareas):
+    def eliminar_usuario(self, gestor_tareas, gestor_inventario):
         confirmar = input(
             "\nAdvertencia: Esta acción eliminará tu cuenta permanentemente. "
             "Presiona Enter para continuar o N para cancelar: "
@@ -98,15 +98,18 @@ class GestorUsuarios:
 
         for usuario in self.usuarios:
             if usuario.usuario == user and usuario.contraseña == password:
-                #Elimino las tareas del usuario
+                # Elimino las tareas del usuario
                 gestor_tareas.eliminar_tareas_de_usuario(usuario.id_usuario)
-                # Elimino usuario
+
+                # Elimino el inventario del usuario
+                gestor_inventario.eliminar_inventario_de_usuario(usuario.id_usuario)
+
+                # Elimino el usuario de la lista
                 self.usuarios.remove(usuario)
                 self.guardar_usuarios()
 
-                print(Fore.GREEN + f"\nCuenta '{user}' eliminada exitosamente." + Style.RESET_ALL)
+                print(Fore.GREEN + f"\n✅ Cuenta '{user}' eliminada exitosamente junto con sus tareas e inventario." + Style.RESET_ALL)
                 return True
 
-        print(Fore.RED + "\nNombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
+        print(Fore.RED + "\n❌ Nombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
         return None
-
