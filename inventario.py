@@ -27,7 +27,8 @@ class Inventario:
                 "descripcion": item.descripcion,
                 "cantidad": cantidad,
                 "tipo": getattr(item, "tipo", None),
-                "slot": getattr(item, "slot", None)
+                "slot": getattr(item, "slot", None),
+                "efecto": getattr(item, "efecto", {})
             }
 
     def quitar_item(self, id_item, cantidad=1):

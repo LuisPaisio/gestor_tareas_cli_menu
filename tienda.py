@@ -55,12 +55,18 @@ class Tienda:
             print(Fore.RED + "⚠️ Item no encontrado en la tienda." + Style.RESET_ALL)
             return
 
+        # 🔹 Validar cantidad según tipo
+        if getattr(item, "tipo", None) == "equipable":
+            if cantidad > 1:
+                print(Fore.YELLOW + f"⚠️ '{item.nombre}' es equipable, solo puedes comprar 1 unidad." + Style.RESET_ALL)
+            cantidad = 1  # forzar a 1
+
         costo_total = item.precio * cantidad
         if usuario.coin_usuario < costo_total:
             print(Fore.RED + f"⚠️ No tenés suficientes coins. Necesitás {costo_total}, pero tenés {usuario.coin_usuario}." + Style.RESET_ALL)
             return
 
-        # Actualizar coins e inventario
+        # Actualizar coins e inventario (solo inventario, no slots)
         usuario.coin_usuario -= costo_total
         inventario = usuario.gestor_inventario.inventario_usuario()
         inventario.agregar_item(item, cantidad)
@@ -78,8 +84,20 @@ class Tienda:
             print(Fore.YELLOW + "Tu inventario está vacío." + Style.RESET_ALL)
             return
 
+        # Construir lista ordenada de ítems (por nombre para consistencia)
+        inventario_lista = []
+        for id_item, datos_item in inventario.items.items():
+            item = self.obtener_item(int(id_item))
+            if item:
+                cantidad_disp = datos_item["cantidad"]
+                inventario_lista.append((id_item, item, cantidad_disp))
+
+        inventario_lista.sort(key=lambda x: x[1].nombre)
+
+        # Mostrar inventario enumerado
         print(Fore.YELLOW + "\n=== Inventario para vender ===" + Style.RESET_ALL)
-        inventario.mostrar(tienda=self, enumerado=True)
+        for idx, (_, item, cantidad_disp) in enumerate(inventario_lista, start=1):
+            print(f"{idx}. {item.nombre} - {cantidad_disp} unidades | {item.descripcion}")
 
         try:
             seleccion = int(input("\nSelecciona el número del ítem a vender | 0 cancelar: "))
@@ -87,16 +105,8 @@ class Tienda:
                 print(Fore.YELLOW + "Operación cancelada." + Style.RESET_ALL)
                 return
 
-            # Construir lista de ítems válidos
-            inventario_lista = []
-            for id_item, datos_item in inventario.items.items():
-                item = self.obtener_item(int(id_item))
-                if item:
-                    cantidad_disp = datos_item["cantidad"]
-                    inventario_lista.append((item, cantidad_disp))
-
             if 1 <= seleccion <= len(inventario_lista):
-                item, cantidad_disp = inventario_lista[seleccion - 1]
+                id_item, item, cantidad_disp = inventario_lista[seleccion - 1]
                 cantidad_vender = int(input(f"¿Cuántas unidades de '{item.nombre}' deseas vender?: "))
 
                 if cantidad_vender <= 0 or cantidad_vender > cantidad_disp:
@@ -108,6 +118,15 @@ class Tienda:
                 coins_ganados = int(item.precio * 0.5) * cantidad_vender
                 usuario.coin_usuario += coins_ganados
 
+                # 🔹 Si ya no queda ninguna unidad, limpiar slot si estaba equipado
+                datos_item = inventario.items.get(str(item.id_item))
+                if not datos_item:  # ítem ya no existe en inventario
+                    for slot, equipado in usuario.slots.items():
+                        if equipado == item.id_item:
+                            usuario.slots[slot] = None
+                            nombre_slot = NOMBRES_BONITOS.get(slot, slot)
+                            print(Fore.YELLOW + f"❎ '{item.nombre}' estaba equipado en {nombre_slot} y fue removido al venderlo." + Style.RESET_ALL)
+
                 # Persistir cambios
                 usuario.gestor_inventario.actualizar_inventario(inventario)
                 gestor_usuarios.actualizar_usuario(usuario)
@@ -118,3 +137,5 @@ class Tienda:
 
         except ValueError:
             print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
+
+

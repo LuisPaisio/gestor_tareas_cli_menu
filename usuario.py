@@ -86,6 +86,14 @@ class Usuario:
         print(f"Coin: {self.coin_usuario}")
         print(f"Descripción: {self.descripcion or 'Sin Descripción'}")
         print(f"Foto: {self.foto_perfil or 'Sin Foto'}")
+        
+        mejoras = self.atributos_totales()
+        print("Mejoras activas:")
+        for atributo, valor in mejoras.items():
+            if valor != 0:
+                print(f"  - {atributo}: +{valor}")
+        print("Ninguna")
+
 
     def editar_perfil(self):
         self.ver_perfil()
@@ -178,13 +186,32 @@ class Usuario:
         inventario.quitar_item(id_item, 1)
         print(Fore.GREEN + f"💥 Usaste {datos_item['nombre']} → {datos_item['descripcion']}" + Style.RESET_ALL)
 
-        if "vida" in datos_item['nombre'].lower():
-            self.sumar_vida(20)
-        elif "xp" in datos_item['nombre'].lower():
-            self.sumar_xp(10)
+        if "efecto" in datos_item:
+            for clave, valor in datos_item["efecto"].items():
+                if clave == "vida":
+                    inicial = self.vida_usuario
+                    self.sumar_vida(valor)
+                    print(Fore.CYAN + f"❤️ HP: {inicial} → {self.vida_usuario}" + Style.RESET_ALL)
+                elif clave == "xp":
+                    inicial = self.xp_usuario
+                    self.sumar_xp(valor)
+                    print(Fore.CYAN + f"⭐ XP: {inicial} → {self.xp_usuario}" + Style.RESET_ALL)
+                elif clave == "mana":
+                    inicial = getattr(self, "mana_usuario", 0)
+                    setattr(self, "mana_usuario", inicial + valor)
+                    print(Fore.CYAN + f"🔮 Maná: {inicial} → {self.mana_usuario}" + Style.RESET_ALL)
+                elif clave == "velocidad":
+                    inicial = getattr(self, "velocidad_temporal", 0)
+                    setattr(self, "velocidad_temporal", inicial + valor)
+                    print(Fore.CYAN + f"⚡ Velocidad: {inicial} → {self.velocidad_temporal}" + Style.RESET_ALL)
+                elif clave == "defensa_temporal":
+                    inicial = getattr(self, "defensa_temporal", 0)
+                    setattr(self, "defensa_temporal", inicial + valor)
+                    print(Fore.CYAN + f"🛡️ Defensa temporal: {inicial} → {self.defensa_temporal}" + Style.RESET_ALL)
 
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
+
 
     # -------------------------------
     # XP, Coins y Vida
@@ -222,3 +249,18 @@ class Usuario:
         # 🔹 Persistir cambios en usuarios.json
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
+
+    #--------------------------------
+    # Atributos_totales, se calculan las mejoras activas
+    #--------------------------------
+    
+    def atributos_totales(self):
+        atributos = {"fuerza": 0, "defensa": 0, "mana": 0, "velocidad": 0, "vida": 0, "xp": 0}
+        inventario = self.gestor_inventario.inventario_usuario()
+        for slot, id_item in self.slots.items():
+            if id_item:
+                datos_item = inventario.items.get(str(id_item))
+                if datos_item and "efecto" in datos_item:
+                    for clave, valor in datos_item["efecto"].items():
+                        atributos[clave] += valor
+        return atributos

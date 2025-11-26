@@ -1,5 +1,5 @@
 class Item:
-    def __init__(self, id_item: int, nombre: str, precio: int, descripcion: str, tipo: str, slot: str = None):
+    def __init__(self, id_item: int, nombre: str, precio: int, descripcion: str, tipo: str, slot: str = None, efecto: str = None):
         if precio < 0:
             raise ValueError("El precio no puede ser negativo")
         if tipo == "equipable" and not slot:
@@ -10,6 +10,7 @@ class Item:
         self.descripcion = descripcion
         self.tipo = tipo
         self.slot = slot  # puede ser None si es consumible
+        self.efecto = efecto
 
     def to_dict(self) -> dict:
         data = {
@@ -17,7 +18,8 @@ class Item:
             "nombre": self.nombre,
             "precio": self.precio,
             "descripcion": self.descripcion,
-            "tipo": self.tipo
+            "tipo": self.tipo,
+            "efecto": self.efecto
         }
         if self.slot:  # solo incluir slot si existe
             data["slot"] = self.slot
@@ -31,7 +33,8 @@ class Item:
             precio=data["precio"],
             descripcion=data["descripcion"],
             tipo=data["tipo"],
-            slot=data.get("slot")  # puede no estar en consumibles
+            slot=data.get("slot"),  # puede no estar en consumibles
+            efecto=data.get("efecto")
         )
 
     def __str__(self) -> str:
