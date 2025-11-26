@@ -21,6 +21,13 @@
         "tipo": "consumible"
     },
     {
+        "id_item": 4,
+        "nombre": "Poción de experiencia",
+        "descripcion": "Sumas 15 de experiencia",
+        "precio": 150,
+        "tipo": "consumible"
+    },
+    {
         "id_item": 5,
         "nombre": "Poción de resistencia",
         "descripcion": "Reduce el daño recibido por 10 turnos",
