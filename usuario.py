@@ -88,11 +88,13 @@ class Usuario:
         print(f"Foto: {self.foto_perfil or 'Sin Foto'}")
         
         mejoras = self.atributos_totales()
-        print("Mejoras activas:")
-        for atributo, valor in mejoras.items():
-            if valor != 0:
-                print(f"  - {atributo}: +{valor}")
-        print("Ninguna")
+        if mejoras:
+            print("Mejoras activas:")
+            for atributo, valor in mejoras.items():
+                if valor != 0:
+                    print(f"  - {atributo}: +{valor}")
+        else:
+            print("Mejoras activas: Ninguna")
 
 
     def editar_perfil(self):
@@ -255,12 +257,14 @@ class Usuario:
     #--------------------------------
     
     def atributos_totales(self):
-        atributos = {"fuerza": 0, "defensa": 0, "mana": 0, "velocidad": 0, "vida": 0, "xp": 0}
+        atributos = {}
         inventario = self.gestor_inventario.inventario_usuario()
         for slot, id_item in self.slots.items():
-            if id_item:
+            if id_item is not None:
                 datos_item = inventario.items.get(str(id_item))
                 if datos_item and "efecto" in datos_item:
                     for clave, valor in datos_item["efecto"].items():
-                        atributos[clave] += valor
+                        atributos[clave] = atributos.get(clave, 0) + valor
         return atributos
+
+

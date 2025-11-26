@@ -5,6 +5,15 @@ from colorama import Fore, Style
 
 ARCHIVO_ITEMS = os.path.join("json", "items.json")
 
+NOMBRES_BONITOS = {
+    "manoderecha": "Mano derecha",
+    "manoizquierda": "Mano izquierda",
+    "cabeza": "Cabeza",
+    "pecho": "Pecho",
+    "pies": "Pies",
+    "escudo": "Escudo"
+}
+
 class Tienda:
     def __init__(self):
         self.items = self.cargar_items()
@@ -128,7 +137,8 @@ class Tienda:
                 datos_item = inventario.items.get(str(item.id_item))
                 if not datos_item:  # ítem ya no existe en inventario
                     for slot, equipado in usuario.slots.items():
-                        if equipado == item.id_item:
+                        # Normalizar comparación: convertir ambos a str
+                        if str(equipado) == str(item.id_item):
                             usuario.slots[slot] = None
                             nombre_slot = NOMBRES_BONITOS.get(slot, slot)
                             print(Fore.YELLOW + f"❎ '{item.nombre}' estaba equipado en {nombre_slot} y fue removido al venderlo." + Style.RESET_ALL)
@@ -143,5 +153,4 @@ class Tienda:
 
         except ValueError:
             print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
-
 
