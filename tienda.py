@@ -55,20 +55,26 @@ class Tienda:
             print(Fore.RED + "⚠️ Item no encontrado en la tienda." + Style.RESET_ALL)
             return
 
+        inventario = usuario.gestor_inventario.inventario_usuario()
+
         # 🔹 Validar cantidad según tipo
         if getattr(item, "tipo", None) == "equipable":
+            # Si ya existe en inventario, no permitir otra compra
+            if str(item.id_item) in inventario.items:
+                print(Fore.YELLOW + f"⚠️ Ya tienes '{item.nombre}' en tu inventario. No puedes comprar más de uno." + Style.RESET_ALL)
+                return
+            # Forzar cantidad a 1
             if cantidad > 1:
                 print(Fore.YELLOW + f"⚠️ '{item.nombre}' es equipable, solo puedes comprar 1 unidad." + Style.RESET_ALL)
-            cantidad = 1  # forzar a 1
+            cantidad = 1
 
         costo_total = item.precio * cantidad
         if usuario.coin_usuario < costo_total:
             print(Fore.RED + f"⚠️ No tenés suficientes coins. Necesitás {costo_total}, pero tenés {usuario.coin_usuario}." + Style.RESET_ALL)
             return
 
-        # Actualizar coins e inventario (solo inventario, no slots)
+        # Actualizar coins e inventario
         usuario.coin_usuario -= costo_total
-        inventario = usuario.gestor_inventario.inventario_usuario()
         inventario.agregar_item(item, cantidad)
 
         # Persistir cambios
