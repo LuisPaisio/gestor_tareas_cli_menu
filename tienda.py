@@ -2,6 +2,7 @@ import json
 import os
 from item import Item
 from colorama import Fore, Style
+from datetime import date
 
 ARCHIVO_ITEMS = os.path.join("json", "items.json")
 
@@ -68,49 +69,43 @@ class Tienda:
 
         # Validar cantidad según tipo "equipable"
         if getattr(item, "tipo", None) == "equipable":
-            # Si ya existe en inventario, no permitir otra compra
             if str(item.id_item) in inventario.items:
                 print(Fore.YELLOW + f"⚠️ Ya tienes '{item.nombre}' en tu inventario. No puedes comprar más de uno." + Style.RESET_ALL)
                 return
-            # Forzar cantidad a 1
             if cantidad > 1:
                 print(Fore.YELLOW + f"⚠️ '{item.nombre}' es equipable, solo puedes comprar 1 unidad." + Style.RESET_ALL)
             cantidad = 1
 
         # Validar cantidad según tipo "consumible_vip"
         if getattr(item, "tipo", None) == "consumible_vip":
-            # Verifico si el usuario ya tiene ese rol
             if usuario.rol == "vip":
                 print(Fore.YELLOW + f"⚠️ Ya tienes '{item.nombre}'. En 30 días podés renovarla." + Style.RESET_ALL)
                 return
-            # Forzar cantidad a 1
             if cantidad > 1:
                 print(Fore.YELLOW + f"⚠️ Solo puedes comprar 1 unidad de '{item.nombre}'." + Style.RESET_ALL)
             cantidad = 1
-        
-        # Calculo costo total según cantidad
+
+        # Calculo costo total
         costo_total = item.precio * cantidad
         if usuario.coin_usuario < costo_total:
             print(Fore.RED + f"⚠️ No tenés suficientes coins. Necesitás {costo_total}, pero tenés {usuario.coin_usuario}." + Style.RESET_ALL)
             return
 
+        # Caso normal (no VIP)
         if getattr(item, "tipo", None) != "consumible_vip":
-            # Actualizar coins e inventario
             usuario.coin_usuario -= costo_total
             inventario.agregar_item(item, cantidad)
-            # Persistir cambios
             usuario.gestor_inventario.actualizar_inventario(inventario)
             gestor_usuarios.actualizar_usuario(usuario)
             print(Fore.GREEN + f"✅ Compraste {cantidad} '{item.nombre}'. Se agregó a tu inventario." + Style.RESET_ALL)
         else:
-            # Actualizar coins e inventario
+            # Caso VIP → delegamos al Usuario
             usuario.coin_usuario -= costo_total
-            # Aplico el efecto VIP directamente
-            if getattr(item, "efecto", None) and "rol" in item.efecto:
-                usuario.rol = item.efecto["rol"]
-                print(Fore.GREEN + f"🌟 ¡Felicitaciones! Ahora eres {usuario.rol.upper()} y tienes acceso a ventajas exclusivas." + Style.RESET_ALL)
-                usuario.gestor_inventario.actualizar_inventario(inventario)
-                gestor_usuarios.actualizar_usuario(usuario)
+            usuario.activar_vip()  # 🔹 método dentro de Usuario
+            usuario.fecha_compra_vip = str(date.today())
+            usuario.gestor_inventario.actualizar_inventario(inventario)
+            gestor_usuarios.actualizar_usuario(usuario)
+
 
         # # Persistir cambios
         # usuario.gestor_inventario.actualizar_inventario(inventario)

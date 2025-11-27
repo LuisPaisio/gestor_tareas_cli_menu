@@ -16,20 +16,36 @@ class Recompensa:
         Devuelve un dict con base, bonus y total en xp/coins.
         """
         if self.tipo == "xp":
-            bonus = int(usuario.fuerza * 0.5)
+            bonus_fuerza = int(usuario.fuerza * 0.5)
+            bonus_vip = 0
             if usuario.rol == "vip" and usuario.ventajas_vip:
-                bonus += int(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
-            total = self.valor + bonus
+                bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
+            bonus_total = bonus_fuerza + bonus_vip
+            total = self.valor + bonus_total
             usuario.xp_usuario += total
-            return {"base": self.valor, "bonus": bonus, "total": total}
+            return {
+                "base": self.valor,
+                "bonus": bonus_total,          # 🔹 compatibilidad
+                "bonus_fuerza": bonus_fuerza,
+                "bonus_vip": bonus_vip,
+                "total": total
+            }
 
         elif self.tipo == "coins":
-            bonus = int(usuario.velocidad * 0.3)
+            bonus_velocidad = int(usuario.velocidad * 0.3)
+            bonus_vip = 0
             if usuario.rol == "vip" and usuario.ventajas_vip:
-                bonus += int(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
-            total = self.valor + bonus
+                bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
+            bonus_total = bonus_velocidad + bonus_vip
+            total = self.valor + bonus_total
             usuario.coin_usuario += total
-            return {"base": self.valor, "bonus": bonus, "total": total}
+            return {
+                "base": self.valor,
+                "bonus": bonus_total,          # 🔹 compatibilidad
+                "bonus_velocidad": bonus_velocidad,
+                "bonus_vip": bonus_vip,
+                "total": total
+            }
 
         elif self.tipo == "vida":
             if self.valor >= 0:
@@ -39,7 +55,11 @@ class Recompensa:
                 daño_base = abs(self.valor)
                 daño_reducido = max(0, daño_base - usuario.defensa)
                 usuario.restar_vida(daño_reducido)
-                return {"base": -daño_base, "bonus": usuario.defensa, "total": -daño_reducido}
+                return {
+                    "base": -daño_base,
+                    "bonus": usuario.defensa,   # aquí sí tiene sentido mantener un único bonus
+                    "total": -daño_reducido
+                }
 
         elif self.tipo == "item":
             inventario = usuario.gestor_inventario.inventario_usuario()

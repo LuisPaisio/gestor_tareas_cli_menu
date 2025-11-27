@@ -1,6 +1,6 @@
 from gestor_inventario import GestorInventario
 from colorama import Fore, Style
-from datetime import date
+from datetime import date, timedelta
 
 # Diccionario global de nombres bonitos
 NOMBRES_BONITOS = {
@@ -22,7 +22,7 @@ class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=50,
                 nivel_usuario=1, contador_50=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -39,6 +39,7 @@ class Usuario:
         self.defensa = int(defensa or 0)
         self.velocidad = int(velocidad or 0)
         self.ultima_fecha_bonus = ultima_fecha_bonus or None
+        self.fecha_compra_vip = fecha_compra_vip or None
 
         # Inicializar slots normalizados si no se pasan
         self.slots = slots if slots is not None else {
@@ -85,7 +86,8 @@ class Usuario:
             "fuerza": self.fuerza,
             "defensa": self.defensa,
             "velocidad": self.velocidad,
-            "ultima_fecha_bonus": self.ultima_fecha_bonus
+            "ultima_fecha_bonus": self.ultima_fecha_bonus,
+            "fecha_compra_vip": self.fecha_compra_vip
         }
 
     def safe_value(value, default=0):
@@ -114,7 +116,8 @@ class Usuario:
             fuerza=int(data.get("fuerza", 0)),
             defensa=int(data.get("defensa", 0)),
             velocidad=int(data.get("velocidad", 0)),
-            ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None
+            ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None,
+            fecha_compra_vip=data.get("fecha_compra_vip")
         )
 
     # -------------------------------
@@ -353,6 +356,76 @@ class Usuario:
                 print(Fore.YELLOW + f"💰 +{bonus_diario} Coins (Bonus Diario)" + Style.RESET_ALL)
                 print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
                 print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/50" + Style.RESET_ALL)
+
+    #activo rango VIP
+    def activar_vip(self):
+        # Si ya es VIP y tiene ventajas, no hacemos nada
+        if self.rol == "vip" and self.ventajas_vip:
+            print(Fore.YELLOW + "⚠️ Ya eres VIP, no es necesario reactivar." + Style.RESET_ALL)
+            return
+
+        self.rol = "vip"
+
+        # Base de ventajas VIP
+        base_vip = {
+            "bonus_xp": 0.2,
+            "bonus_coins": 0.2,
+            "buff_defensa": 5,
+            "buff_velocidad": 5,
+            "buff_fuerza": 5,
+            "bonus_diario": 15
+        }
+
+        # Si no tiene ventajas_vip, inicializamos con base
+        if not self.ventajas_vip:
+            self.ventajas_vip = base_vip
+        else:
+            # Normalizamos: completamos cualquier campo faltante
+            for k, v in base_vip.items():
+                self.ventajas_vip.setdefault(k, v)
+
+        # Ajustar atributos base (evitamos duplicar buffs)
+        self.fuerza = max(self.fuerza, self.ventajas_vip["buff_fuerza"])
+        self.defensa = max(self.defensa, self.ventajas_vip["buff_defensa"])
+        self.velocidad = max(self.velocidad, self.ventajas_vip["buff_velocidad"])
+
+        # Persistir cambios
+        if self.gestor_usuarios:
+            self.gestor_usuarios.actualizar_usuario(self)
+
+        print(Fore.GREEN + "🌟 ¡Felicitaciones! Ahora eres VIP y tienes acceso a ventajas exclusivas." + Style.RESET_ALL)
+        
+    
+    #Desactivo rango VIP
+
+    def desactivar_vip(self):
+        if self.rol != "vip":
+            print(Fore.YELLOW + "⚠️ El usuario no es VIP, no hay nada que desactivar." + Style.RESET_ALL)
+            return
+
+        self.rol = "user"
+        self.ventajas_vip = None
+        self.fecha_compra_vip = None
+
+        # Reiniciar atributos a valores base
+        self.fuerza = 0
+        self.defensa = 0
+        self.velocidad = 0
+
+        if self.gestor_usuarios:
+            self.gestor_usuarios.actualizar_usuario(self)
+
+        print(Fore.CYAN + "🔄 Tu membresía VIP ha expirado. Puedes renovarla desde la Tienda." + Style.RESET_ALL)
+        
+    #Verificar expiración VIP
+    
+    def verificar_vip(self):
+        if self.rol == "vip" and self.fecha_compra_vip:
+            fecha_compra = date.fromisoformat(self.fecha_compra_vip)
+            if date.today() >= fecha_compra + timedelta(days=30):
+                self.desactivar_vip()
+
+
 
 
 
