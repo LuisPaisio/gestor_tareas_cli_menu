@@ -152,7 +152,7 @@ class Usuario:
                                 extra = f" (+{buff_valor} VIP)"
                     if valor_base != 0 or extra:
                         explicacion = EXPLICACIONES_ATRIBUTOS.get(atributo, "")
-                        print(f"  - {atributo}: +{valor_base}{extra} | {explicacion}")
+                        print(f"  - {atributo}: +{valor_base}{extra} | " + Fore.CYAN + f"{explicacion}" + Style.RESET_ALL)
         else:
             print("Mejoras activas: Ninguna")
 
