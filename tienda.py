@@ -52,7 +52,7 @@ class Tienda:
         else:
             print(Fore.YELLOW + "\n=== Catálogo de la Tienda ===" + Style.RESET_ALL)
             for item in self.items:
-                print(f"{item.id_item} - {item.nombre} ({item.precio} coins) | {item.descripcion}")
+                print(Fore.LIGHTGREEN_EX + f"{item.id_item} - {item.nombre} ({item.precio} coins) | " + Style.RESET_ALL + Fore.CYAN + f"{item.descripcion}" + Style.RESET_ALL)
 
     def obtener_item(self, id_item):
         """Devuelve un ítem por su ID."""

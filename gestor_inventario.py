@@ -74,6 +74,6 @@ class GestorInventario:
         if len(nuevo_datos) != len(datos):
             with open(ARCHIVO_INVENTARIO, "w", encoding="utf-8") as f:
                 json.dump(nuevo_datos, f, indent=4, ensure_ascii=False)
-            print(Fore.YELLOW + f"🧹 Inventario del usuario {id_usuario} eliminado correctamente." + Style.RESET_ALL)
-        else:
-            print(Fore.YELLOW + f"⚠️ El usuario {id_usuario} no tenía inventario registrado." + Style.RESET_ALL)
+            #print(Fore.YELLOW + f"🧹 Inventario del usuario {id_usuario} eliminado correctamente." + Style.RESET_ALL)
+        #else:
+            #print(Fore.YELLOW + f"⚠️ El usuario {id_usuario} no tenía inventario registrado." + Style.RESET_ALL)
