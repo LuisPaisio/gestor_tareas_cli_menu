@@ -81,6 +81,8 @@ class Tarea:
 
             recompensas.append(Recompensa(None, f"XP diaria {self.titulo}", "xp", int(constantes_tareas.xp_diaria() * mult)))
             recompensas.append(Recompensa(None, f"Coins diaria {self.titulo}", "coins", int(constantes_tareas.coin_diaria() * mult)))
+            # Bonus explícito por velocidad en diarias (se aplicará en Recompensa)
+            recompensas.append(Recompensa(None, f"Bonus velocidad diaria {self.titulo}", "coins", 0))
 
         # --- Pendiente ---
         elif self.tipo == 3:

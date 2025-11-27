@@ -11,11 +11,17 @@ NOMBRES_BONITOS = {
     "escudo": "Escudo"
 }
 
+EXPLICACIONES_ATRIBUTOS = {
+    "fuerza": "Aumenta la XP obtenida al completar tareas.",
+    "defensa": "Reduce el daño recibido al marcar tareas como incompletas.",
+    "velocidad": "Incrementa las Coins obtenidas al completar tareas."
+}
+
 class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=50,
                 nivel_usuario=1, contador_50=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -27,6 +33,10 @@ class Usuario:
         self.descripcion = descripcion
         self.nombre_publico = nombre_publico
         self.foto_perfil = foto_perfil
+        self.rol = rol
+        self.fuerza = int(fuerza or 0)
+        self.defensa = int(defensa or 0)
+        self.velocidad = int(velocidad or 0)
 
         # Inicializar slots normalizados si no se pasan
         self.slots = slots if slots is not None else {
@@ -38,6 +48,18 @@ class Usuario:
             "escudo": None
         }
 
+        # Inicializar ventajas VIP solo si el rol es vip
+        if rol == "vip":
+            self.ventajas_vip = ventajas_vip if ventajas_vip is not None else {
+                "bonus_xp": 0.2,
+                "bonus_coins": 0.2,
+                "buff_defensa": 5,
+                "buff_velocidad": 5,
+                "buff_fuerza": 5
+            }
+        else:
+            self.ventajas_vip = None
+        
         self.gestor_inventario = GestorInventario(self)
         self.gestor_usuarios = None  # se asigna en register/login
 
@@ -54,8 +76,19 @@ class Usuario:
             "descripcion": self.descripcion,
             "nombre_publico": self.nombre_publico,
             "foto_perfil": self.foto_perfil,
-            "slots": self.slots
+            "slots": self.slots,
+            "rol": self.rol,
+            "ventajas_vip": self.ventajas_vip,
+            "fuerza": self.fuerza,
+            "defensa": self.defensa,
+            "velocidad": self.velocidad
         }
+
+    def safe_value(value, default=0):
+        # Si es lista anidada, tomar el primer valor válido
+        while isinstance(value, list) and value:
+            value = value[0]
+        return value if value is not None else default
 
     @classmethod
     def from_dict(cls, data):
@@ -71,7 +104,12 @@ class Usuario:
             descripcion=data.get("descripcion"),
             nombre_publico=data.get("nombre_publico"),
             foto_perfil=data.get("foto_perfil"),
-            slots=data.get("slots")
+            slots=data.get("slots"),
+            rol=data.get("rol", "user"), # Default User si no está en JSON
+            ventajas_vip=data.get("ventajas_vip"),
+            fuerza=int(data.get("fuerza", 0)),
+            defensa=int(data.get("defensa", 0)),
+            velocidad=int(data.get("velocidad", 0))
         )
 
     # -------------------------------
@@ -88,13 +126,37 @@ class Usuario:
         print(f"Foto: {self.foto_perfil or 'Sin Foto'}")
         
         mejoras = self.atributos_totales()
-        if mejoras:
+
+        if mejoras or (self.rol == "vip" and self.ventajas_vip):
             print("Mejoras activas:")
-            for atributo, valor in mejoras.items():
-                if valor != 0:
-                    print(f"  - {atributo}: +{valor}")
+            atributos_mostrar = set(mejoras.keys())
+
+            if self.rol == "vip" and self.ventajas_vip:
+                for buff_key in self.ventajas_vip:
+                    if buff_key.startswith("buff_"):
+                        atributo = buff_key.replace("buff_", "")
+                        atributos_mostrar.add(atributo)
+
+            orden = ["fuerza", "defensa", "velocidad"]
+            for atributo in orden:
+                if atributo in atributos_mostrar:
+                    valor_base = mejoras.get(atributo, 0)
+                    extra = ""
+                    if self.rol == "vip" and self.ventajas_vip:
+                        buff_key = f"buff_{atributo}"
+                        if buff_key in self.ventajas_vip:
+                            buff_valor = self.ventajas_vip[buff_key]
+                            if valor_base > 0:
+                                extra = f" (+{buff_valor} VIP)"
+                            else:
+                                extra = f" (+{buff_valor} VIP)"
+                    if valor_base != 0 or extra:
+                        explicacion = EXPLICACIONES_ATRIBUTOS.get(atributo, "")
+                        print(f"  - {atributo}: +{valor_base}{extra} | {explicacion}")
         else:
             print("Mejoras activas: Ninguna")
+
+
 
 
     def editar_perfil(self):

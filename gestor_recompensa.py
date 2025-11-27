@@ -30,37 +30,51 @@ class GestorRecompensas:
             json.dump([r.__dict__ for r in self.historial], archivo, indent=4, ensure_ascii=False)
 
     def aplicar_recompensas(self, usuario, recompensas: list[Recompensa]):
-        """
-        Aplica una lista de recompensas al usuario.
-        Cada recompensa se ejecuta y se guarda en el historial.
-        """
         if not recompensas:
             return
 
         print(Fore.LIGHTYELLOW_EX + "\n🎁 ¡Recompensas obtenidas!" + Style.RESET_ALL)
 
         for recompensa in recompensas:
-            recompensa.aplicar_usuario(usuario)
+            resultado = recompensa.aplicar_usuario(usuario)  # devuelve dict con base, bonus, total
             self.historial.append(recompensa)
 
-            # Feedback bonito según tipo
             if recompensa.tipo == "xp":
-                print(Fore.GREEN + f"✨ +{recompensa.valor} XP" + Style.RESET_ALL)
-            elif recompensa.tipo == "coins":
-                print(Fore.YELLOW + f"💰 +{recompensa.valor} Coins" + Style.RESET_ALL)
-            elif recompensa.tipo == "vida":
-                if recompensa.valor < 0:
-                    print(Fore.RED + f"❤️ -{abs(recompensa.valor)} Vida" + Style.RESET_ALL)
+                if resultado["total"] >= 0:
+                    if resultado["base"] > 0:
+                        print(Fore.GREEN + f"✨ +{resultado['base']} XP" + Style.RESET_ALL)
+                    if resultado["bonus"] > 0:
+                        print(Fore.GREEN + f"✨ +{resultado['bonus']} XP (VIP/bonus)" + Style.RESET_ALL)
                 else:
-                    print(Fore.GREEN + f"❤️ +{recompensa.valor} Vida" + Style.RESET_ALL)
+                    # penalización
+                    print(Fore.RED + f"✨ {resultado['total']} XP" + Style.RESET_ALL)
+
+            elif recompensa.tipo == "coins":
+                if resultado["total"] >= 0:
+                    if resultado["base"] > 0:
+                        print(Fore.YELLOW + f"💰 +{resultado['base']} Coins" + Style.RESET_ALL)
+                    if resultado["bonus"] > 0:
+                        print(Fore.YELLOW + f"💰 +{resultado['bonus']} Coins (VIP/bonus)" + Style.RESET_ALL)
+                else:
+                    # penalización
+                    print(Fore.RED + f"💰 {resultado['total']} Coins" + Style.RESET_ALL)
+
+            elif recompensa.tipo == "vida":
+                if resultado["total"] < 0:
+                    print(Fore.RED + f"❤️ {resultado['total']} Vida" + Style.RESET_ALL)
+                else:
+                    print(Fore.GREEN + f"❤️ +{resultado['total']} Vida" + Style.RESET_ALL)
+
             elif recompensa.tipo == "item":
                 print(Fore.CYAN + f"🪄 Obtuviste el ítem: {recompensa.nombre}" + Style.RESET_ALL)
-            else:
-                print(Fore.MAGENTA + f"🔹 {recompensa.nombre} ({recompensa.tipo}: {recompensa.valor})" + Style.RESET_ALL)
 
-        # Guardar historial
+            else:
+                print(Fore.MAGENTA + f"🔹 {recompensa.nombre} ({recompensa.tipo}: {resultado['total']})" + Style.RESET_ALL)
+
         self.guardar_historial()
 
-        # Resumen del estado actual del usuario
         print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
         print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/50" + Style.RESET_ALL)
+
+
+

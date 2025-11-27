@@ -24,7 +24,7 @@
         "efecto": {"mana": 30}
     },
     {
-        "id_item": 51,
+        "id_item": 4,
         "nombre": "Capa del viajero",
         "descripcion": "Una capa ligera que protege del clima y otorga agilidad en los viajes",
         "precio": 350,
@@ -441,5 +441,13 @@
         "precio": 400,
         "tipo": "consumible",
         "efecto": {"xp": 50}
+    },
+    {
+        "id_item": 51,
+        "nombre": "Membresía VIP",
+        "descripcion": "Otorga acceso exclusivo a recompensas y ventajas especiales durante 30 días.",
+        "precio": 5000,
+        "tipo": "consumible_vip",
+        "efecto": {"rol": "vip"}
     }
 ]
