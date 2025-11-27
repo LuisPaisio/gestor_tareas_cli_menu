@@ -1,5 +1,6 @@
 from gestor_inventario import GestorInventario
 from colorama import Fore, Style
+from datetime import date
 
 # Diccionario global de nombres bonitos
 NOMBRES_BONITOS = {
@@ -21,7 +22,7 @@ class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=50,
                 nivel_usuario=1, contador_50=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -37,6 +38,7 @@ class Usuario:
         self.fuerza = int(fuerza or 0)
         self.defensa = int(defensa or 0)
         self.velocidad = int(velocidad or 0)
+        self.ultima_fecha_bonus = ultima_fecha_bonus or None
 
         # Inicializar slots normalizados si no se pasan
         self.slots = slots if slots is not None else {
@@ -55,7 +57,8 @@ class Usuario:
                 "bonus_coins": 0.2,
                 "buff_defensa": 5,
                 "buff_velocidad": 5,
-                "buff_fuerza": 5
+                "buff_fuerza": 5,
+                "bonus_diario": 15
             }
         else:
             self.ventajas_vip = None
@@ -81,7 +84,8 @@ class Usuario:
             "ventajas_vip": self.ventajas_vip,
             "fuerza": self.fuerza,
             "defensa": self.defensa,
-            "velocidad": self.velocidad
+            "velocidad": self.velocidad,
+            "ultima_fecha_bonus": self.ultima_fecha_bonus
         }
 
     def safe_value(value, default=0):
@@ -109,7 +113,8 @@ class Usuario:
             ventajas_vip=data.get("ventajas_vip"),
             fuerza=int(data.get("fuerza", 0)),
             defensa=int(data.get("defensa", 0)),
-            velocidad=int(data.get("velocidad", 0))
+            velocidad=int(data.get("velocidad", 0)),
+            ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None
         )
 
     # -------------------------------
@@ -328,5 +333,29 @@ class Usuario:
                     for clave, valor in datos_item["efecto"].items():
                         atributos[clave] = atributos.get(clave, 0) + valor
         return atributos
+
+
+    #Bonus diario para VIPS
+    def aplicar_bonus_diario(self):
+        if self.rol == "vip" and self.ventajas_vip:
+            bonus_diario = self.ventajas_vip.get("bonus_diario", 0)
+            hoy = str(date.today())  # siempre string
+
+            if bonus_diario > 0 and self.ultima_fecha_bonus != hoy:
+                self.coin_usuario += bonus_diario
+                self.ultima_fecha_bonus = hoy
+
+                # Persistir el cambio en JSON
+                if self.gestor_usuarios:
+                    self.gestor_usuarios.actualizar_usuario(self)
+
+                print(Fore.LIGHTYELLOW_EX + "\n🎁 ¡Recompensa diaria VIP!" + Style.RESET_ALL)
+                print(Fore.YELLOW + f"💰 +{bonus_diario} Coins (Bonus Diario)" + Style.RESET_ALL)
+                print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
+                print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/50" + Style.RESET_ALL)
+
+
+
+
 
 
