@@ -25,7 +25,7 @@ class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=vida_maxima(),
                 nivel_usuario=1, contador_100=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, tags=None, mana_usuario=0):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, contador_vip = 0, tags=None, mana_usuario=0):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -43,6 +43,7 @@ class Usuario:
         self.velocidad = int(velocidad or 0)
         self.ultima_fecha_bonus = ultima_fecha_bonus or None
         self.fecha_compra_vip = fecha_compra_vip or None
+        self.contador_vip = contador_vip
         self.tags = tags if tags is not None else []
         self.mana_usuario = mana_usuario
 
@@ -93,6 +94,7 @@ class Usuario:
             "velocidad": self.velocidad,
             "ultima_fecha_bonus": self.ultima_fecha_bonus,
             "fecha_compra_vip": self.fecha_compra_vip,
+            "contador_vip": self.contador_vip,
             "tags": self.tags,
             "mana_usuario": self.mana_usuario
         }
@@ -126,6 +128,7 @@ class Usuario:
             velocidad=int(data.get("velocidad", 0)),
             ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None,
             fecha_compra_vip=data.get("fecha_compra_vip"),
+            contador_vip=data.get("contador_vip", 0),
             tags=data.get("tags", []),
             mana_usuario=data.get("mana_usuario", 0)
         )
@@ -380,12 +383,7 @@ class Usuario:
 
     #activo rango VIP
     def activar_vip(self):
-        # Si ya es VIP y tiene ventajas, no hacemos nada
-        if self.rol == "vip" and self.ventajas_vip:
-            print(Fore.YELLOW + "⚠️ Ya eres VIP, no es necesario reactivar." + Style.RESET_ALL)
-            return
-
-        self.rol = "vip"
+        hoy = date.today()
 
         # Base de ventajas VIP
         base_vip = {
@@ -397,26 +395,48 @@ class Usuario:
             "bonus_diario": 15
         }
 
-        # Si no tiene ventajas_vip, inicializamos con base
+        # Si ya era VIP, verificamos continuidad
+        if self.rol == "vip" and self.fecha_compra_vip:
+            fecha_compra = date.fromisoformat(self.fecha_compra_vip)
+            fecha_expira = fecha_compra + timedelta(days=30)
+            dias_restantes = (fecha_expira - hoy).days
+
+            if dias_restantes > 5:
+                print(Fore.YELLOW + f"⚠️ Todavía faltan {dias_restantes} días para que expire tu VIP. Solo puedes renovarlo cuando falten 5 días o menos." + Style.RESET_ALL)
+                return
+
+            # Renovación dentro de la ventana → cadena continua
+            self.contador_vip = getattr(self, "contador_vip", 0) + 1
+        else:
+            # Primera activación o cadena cortada
+            self.contador_vip = 1
+
+        # Activar rol y ventajas
+        self.rol = "vip"
         if not self.ventajas_vip:
             self.ventajas_vip = base_vip
         else:
-            # Normalizamos: completamos cualquier campo faltante
             for k, v in base_vip.items():
                 self.ventajas_vip.setdefault(k, v)
 
-        # Ajustar atributos base (evitamos duplicar buffs)
+        # Ajustar atributos base
         self.fuerza = max(self.fuerza, self.ventajas_vip["buff_fuerza"])
         self.defensa = max(self.defensa, self.ventajas_vip["buff_defensa"])
         self.velocidad = max(self.velocidad, self.ventajas_vip["buff_velocidad"])
+
+        # Actualizar fechas
+        self.fecha_compra_vip = hoy.isoformat()
+        self.fecha_expiracion_vip = (hoy + timedelta(days=30)).isoformat()
+
+        # --- Recompensas VIP según mes consecutivo ---
+        self.dar_recompensa_vip()
 
         # Persistir cambios
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
 
-        print(Fore.GREEN + "🌟 ¡Felicitaciones! Ahora eres VIP y tienes acceso a ventajas exclusivas." + Style.RESET_ALL)
-        
-    
+        print(Fore.GREEN + f"🌟 ¡Felicitaciones! Ahora eres VIP (Mes {self.contador_vip} consecutivo)." + Style.RESET_ALL)
+
     #Desactivo rango VIP
 
     def desactivar_vip(self):
@@ -424,9 +444,11 @@ class Usuario:
             print(Fore.YELLOW + "⚠️ El usuario no es VIP, no hay nada que desactivar." + Style.RESET_ALL)
             return
 
+        # Resetear rol y ventajas
         self.rol = "user"
         self.ventajas_vip = None
         self.fecha_compra_vip = None
+        self.fecha_expiracion_vip = None   # 🔹 limpiar también
 
         # Reiniciar atributos a valores base
         self.fuerza = 0
@@ -437,15 +459,12 @@ class Usuario:
             self.gestor_usuarios.actualizar_usuario(self)
 
         print(Fore.CYAN + "🔄 Tu membresía VIP ha expirado. Puedes renovarla desde la Tienda." + Style.RESET_ALL)
-        
-    #Verificar expiración VIP
-    
-    def verificar_vip(self):
-        if self.rol == "vip" and self.fecha_compra_vip:
-            fecha_compra = date.fromisoformat(self.fecha_compra_vip)
-            if date.today() >= fecha_compra + timedelta(days=30):
-                self.desactivar_vip()
 
+    def verificar_vip(self):
+        if self.rol == "vip" and self.fecha_expiracion_vip:
+            fecha_expira = date.fromisoformat(self.fecha_expiracion_vip)
+            if date.today() >= fecha_expira:
+                self.desactivar_vip()
 
     #---------------------------------
     # Sistema de niveles - progresión
@@ -493,8 +512,11 @@ class Usuario:
                 opcion = input("🔄 ¿Deseas reiniciar tu nivel a 1 y obtener un tag especial? (s/n): ")
                 if opcion.lower() == "s":
                     self.reiniciar_nivel_100()
+                    # Mostrar nombre con tags después del reinicio
+                    print(f"✨ Nuevo estado: {self.nombre_con_tags()}")
                 else:
                     print("ℹ️ Puedes reiniciar tu nivel cuando lo desees desde tu perfil en el menú principal.")
+
 
             xp_req = self.xp_requerida()
 
@@ -541,8 +563,8 @@ class Usuario:
 
                 # Activar rol VIP y fecha de expiración
                 self.rol = "vip"
-                self.fecha_compra_vip = date.today()
-                self.fecha_expiracion_vip = date.today() + timedelta(days=30)
+                self.fecha_compra_vip = date.today().isoformat()
+                self.fecha_expiracion_vip = (date.today() + timedelta(days=30)).isoformat()
 
                 print("🏆 ¡Has alcanzado el nivel 100 por tercera vez!")
                 print("🎁 Has recibido la Membresía VIP equipada automáticamente.")
@@ -573,5 +595,37 @@ class Usuario:
         tags = self.obtener_tag()
         nombre = self.nombre_publico or self.usuario
         return Fore.YELLOW + f"{tags}" + Style.RESET_ALL + f"{nombre}" if tags else nombre
+
+
+    # Recompensa VIP por meses de membresía.
+    def dar_recompensa_vip(self):
+        catalogo = self.gestor_inventario.catalogo_items()
+        inventario = self.gestor_inventario.inventario_usuario()
+        posibles_items = [i for i in catalogo if i["id_item"] != 51]  # excluir VIP
+
+        # Seleccionar un item random (≠ VIP)
+        item_random = random.choice(posibles_items)
+        inventario.agregar_item(Item.from_dict(item_random))
+        self.gestor_inventario.actualizar_inventario(inventario)
+
+        if self.contador_vip == 1:
+            print(Fore.MAGENTA + f"🎁 Recompensa VIP mes 1: {item_random['nombre']}" + Style.RESET_ALL)
+
+        elif self.contador_vip == 2:
+            print(Fore.MAGENTA + f"🎁 Recompensa VIP mes 2: {item_random['nombre']}" + Style.RESET_ALL)
+
+        elif self.contador_vip == 3:
+            # Extender VIP 30 días más (protegido)
+            if self.fecha_expiracion_vip:
+                fecha_expira = date.fromisoformat(self.fecha_expiracion_vip)
+            else:
+                fecha_expira = date.today()
+            nueva_expira = fecha_expira + timedelta(days=30)
+            self.fecha_expiracion_vip = nueva_expira.isoformat()
+
+            print(Fore.MAGENTA + f"🎁 Recompensa VIP mes 3: {item_random['nombre']} + 30 días extra de VIP" + Style.RESET_ALL)
+
+        elif self.contador_vip % 3 == 0:
+            print(Fore.MAGENTA + f"🎁 Recompensa VIP mes {self.contador_vip}: {item_random['nombre']}" + Style.RESET_ALL)
 
 

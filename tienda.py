@@ -2,7 +2,7 @@ import json
 import os
 from item import Item
 from colorama import Fore, Style
-from datetime import date
+from datetime import date, timedelta
 
 ARCHIVO_ITEMS = os.path.join("json", "items.json")
 
@@ -52,14 +52,15 @@ class Tienda:
         else:
             print(Fore.YELLOW + "\n=== Catálogo de la Tienda ===" + Style.RESET_ALL)
             for item in self.items:
-                print(Fore.LIGHTGREEN_EX + f"{item.id_item} - {item.nombre} ({item.precio} coins) | " + Style.RESET_ALL + Fore.CYAN + f"{item.descripcion}" + Style.RESET_ALL)
+                print(Fore.LIGHTGREEN_EX + f"{item.id_item} - {item.nombre} ({item.precio} coins) | " 
+                    + Style.RESET_ALL + Fore.CYAN + f"{item.descripcion}" + Style.RESET_ALL)
 
     def obtener_item(self, id_item):
         """Devuelve un ítem por su ID."""
         return next((i for i in self.items if i.id_item == id_item), None)
 
+
     def comprar_item(self, usuario, gestor_usuarios, id_item, cantidad=1):
-        """Permite comprar un ítem de la tienda."""
         item = self.obtener_item(id_item)
         if not item:
             print(Fore.RED + "⚠️ Item no encontrado en la tienda." + Style.RESET_ALL)
@@ -78,9 +79,16 @@ class Tienda:
 
         # Validar cantidad según tipo "consumible_vip"
         if getattr(item, "tipo", None) == "consumible_vip":
-            if usuario.rol == "vip":
-                print(Fore.YELLOW + f"⚠️ Ya tienes '{item.nombre}'. En 30 días podés renovarla." + Style.RESET_ALL)
-                return
+            if usuario.rol == "vip" and usuario.fecha_compra_vip:
+                fecha_compra = date.fromisoformat(usuario.fecha_compra_vip)
+                fecha_expira = fecha_compra + timedelta(days=30)
+                dias_restantes = (fecha_expira - date.today()).days
+
+                if dias_restantes > 5:
+                    print(Fore.YELLOW + f"⚠️ Todavía faltan {dias_restantes} días para que expire tu VIP. "
+                        f"Solo puedes renovarlo cuando falten 5 días o menos." + Style.RESET_ALL)
+                    return
+
             if cantidad > 1:
                 print(Fore.YELLOW + f"⚠️ Solo puedes comprar 1 unidad de '{item.nombre}'." + Style.RESET_ALL)
             cantidad = 1
@@ -101,17 +109,11 @@ class Tienda:
         else:
             # Caso VIP → delegamos al Usuario
             usuario.coin_usuario -= costo_total
-            usuario.activar_vip()  # 🔹 método dentro de Usuario
-            usuario.fecha_compra_vip = str(date.today())
+            usuario.activar_vip()  # maneja contador_vip, fechas y recompensas
             usuario.gestor_inventario.actualizar_inventario(inventario)
             gestor_usuarios.actualizar_usuario(usuario)
+            print(Fore.GREEN + f"🌟 Renovaste tu membresía VIP (Mes {usuario.contador_vip} consecutivo). ¡Sigue la cadena para más recompensas!" + Style.RESET_ALL)
 
-
-        # # Persistir cambios
-        # usuario.gestor_inventario.actualizar_inventario(inventario)
-        # gestor_usuarios.actualizar_usuario(usuario)
-
-        # print(Fore.GREEN + f"✅ Compraste {cantidad} '{item.nombre}'. Se agregó a tu inventario." + Style.RESET_ALL)
 
     def vender_item(self, usuario, gestor_usuarios):
         """Permite vender ítems del inventario a la tienda."""
@@ -161,7 +163,6 @@ class Tienda:
                 datos_item = inventario.items.get(str(item.id_item))
                 if not datos_item:  # ítem ya no existe en inventario
                     for slot, equipado in usuario.slots.items():
-                        # Normalizar comparación: convertir ambos a str
                         if str(equipado) == str(item.id_item):
                             usuario.slots[slot] = None
                             nombre_slot = NOMBRES_BONITOS.get(slot, slot)
@@ -177,4 +178,5 @@ class Tienda:
 
         except ValueError:
             print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
+
 
