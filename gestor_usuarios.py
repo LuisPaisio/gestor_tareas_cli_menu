@@ -4,8 +4,8 @@ from colorama import Fore, Style
 from usuario import Usuario
 
 
-ARCHIVO_USUARIOS = "json\\usuarios.json"
-ARCHIVO_TAREAS = "json\\tareas.json"
+ARCHIVO_USUARIOS = os.path.join("json", "usuarios.json")
+ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
 
 class GestorUsuarios:
     def __init__(self):

@@ -2,9 +2,9 @@ from colorama import Fore, Style
 
 class Mascota:
     def __init__(self, id_mascota, nombre, id_usuario,
-                 nivel=1, xp=0, estado="huevo",
-                 especial=False, descripcion="",
-                 progresion=None, xp_por_comida=10):
+                nivel=1, xp=0, estado="huevo",
+                especial=False, descripcion="",
+                progresion=None, xp_por_comida=10):
         self.id_mascota = id_mascota
         self.nombre = nombre
         self.descripcion = descripcion   # viene del catálogo global
