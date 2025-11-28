@@ -2,8 +2,10 @@ import os
 import json
 from recompensa import Recompensa
 from colorama import Fore, Style
+from utils_rutas import ruta_json
 
-ARCHIVO_RECOMPENSAS = os.path.join("json", "recompensas.json")
+#ARCHIVO_RECOMPENSAS = os.path.join("json", "recompensas.json")
+ARCHIVO_RECOMPENSAS = ruta_json("recompensas.json")
 
 class GestorRecompensas:
     def __init__(self):

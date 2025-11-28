@@ -2,9 +2,13 @@ import os
 import json
 from mascotas import Mascota
 from colorama import Fore, Style
+from utils_rutas import ruta_json
 
-ARCHIVO_CATALOGO = os.path.join("json", "mascotas.json")              # catálogo global
-ARCHIVO_INVENTARIOS = os.path.join("json", "inventarios_mascotas.json")  # inventarios por usuario
+# ARCHIVO_CATALOGO = os.path.join("json", "mascotas.json")              # catálogo global
+# ARCHIVO_INVENTARIOS = os.path.join("json", "inventarios_mascotas.json")  # inventarios por usuario
+
+ARCHIVO_CATALOGO = ruta_json("mascotas.json")              # catálogo global
+ARCHIVO_INVENTARIOS = ruta_json("inventarios_mascotas.json")  # inventarios por usuario
 
 class GestorMascotas:
     def __init__(self, id_usuario, gestor_inventario):

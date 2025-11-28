@@ -3,8 +3,11 @@ import os
 from item import Item
 from colorama import Fore, Style
 from datetime import date, timedelta
+from utils_rutas import ruta_json
 
-ARCHIVO_ITEMS = os.path.join("json", "items.json")
+# ARCHIVO_ITEMS = os.path.join("json", "items.json")
+ARCHIVO_ITEMS = ruta_json("items.json")
+
 
 NOMBRES_BONITOS = {
     "manoderecha": "Mano derecha",

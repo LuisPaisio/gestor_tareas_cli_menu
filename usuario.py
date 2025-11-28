@@ -214,7 +214,7 @@ class Usuario:
     # -------------------------------
     def ver_inventario(self, tienda=None, enumerado=False, modo="todos"):
         inventario = self.gestor_inventario.inventario_usuario()
-        print(f"\nInventario de {self.nombre_publico or self.usuario}:")
+        print(Fore.YELLOW + f"\nInventario de " + Style.RESET_ALL + f"{self.nombre_con_tags()}"+ Fore.YELLOW + ":" + Style.RESET_ALL)
 
         # Filtrar según el modo
         if modo == "equipar":

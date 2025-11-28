@@ -9,8 +9,10 @@ from constantes_tareas import (
 )
 from tareas import Tarea
 from gestor_recompensa import GestorRecompensas   # motor de recompensas
+from utils_rutas import ruta_json
 
-ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
+# ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
+ARCHIVO_TAREAS = ruta_json("tareas.json")
 
 class GestorTareas:
     def __init__(self, usuario=None, gestor_usuarios=None):

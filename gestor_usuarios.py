@@ -2,10 +2,13 @@ import json
 import os
 from colorama import Fore, Style
 from usuario import Usuario
+from utils_rutas import ruta_json
 
+# ARCHIVO_USUARIOS = os.path.join("json", "usuarios.json")
+# ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
 
-ARCHIVO_USUARIOS = os.path.join("json", "usuarios.json")
-ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
+ARCHIVO_USUARIOS = ruta_json("usuarios.json")
+ARCHIVO_TAREAS = ruta_json("tareas.json")
 
 class GestorUsuarios:
     def __init__(self):

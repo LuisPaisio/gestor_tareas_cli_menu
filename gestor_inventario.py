@@ -2,8 +2,10 @@ import json
 import os
 from inventario import Inventario
 from colorama import Fore, Style
+from utils_rutas import ruta_json
 
-ARCHIVO_INVENTARIO = os.path.join("json", "inventarios.json")
+#ARCHIVO_INVENTARIO = os.path.join("json", "inventarios.json")
+ARCHIVO_INVENTARIO = ruta_json("inventarios.json")
 
 class GestorInventario:
     def __init__(self, usuario=None):
