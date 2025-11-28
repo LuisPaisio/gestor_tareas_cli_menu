@@ -67,7 +67,8 @@ class Usuario:
                 "buff_defensa": 5,
                 "buff_velocidad": 5,
                 "buff_fuerza": 5,
-                "bonus_diario": 15
+                "bonus_diario": 15,
+                "bonus_mana": 5
             }
         else:
             self.ventajas_vip = None

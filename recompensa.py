@@ -75,3 +75,4 @@ class Recompensa:
 
         else:
             raise ValueError(f"Tipo de recompensa no válido: {self.tipo}")
+

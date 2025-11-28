@@ -24,6 +24,11 @@ def mana_maximo():
     """Devuelve el maná máximo de un usuario."""
     return 56
 
+# Regeneración de Maná por tarea completada (usuarios normales)
+def mana_regeneracion():
+    """Devuelve la cantidad de maná que se regenera al completar una tarea (usuarios normales)."""
+    return 2
+
 # Valores de XP
 def xp_habito(): return 10
 def xp_diaria(): return 20
