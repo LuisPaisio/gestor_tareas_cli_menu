@@ -25,7 +25,8 @@ class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=vida_maxima(),
                 nivel_usuario=1, contador_100=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, contador_vip = 0, tags=None, mana_usuario=0):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, contador_vip = 0, tags=None, mana_usuario=0,
+                fecha_expiracion_vip=None):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -46,6 +47,7 @@ class Usuario:
         self.contador_vip = contador_vip
         self.tags = tags if tags is not None else []
         self.mana_usuario = mana_usuario
+        self.fecha_expiracion_vip = fecha_expiracion_vip or None
 
         # Inicializar slots normalizados si no se pasan
         self.slots = slots if slots is not None else {
@@ -96,7 +98,8 @@ class Usuario:
             "fecha_compra_vip": self.fecha_compra_vip,
             "contador_vip": self.contador_vip,
             "tags": self.tags,
-            "mana_usuario": self.mana_usuario
+            "mana_usuario": self.mana_usuario,
+            "fecha_expiracion_vip": self.fecha_expiracion_vip
         }
 
     @staticmethod
@@ -130,7 +133,8 @@ class Usuario:
             fecha_compra_vip=data.get("fecha_compra_vip"),
             contador_vip=data.get("contador_vip", 0),
             tags=data.get("tags", []),
-            mana_usuario=data.get("mana_usuario", 0)
+            mana_usuario=data.get("mana_usuario", 0),
+            fecha_expiracion_vip=data.get("fecha_expiracion_vip")
         )
 
     # -------------------------------
