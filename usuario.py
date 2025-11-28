@@ -211,11 +211,29 @@ class Usuario:
     # -------------------------------
     # Inventario
     # -------------------------------
-    def ver_inventario(self, tienda=None, enumerado=False):
+    def ver_inventario(self, tienda=None, enumerado=False, modo="todos"):
         inventario = self.gestor_inventario.inventario_usuario()
         print(f"\nInventario de {self.nombre_publico or self.usuario}:")
-        inventario.mostrar(tienda=None, enumerado=enumerado)
-        self.enumeracion_items = inventario.enumeracion_items.copy()
+
+        # Filtrar según el modo
+        if modo == "equipar":
+            items_filtrados = {k:v for k,v in inventario.items.items()
+                            if v.get("tipo") == "equipable"}
+        elif modo == "usar":
+            items_filtrados = {k:v for k,v in inventario.items.items()
+                            if v.get("tipo") in ["consumible", "consumible_vip"]}
+        else:
+            items_filtrados = inventario.items  # todos
+
+        # Mostrar ítems filtrados
+        for idx, (id_item, datos) in enumerate(items_filtrados.items(), start=1):
+            print(f"{idx}. {datos['nombre']} ({datos['tipo']})")
+
+        # Guardar enumeración para equipar/usar
+        self.enumeracion_items = {
+            str(idx): id_item for idx, (id_item, _) in enumerate(items_filtrados.items(), start=1)
+        }
+
 
     def equipar(self, indice):
         id_item = (self.enumeracion_items or {}).get(str(indice))

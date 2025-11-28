@@ -449,5 +449,21 @@
         "precio": 5000,
         "tipo": "consumible_vip",
         "efecto": {"rol": "vip"}
+    },
+    {
+        "id_item": 52,
+        "nombre": "Poción de Eclosión",
+        "descripcion": "Permite que un huevo de mascota eclosione y se convierta en bebé.",
+        "precio": 100,
+        "tipo": "consumible_mascota",
+        "efecto": { "accion": "eclosionar" }
+    },
+    {
+        "id_item": 53,
+        "nombre": "Alimento Básico",
+        "descripcion": "Comida sencilla que otorga XP a las mascotas al ser consumida.",
+        "precio": 50,
+        "tipo": "consumible_mascota",
+        "efecto": { "accion": "alimentar", "xp": "default" }
     }
 ]
