@@ -299,10 +299,12 @@ class GestorTareas:
                             if opcion.lower() == "s":
                                 recompensas = tarea.completar(retroactivo=True)
                                 self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas)
+                                self.usuario.subir_nivel() # Para aplicar subir de nivel
                                 print(Fore.YELLOW + f"'{tarea.titulo}' marcada como completada retroactivamente." + Style.RESET_ALL)
                             else:
                                 penalizaciones = tarea.fallar(por_medianoche=True)
                                 self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones)
+                                self.usuario.subir_nivel() # Para aplicar subir de nivel
                                 print(Fore.RED + f"Diaria '{tarea.titulo}' marcada como fallida." + Style.RESET_ALL)
 
                         tarea.completada = False
@@ -343,10 +345,12 @@ class GestorTareas:
                         if tarea_a_marcar.habito == "+":
                             recompensas = tarea_a_marcar.completar()
                             self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas)
+                            self.usuario.subir_nivel() # Para aplicar subir de nivel
                             print(Fore.YELLOW + f"Hábito '{tarea_a_marcar.titulo}' completado." + Style.RESET_ALL)
                         elif tarea_a_marcar.habito == "-":
                             penalizaciones = tarea_a_marcar.fallar()
                             self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones)
+                            self.usuario.subir_nivel() # Para aplicar subir de nivel
                             print(Fore.RED + f"Hábito negativo '{tarea_a_marcar.titulo}' registrado." + Style.RESET_ALL)
 
                     # --- Pendiente ---
@@ -354,6 +358,7 @@ class GestorTareas:
                         if not tarea_a_marcar.completada:
                             recompensas = tarea_a_marcar.completar()
                             self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas)
+                            self.usuario.subir_nivel() # Para aplicar subir de nivel
                             print(Fore.YELLOW + f"Pendiente '{tarea_a_marcar.titulo}' completada." + Style.RESET_ALL)
                         else:
                             print(Fore.YELLOW + f"La tarea '{tarea_a_marcar.titulo}' ya está completada." + Style.RESET_ALL)
@@ -363,10 +368,12 @@ class GestorTareas:
                         if not tarea_a_marcar.completada:
                             recompensas = tarea_a_marcar.completar()
                             self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas)
+                            self.usuario.subir_nivel() # Para aplicar subir de nivel
                             print(Fore.YELLOW + f"Diaria '{tarea_a_marcar.titulo}' completada." + Style.RESET_ALL)
                         else:
                             penalizaciones = tarea_a_marcar.fallar(por_medianoche=False)
                             self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones)
+                            self.usuario.subir_nivel() # Para aplicar subir de nivel
                             tarea_a_marcar.marcar_incompleta()
                             print(Fore.RED + f"Diaria '{tarea_a_marcar.titulo}' marcada como incompleta." + Style.RESET_ALL)
 

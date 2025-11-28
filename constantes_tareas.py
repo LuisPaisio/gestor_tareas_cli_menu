@@ -14,11 +14,15 @@ def coin_bonus_vencida():
     """Devuelve las coins extra por cada día de atraso al completar una tarea Pendiente vencida."""
     return 2  # por ejemplo, 2 coins por día de atraso
 
-# constantes_tareas.py
+# constante para vida máxima
 def vida_maxima():
     """Devuelve la vida máxima de un usuario."""
     return 50
 
+# constante para maná maximo
+def mana_maximo():
+    """Devuelve el maná máximo de un usuario."""
+    return 56
 
 # Valores de XP
 def xp_habito(): return 10

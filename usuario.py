@@ -1,6 +1,7 @@
 from gestor_inventario import GestorInventario
 from colorama import Fore, Style
 from datetime import date, timedelta
+from constantes_tareas import vida_maxima, mana_maximo
 
 # Diccionario global de nombres bonitos
 NOMBRES_BONITOS = {
@@ -20,9 +21,9 @@ EXPLICACIONES_ATRIBUTOS = {
 
 class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
-                xp_usuario=0, coin_usuario=0, vida_usuario=50,
-                nivel_usuario=1, contador_50=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None):
+                xp_usuario=0, coin_usuario=0, vida_usuario=vida_maxima(),
+                nivel_usuario=1, contador_100=0, descripcion=None,
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, tags=None, mana_usuario=0):
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -30,7 +31,7 @@ class Usuario:
         self.coin_usuario = coin_usuario
         self.vida_usuario = vida_usuario
         self.nivel_usuario = nivel_usuario
-        self.contador_50 = contador_50
+        self.contador_100 = contador_100
         self.descripcion = descripcion
         self.nombre_publico = nombre_publico
         self.foto_perfil = foto_perfil
@@ -40,6 +41,8 @@ class Usuario:
         self.velocidad = int(velocidad or 0)
         self.ultima_fecha_bonus = ultima_fecha_bonus or None
         self.fecha_compra_vip = fecha_compra_vip or None
+        self.tags = tags if tags is not None else []
+        self.mana_usuario = mana_usuario
 
         # Inicializar slots normalizados si no se pasan
         self.slots = slots if slots is not None else {
@@ -76,7 +79,7 @@ class Usuario:
             "coin_usuario": self.coin_usuario,
             "vida_usuario": self.vida_usuario,
             "nivel_usuario": self.nivel_usuario,
-            "contador_50": self.contador_50,
+            "contador_100": self.contador_100,
             "descripcion": self.descripcion,
             "nombre_publico": self.nombre_publico,
             "foto_perfil": self.foto_perfil,
@@ -87,9 +90,12 @@ class Usuario:
             "defensa": self.defensa,
             "velocidad": self.velocidad,
             "ultima_fecha_bonus": self.ultima_fecha_bonus,
-            "fecha_compra_vip": self.fecha_compra_vip
+            "fecha_compra_vip": self.fecha_compra_vip,
+            "tags": self.tags,
+            "mana_usuario": self.mana_usuario
         }
 
+    @staticmethod
     def safe_value(value, default=0):
         # Si es lista anidada, tomar el primer valor válido
         while isinstance(value, list) and value:
@@ -104,9 +110,9 @@ class Usuario:
             contraseña=data["contraseña"],
             xp_usuario=data.get("xp_usuario", 0),
             coin_usuario=data.get("coin_usuario", 0),
-            vida_usuario=data.get("vida_usuario", 50),
+            vida_usuario=data.get("vida_usuario", vida_maxima()),
             nivel_usuario=data.get("nivel_usuario", 1),
-            contador_50=data.get("contador_50", 0),
+            contador_100=data.get("contador_100", 0),
             descripcion=data.get("descripcion"),
             nombre_publico=data.get("nombre_publico"),
             foto_perfil=data.get("foto_perfil"),
@@ -117,7 +123,9 @@ class Usuario:
             defensa=int(data.get("defensa", 0)),
             velocidad=int(data.get("velocidad", 0)),
             ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None,
-            fecha_compra_vip=data.get("fecha_compra_vip")
+            fecha_compra_vip=data.get("fecha_compra_vip"),
+            tags=data.get("tags", []),
+            mana_usuario=data.get("mana_usuario", 0)
         )
 
     # -------------------------------
@@ -125,7 +133,7 @@ class Usuario:
     # -------------------------------
     def ver_perfil(self):
         print(Fore.YELLOW + "\n--- Perfil del Usuario ---" + Style.RESET_ALL)
-        print(f"Nombre público: {self.nombre_publico or self.usuario}")
+        print(f"Nombre público: {self.nombre_con_tags()}")
         print(f"Salud: {self.vida_usuario}/50")
         print(f"Nivel: {self.nivel_usuario}")
         print(f"XP: {self.xp_usuario}")
@@ -179,6 +187,17 @@ class Usuario:
                 self.gestor_usuarios.actualizar_usuario(self)
         else:
             print("\nOperación cancelada, volviendo al menú...")
+            
+        if self.nivel_usuario == 100:
+            print("🏆 Has alcanzado el nivel máximo (100).")
+            opcion_lvl = input("🔄 ¿Deseas reiniciar tu nivel a 1 y obtener un tag especial? (s/n): ")
+            if opcion_lvl.lower() == "s":
+                self.reiniciar_nivel_100()
+            elif opcion_lvl.lower() == "n":
+                print("ℹ️ Puedes reiniciar tu nivel cuando lo desees desde tu perfil.")
+            else:
+                print(Fore.RED + "⚠️ Opción inválida." + Style.RESET_ALL)
+
 
     # -------------------------------
     # Inventario
@@ -426,8 +445,100 @@ class Usuario:
                 self.desactivar_vip()
 
 
+    #---------------------------------
+    # Sistema de niveles - progresión
+    #---------------------------------
+
+    def xp_requerida(self, nivel=None):
+        """
+        Calcula la XP requerida para subir al siguiente nivel.
+        Curva suavizada inspirada en Habitica:
+        - Niveles 1–20: progresión más accesible (mitad de la fórmula base).
+        - Niveles 21–50: progresión media (75% de la fórmula base).
+        - Niveles 51–100: progresión completa (fórmula base).
+        """
+        if nivel is None:
+            nivel = self.nivel_usuario
+
+        base = 2 * (nivel ** 2) + 10 * nivel
+
+        if nivel <= 20:
+            return base // 2
+        elif nivel <= 50:
+            return int(base * 0.75)
+        else:
+            return base
 
 
+    def subir_nivel(self):
+        xp_req = self.xp_requerida()
+        niveles_subidos = 0  # contador de niveles ganados en esta acción
+
+        while self.xp_usuario >= xp_req and self.nivel_usuario < 100:
+            self.xp_usuario -= xp_req
+            self.nivel_usuario += 1
+            niveles_subidos += 1
+            self.vida_usuario = vida_maxima()  # función global
+
+            # Desbloqueo de maná en nivel 10
+            if self.nivel_usuario == 10:
+                self.mana_usuario = mana_maximo()
+                print(f"🔮 Has desbloqueado el atributo MANÁ ({self.mana_usuario}/{mana_maximo()}).")
+
+            # Nivel máximo alcanzado
+            if self.nivel_usuario == 100:
+                print("🏆 Has alcanzado el nivel máximo (100).")
+                opcion = input("🔄 ¿Deseas reiniciar tu nivel a 1 y obtener un tag especial? (s/n): ")
+                if opcion.lower() == "s":
+                    self.reiniciar_nivel_100()
+                else:
+                    print("ℹ️ Puedes reiniciar tu nivel cuando lo desees desde tu perfil en el menú principal.")
+
+            xp_req = self.xp_requerida()
+
+        # Mostrar resumen si subió niveles
+        if niveles_subidos > 0:
+            print(f"🎉 ¡Has subido {niveles_subidos} niveles! Ahora eres nivel {self.nivel_usuario}.")
+            print(f"✨ Vida restaurada: {self.vida_usuario}/{vida_maxima()}")
+
+        # Mostrar progreso hacia el siguiente nivel
+        if self.nivel_usuario < 100:
+            xp_req = self.xp_requerida()
+            print(f"📊 XP actual: {self.xp_usuario}/{xp_req} (para nivel {self.nivel_usuario + 1})")
+
+
+    def reiniciar_nivel_100(self):
+        if self.contador_100 < 3:
+            self.nivel_usuario = 1
+            self.xp_usuario = 0
+            self.vida_usuario = vida_maxima()
+            self.mana_usuario = 0
+            self.contador_100 += 1
+            print(f"🔄 Reiniciaste tu nivel. Nuevo tag: {self.obtener_tag()}")
+        else:
+            print("⚠️ Ya alcanzaste el máximo de reinicios (3).")
+
+
+    def obtener_tag(self):
+        tags = []
+        if self.rol == "vip":
+            tags.append("[vip]")
+        if self.contador_100 == 1:
+            tags.append("[ascendido]")
+        elif self.contador_100 == 2:
+            tags.append("[legendario]")
+        elif self.contador_100 == 3:
+            tags.append("[eterno]")
+        return "".join(tags)
+
+    def nombre_con_tags(self):
+        """
+        Devuelve el nombre público (o usuario) acompañado de los tags acumulados.
+        Ejemplo: [vip][ascendido]Luis
+        """
+        tags = self.obtener_tag()
+        nombre = self.nombre_publico or self.usuario
+        return Fore.YELLOW + f"{tags}" + Style.RESET_ALL + f"{nombre}" if tags else nombre
 
 
 
