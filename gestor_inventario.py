@@ -77,3 +77,12 @@ class GestorInventario:
             #print(Fore.YELLOW + f"🧹 Inventario del usuario {id_usuario} eliminado correctamente." + Style.RESET_ALL)
         #else:
             #print(Fore.YELLOW + f"⚠️ El usuario {id_usuario} no tenía inventario registrado." + Style.RESET_ALL)
+
+    #Catalogo de items que en principio lo llamo desde usuario.reiniciar_nivel_100
+    def catalogo_items(self):
+            """Carga y devuelve todos los items disponibles desde items.json"""
+            ruta_items = os.path.join("json", "items.json")
+            if os.path.exists(ruta_items):
+                with open(ruta_items, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            return []

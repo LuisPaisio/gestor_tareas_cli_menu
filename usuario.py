@@ -1,6 +1,8 @@
 from gestor_inventario import GestorInventario
 from colorama import Fore, Style
 from datetime import date, timedelta
+import random
+from item import Item
 from constantes_tareas import vida_maxima, mana_maximo
 
 # Diccionario global de nombres bonitos
@@ -506,7 +508,6 @@ class Usuario:
             xp_req = self.xp_requerida()
             print(f"📊 XP actual: {self.xp_usuario}/{xp_req} (para nivel {self.nivel_usuario + 1})")
 
-
     def reiniciar_nivel_100(self):
         if self.contador_100 < 3:
             self.nivel_usuario = 1
@@ -514,6 +515,39 @@ class Usuario:
             self.vida_usuario = vida_maxima()
             self.mana_usuario = 0
             self.contador_100 += 1
+
+            inventario = self.gestor_inventario.inventario_usuario()
+            catalogo = self.gestor_inventario.catalogo_items()
+
+            if self.contador_100 < 3:
+                # Elegir objeto aleatorio excluyendo el VIP
+                posibles_items = [i for i in catalogo if i["id_item"] != 51]
+                item_random = random.choice(posibles_items)
+
+                # Crear instancia Item y agregar al inventario
+                nuevo_item = Item.from_dict(item_random)
+                inventario.agregar_item(nuevo_item)
+                self.gestor_inventario.actualizar_inventario(inventario)
+
+                print(f"🎁 Has recibido un objeto especial: {nuevo_item.nombre}")
+                print("✨ Puedes equiparlo desde tu inventario si lo deseas.")
+
+            else:
+                # Tercera vez → dar Membresía VIP
+                vip_item = next(i for i in catalogo if i["id_item"] == 51)
+                nuevo_item = Item.from_dict(vip_item)
+                inventario.agregar_item(nuevo_item)
+                self.gestor_inventario.actualizar_inventario(inventario)
+
+                # Activar rol VIP y fecha de expiración
+                self.rol = "vip"
+                self.fecha_compra_vip = date.today()
+                self.fecha_expiracion_vip = date.today() + timedelta(days=30)
+
+                print("🏆 ¡Has alcanzado el nivel 100 por tercera vez!")
+                print("🎁 Has recibido la Membresía VIP equipada automáticamente.")
+                print("✨ Disfrutarás de todas las ventajas VIP durante 30 días.")
+
             print(f"🔄 Reiniciaste tu nivel. Nuevo tag: {self.obtener_tag()}")
         else:
             print("⚠️ Ya alcanzaste el máximo de reinicios (3).")
@@ -539,7 +573,5 @@ class Usuario:
         tags = self.obtener_tag()
         nombre = self.nombre_publico or self.usuario
         return Fore.YELLOW + f"{tags}" + Style.RESET_ALL + f"{nombre}" if tags else nombre
-
-
 
 
