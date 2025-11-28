@@ -317,7 +317,7 @@ class Usuario:
     # XP, Coins y Vida
     # -------------------------------
     def sumar_xp(self, xp):
-        self.xp_usuario += xp
+        self.xp_usuario = max(0, self.xp_usuario + xp)
 
     def sumar_coins(self, coins):
         self.coin_usuario += coins
