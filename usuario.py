@@ -320,7 +320,7 @@ class Usuario:
         self.xp_usuario = max(0, self.xp_usuario + xp)
 
     def sumar_coins(self, coins):
-        self.coin_usuario += coins
+        self.coin_usuario = max(0, self.coin_usuario + coins)
 
     def sumar_vida(self, vida):
         self.vida_usuario = min(50, self.vida_usuario + vida)

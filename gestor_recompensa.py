@@ -36,7 +36,7 @@ class GestorRecompensas:
         print(Fore.LIGHTYELLOW_EX + "\n🎁 ¡Recompensas obtenidas!" + Style.RESET_ALL)
 
         for recompensa in recompensas:
-            resultado = recompensa.aplicar_usuario(usuario)  # devuelve dict con base, bonus, total
+            resultado = recompensa.aplicar_usuario(usuario)  # dict con base, bonus, total
             self.historial.append(recompensa)
 
             if recompensa.tipo == "xp":
@@ -46,7 +46,6 @@ class GestorRecompensas:
                     if resultado["bonus"] > 0:
                         print(Fore.GREEN + f"✨ +{resultado['bonus']} XP (VIP/bonus)" + Style.RESET_ALL)
                 else:
-                    # penalización
                     print(Fore.RED + f"✨ {resultado['total']} XP" + Style.RESET_ALL)
 
             elif recompensa.tipo == "coins":
@@ -56,7 +55,6 @@ class GestorRecompensas:
                     if resultado["bonus"] > 0:
                         print(Fore.YELLOW + f"💰 +{resultado['bonus']} Coins (VIP/bonus)" + Style.RESET_ALL)
                 else:
-                    # penalización
                     print(Fore.RED + f"💰 {resultado['total']} Coins" + Style.RESET_ALL)
 
             elif recompensa.tipo == "vida":
@@ -74,7 +72,6 @@ class GestorRecompensas:
         self.guardar_historial()
 
         print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
-        print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/50" + Style.RESET_ALL)
-
-
-
+        print(Fore.LIGHTYELLOW_EX + 
+            f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/50" 
+            + Style.RESET_ALL)

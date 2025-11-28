@@ -22,10 +22,13 @@ class Recompensa:
                 bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
             bonus_total = bonus_fuerza + bonus_vip
             total = self.valor + bonus_total
-            usuario.xp_usuario += total
+
+            # 🔹 usar sumar_xp para evitar negativos
+            usuario.sumar_xp(total)
+
             return {
                 "base": self.valor,
-                "bonus": bonus_total,          # 🔹 compatibilidad
+                "bonus": bonus_total,
                 "bonus_fuerza": bonus_fuerza,
                 "bonus_vip": bonus_vip,
                 "total": total
@@ -38,10 +41,13 @@ class Recompensa:
                 bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
             bonus_total = bonus_velocidad + bonus_vip
             total = self.valor + bonus_total
-            usuario.coin_usuario += total
+
+            # 🔹 usar sumar_coins para evitar negativos
+            usuario.sumar_coins(total)
+
             return {
                 "base": self.valor,
-                "bonus": bonus_total,          # 🔹 compatibilidad
+                "bonus": bonus_total,
                 "bonus_velocidad": bonus_velocidad,
                 "bonus_vip": bonus_vip,
                 "total": total
@@ -57,7 +63,7 @@ class Recompensa:
                 usuario.restar_vida(daño_reducido)
                 return {
                     "base": -daño_base,
-                    "bonus": usuario.defensa,   # aquí sí tiene sentido mantener un único bonus
+                    "bonus": usuario.defensa,
                     "total": -daño_reducido
                 }
 
