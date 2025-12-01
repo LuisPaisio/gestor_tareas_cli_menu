@@ -61,7 +61,7 @@ class Clase:
 
         efectos = poder.get("efectos", {})
 
-        print(f"\n✨ {usuario.usuario} usó {nombre_poder}. Efectos aplicados:")
+        print(f"\n✨ {usuario.nombre_con_tags()} usó {nombre_poder}. Efectos aplicados:")
 
         # Interpretación de efectos
         for atributo, valor in efectos.items():
