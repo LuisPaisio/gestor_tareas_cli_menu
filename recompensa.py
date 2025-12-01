@@ -1,55 +1,51 @@
+from constantes_tareas import mana_maximo
+
 class Recompensa:
     """
     Clase que representa una recompensa o penalización.
-    Puede ser de tipo: xp, coins, vida, item.
+    Puede ser de tipo: xp, coins, vida, mana, item.
     """
     def __init__(self, id_recompensa, nombre, tipo, valor):
         self.id_recompensa = id_recompensa
         self.nombre = nombre
-        self.tipo = tipo      # "xp", "coins", "vida", "item"
+        self.tipo = tipo      # "xp", "coins", "vida", "mana", "item"
         self.valor = valor    # cantidad o referencia al ítem
 
     def aplicar_usuario(self, usuario):
         """
         Aplica la recompensa al usuario según su tipo,
         considerando atributos RPG y ventajas VIP.
-        Devuelve un dict con base, bonus y total en xp/coins.
+        Devuelve un dict con base, bonus y total.
         """
         if self.tipo == "xp":
-            bonus_fuerza = int(usuario.fuerza * 0.5)
+            bonus_fuerza = round(usuario.fuerza * 0.5)
             bonus_vip = 0
             if usuario.rol == "vip" and usuario.ventajas_vip:
-                bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
+                bonus_vip = round(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
             bonus_total = bonus_fuerza + bonus_vip
             total = self.valor + bonus_total
 
-            # 🔹 usar sumar_xp para evitar negativos
             usuario.sumar_xp(total)
 
             return {
                 "base": self.valor,
                 "bonus": bonus_total,
-                "bonus_fuerza": bonus_fuerza,
-                "bonus_vip": bonus_vip,
                 "total": total
             }
 
         elif self.tipo == "coins":
-            bonus_velocidad = int(usuario.velocidad * 0.3)
+            bonus_velocidad = round(usuario.velocidad * 0.3)
             bonus_vip = 0
             if usuario.rol == "vip" and usuario.ventajas_vip:
-                bonus_vip = int(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
+                bonus_vip = round(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
             bonus_total = bonus_velocidad + bonus_vip
             total = self.valor + bonus_total
 
-            # 🔹 usar sumar_coins para evitar negativos
             usuario.sumar_coins(total)
 
             return {
                 "base": self.valor,
                 "bonus": bonus_total,
-                "bonus_velocidad": bonus_velocidad,
-                "bonus_vip": bonus_vip,
                 "total": total
             }
 
@@ -67,6 +63,23 @@ class Recompensa:
                     "total": -daño_reducido
                 }
 
+        elif self.tipo == "mana":
+            bonus_vip = 0
+            if usuario.rol == "vip" and usuario.ventajas_vip:
+                bonus_vip = round(self.valor * usuario.ventajas_vip.get("bonus_mana", 0))
+
+            bonus_items = usuario.atributos_totales().get("mana", 0)
+            bonus_total = bonus_vip + bonus_items
+            total = self.valor + bonus_total
+
+            usuario.mana_usuario = min(usuario.mana_usuario + total, mana_maximo())
+
+            return {
+                "base": self.valor,
+                "bonus": bonus_total,   # este campo es el que usa aplicar_recompensas
+                "total": total
+            }
+
         elif self.tipo == "item":
             inventario = usuario.gestor_inventario.inventario_usuario()
             inventario.agregar_item(self.valor, 1)
@@ -75,4 +88,3 @@ class Recompensa:
 
         else:
             raise ValueError(f"Tipo de recompensa no válido: {self.tipo}")
-

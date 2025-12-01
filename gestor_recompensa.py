@@ -3,8 +3,8 @@ import json
 from recompensa import Recompensa
 from colorama import Fore, Style
 from utils_rutas import ruta_json
+from constantes_tareas import mana_maximo, vida_maxima
 
-#ARCHIVO_RECOMPENSAS = os.path.join("json", "recompensas.json")
 ARCHIVO_RECOMPENSAS = ruta_json("recompensas.json")
 
 class GestorRecompensas:
@@ -45,8 +45,15 @@ class GestorRecompensas:
                 if resultado["total"] >= 0:
                     if resultado["base"] > 0:
                         print(Fore.GREEN + f"✨ +{resultado['base']} XP" + Style.RESET_ALL)
-                    if resultado["bonus"] > 0:
-                        print(Fore.GREEN + f"✨ +{resultado['bonus']} XP (VIP/bonus)" + Style.RESET_ALL)
+                    bonus_total = resultado.get("bonus", 0)
+                    if bonus_total > 0:
+                        print(Fore.GREEN + f"✨ +{bonus_total} XP (VIP/bonus)" + Style.RESET_ALL)
+                    # Buff de poderes
+                    if usuario.buff_xp > 1:
+                        extra_buff = (resultado["base"] + bonus_total) * (usuario.buff_xp - 1)
+                        usuario.sumar_xp(extra_buff)  # aplicar realmente
+                        print(Fore.GREEN + f"✨ +{extra_buff} XP (Poder de clase)" + Style.RESET_ALL)
+                        usuario.buff_xp = 1
                 else:
                     print(Fore.RED + f"✨ {resultado['total']} XP" + Style.RESET_ALL)
 
@@ -54,8 +61,14 @@ class GestorRecompensas:
                 if resultado["total"] >= 0:
                     if resultado["base"] > 0:
                         print(Fore.YELLOW + f"💰 +{resultado['base']} Coins" + Style.RESET_ALL)
-                    if resultado["bonus"] > 0:
-                        print(Fore.YELLOW + f"💰 +{resultado['bonus']} Coins (VIP/bonus)" + Style.RESET_ALL)
+                    bonus_total = resultado.get("bonus", 0)
+                    if bonus_total > 0:
+                        print(Fore.YELLOW + f"💰 +{bonus_total} Coins (VIP/bonus)" + Style.RESET_ALL)
+                    if usuario.buff_coins > 1:
+                        extra_buff = (resultado["base"] + bonus_total) * (usuario.buff_coins - 1)
+                        usuario.sumar_coins(extra_buff)  # aplicar realmente
+                        print(Fore.YELLOW + f"💰 +{extra_buff} Coins (Poder de clase)" + Style.RESET_ALL)
+                        usuario.buff_coins = 1
                 else:
                     print(Fore.RED + f"💰 {resultado['total']} Coins" + Style.RESET_ALL)
 
@@ -68,12 +81,20 @@ class GestorRecompensas:
             elif recompensa.tipo == "item":
                 print(Fore.CYAN + f"🪄 Obtuviste el ítem: {recompensa.nombre}" + Style.RESET_ALL)
 
+            elif recompensa.tipo == "mana":
+                if resultado["total"] >= 0:
+                    if resultado["base"] > 0:
+                        print(Fore.MAGENTA + f"🔮 +{resultado['base']} Maná" + Style.RESET_ALL)
+                    bonus_total = resultado.get("bonus", 0)
+                    if bonus_total > 0:
+                        print(Fore.MAGENTA + f"🔮 +{bonus_total} Maná (VIP/bonus)" + Style.RESET_ALL)
+                else:
+                    print(Fore.RED + f"🔮 {resultado['total']} Maná" + Style.RESET_ALL)
+
             else:
                 print(Fore.MAGENTA + f"🔹 {recompensa.nombre} ({recompensa.tipo}: {resultado['total']})" + Style.RESET_ALL)
 
         self.guardar_historial()
 
         print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
-        print(Fore.LIGHTYELLOW_EX + 
-            f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/50" 
-            + Style.RESET_ALL)
+        print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/{vida_maxima()} | Maná {usuario.mana_usuario}/{mana_maximo()}" + Style.RESET_ALL)

@@ -4,6 +4,7 @@ from datetime import date, timedelta
 import random
 from item import Item
 from constantes_tareas import vida_maxima, mana_maximo
+from clases import Clase
 
 # Diccionario global de nombres bonitos
 NOMBRES_BONITOS = {
@@ -25,8 +26,11 @@ class Usuario:
     def __init__(self, id_usuario, usuario, contraseña,
                 xp_usuario=0, coin_usuario=0, vida_usuario=vida_maxima(),
                 nivel_usuario=1, contador_100=0, descripcion=None,
-                nombre_publico=None, foto_perfil=None, slots=None, rol="user", ventajas_vip = None, fuerza=0, defensa=0, velocidad=0, ultima_fecha_bonus = None, fecha_compra_vip=None, contador_vip = 0, tags=None, mana_usuario=0,
-                fecha_expiracion_vip=None):
+                nombre_publico=None, foto_perfil=None, slots=None, rol="user",
+                ventajas_vip=None, fuerza=0, defensa=0, velocidad=0,
+                ultima_fecha_bonus=None, fecha_compra_vip=None, contador_vip=0,
+                tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None):
+        
         self.id_usuario = id_usuario
         self.usuario = usuario
         self.contraseña = contraseña
@@ -49,7 +53,11 @@ class Usuario:
         self.mana_usuario = mana_usuario
         self.fecha_expiracion_vip = fecha_expiracion_vip or None
 
-        # Inicializar slots normalizados si no se pasan
+        # Buffs temporales para poderes
+        self.buff_xp = 1
+        self.buff_coins = 1
+
+        # Inicializar slots
         self.slots = slots if slots is not None else {
             "manoizquierda": None,
             "manoderecha": None,
@@ -59,7 +67,7 @@ class Usuario:
             "escudo": None
         }
 
-        # Inicializar ventajas VIP solo si el rol es vip
+        # Inicializar ventajas VIP
         if rol == "vip":
             self.ventajas_vip = ventajas_vip if ventajas_vip is not None else {
                 "bonus_xp": 0.2,
@@ -68,13 +76,16 @@ class Usuario:
                 "buff_velocidad": 5,
                 "buff_fuerza": 5,
                 "bonus_diario": 15,
-                "bonus_mana": 5
+                "bonus_mana": 0.8
             }
         else:
             self.ventajas_vip = None
-        
+
+        # Inicializar clase RPG
+        self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip") if clase_nombre else None
+
         self.gestor_inventario = GestorInventario(self)
-        self.gestor_usuarios = None  # se asigna en register/login
+        self.gestor_usuarios = None
 
     def to_dict(self):
         return {
@@ -100,7 +111,8 @@ class Usuario:
             "contador_vip": self.contador_vip,
             "tags": self.tags,
             "mana_usuario": self.mana_usuario,
-            "fecha_expiracion_vip": self.fecha_expiracion_vip
+            "fecha_expiracion_vip": self.fecha_expiracion_vip,
+            "clase_nombre": self.clase.nombre if self.clase else None
         }
 
     @staticmethod
@@ -125,7 +137,7 @@ class Usuario:
             nombre_publico=data.get("nombre_publico"),
             foto_perfil=data.get("foto_perfil"),
             slots=data.get("slots"),
-            rol=data.get("rol", "user"), # Default User si no está en JSON
+            rol=data.get("rol", "user"),
             ventajas_vip=data.get("ventajas_vip"),
             fuerza=int(data.get("fuerza", 0)),
             defensa=int(data.get("defensa", 0)),
@@ -135,7 +147,8 @@ class Usuario:
             contador_vip=data.get("contador_vip", 0),
             tags=data.get("tags", []),
             mana_usuario=data.get("mana_usuario", 0),
-            fecha_expiracion_vip=data.get("fecha_expiracion_vip")
+            fecha_expiracion_vip=data.get("fecha_expiracion_vip"),
+            clase_nombre=data.get("clase_nombre", None)  # None si no existe
         )
 
     # -------------------------------
@@ -150,11 +163,23 @@ class Usuario:
         print(f"Coin: {self.coin_usuario}")
         print(f"Descripción: {self.descripcion or 'Sin Descripción'}")
         print(f"Foto: {self.foto_perfil or 'Sin Foto'}")
-        
+
+        # 🔹 Mostrar clase si nivel >= 10 y ya está asignada
+        if self.nivel_usuario >= 10 and self.clase is not None:
+            print(f"Clase: {self.clase.nombre}{' (VIP)' if self.rol == 'vip' else ''}")
+
+            # Mostrar poderes de la clase con descripción
+            if self.clase.poderes:
+                print(Fore.YELLOW + "\n--- Poderes disponibles ---" + Style.RESET_ALL)
+                for nombre_poder, datos in self.clase.poderes.items():
+                    coste = datos.get("coste", 0)
+                    descripcion = datos.get("descripcion", "Sin descripción")
+                    print(f"🪄 {nombre_poder} (Coste: {coste} Maná) | " + Fore.CYAN + f"{descripcion}" + Style.RESET_ALL)
+
         mejoras = self.atributos_totales()
 
         if mejoras or (self.rol == "vip" and self.ventajas_vip):
-            print("Mejoras activas:")
+            print("\nMejoras activas:")
             atributos_mostrar = set(mejoras.keys())
 
             if self.rol == "vip" and self.ventajas_vip:
@@ -172,32 +197,82 @@ class Usuario:
                         buff_key = f"buff_{atributo}"
                         if buff_key in self.ventajas_vip:
                             buff_valor = self.ventajas_vip[buff_key]
-                            if valor_base > 0:
-                                extra = f" (+{buff_valor} VIP)"
-                            else:
-                                extra = f" (+{buff_valor} VIP)"
+                            extra = f" (+{buff_valor} VIP)"
                     if valor_base != 0 or extra:
                         explicacion = EXPLICACIONES_ATRIBUTOS.get(atributo, "")
-                        print(f"  - {atributo}: +{valor_base}{extra} | " + Fore.CYAN + f"{explicacion}" + Style.RESET_ALL)
+                        print(f"  - {atributo}: +{valor_base}{extra} | "
+                            + Fore.CYAN + f"{explicacion}" + Style.RESET_ALL)
         else:
             print("Mejoras activas: Ninguna")
-
-
 
 
     def editar_perfil(self):
         self.ver_perfil()
         opcion = input("\n¿Desea modificar su perfil?(s/n): ")
+
         if opcion.lower() == "s":
             self.nombre_publico = input("Nombre Público: ").strip() or self.nombre_publico
             self.descripcion = input("Sobre mí: ").strip() or self.descripcion
             self.foto_perfil = input("Ingresa la URL de la imagen: ").strip() or self.foto_perfil
+
+            # Elegir o cambiar clase si nivel >= 10
+            if self.nivel_usuario >= 10:
+                if self.clase is None:
+                    print(Fore.YELLOW + "\n✨ Aún no tienes clase asignada. Debes elegir una." + Style.RESET_ALL)
+                    elegir_clase = "s"  # fuerza la elección inicial
+                else:
+                    elegir_clase = input("¿Deseas cambiar tu clase? (s/n): ")
+
+                if elegir_clase.lower() == "s":
+                    print("\nElige tu clase:")
+                    opciones = ["Guerrero", "Sanador", "Mago", "Pícaro"]
+                    for i, clase_nombre in enumerate(opciones, start=1):
+                        clase_temp = Clase.cargar_clase(clase_nombre, self.rol == "vip")
+                        print(f"{i}. {clase_nombre} → {clase_temp.descripcion}")
+
+                    try:
+                        seleccion = int(input("Ingresa el número de tu clase: "))
+                        if 1 <= seleccion <= len(opciones):
+                            clase_nombre = opciones[seleccion - 1]
+                            self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip")
+                            print(f"✨ Has elegido la clase {clase_nombre}.")
+                        else:
+                            print(Fore.RED + "⚠️ Selección inválida. No se cambió la clase." + Style.RESET_ALL)
+                    except ValueError:
+                        print(Fore.RED + "⚠️ Entrada inválida. No se cambió la clase." + Style.RESET_ALL)
+            else:
+                print(Fore.YELLOW + "ℹ️ Solo puedes elegir o cambiar tu clase a partir del nivel 10." + Style.RESET_ALL)
+
             print("\nPerfil actualizado exitosamente")
             if self.gestor_usuarios:
                 self.gestor_usuarios.actualizar_usuario(self)
         else:
             print("\nOperación cancelada, volviendo al menú...")
-            
+
+            # 🔹 Si es nivel >= 10 y aún no tiene clase, forzar elección aunque no edite
+            if self.nivel_usuario >= 10 and self.clase is None:
+                print(Fore.YELLOW + "\n✨ Aún no tienes clase asignada. Debes elegir una." + Style.RESET_ALL)
+
+                print("\nElige tu clase:")
+                opciones = ["Guerrero", "Sanador", "Mago", "Pícaro"]
+                for i, clase_nombre in enumerate(opciones, start=1):
+                    clase_temp = Clase.cargar_clase(clase_nombre, self.rol == "vip")
+                    print(f"{i}. {clase_nombre} → {clase_temp.descripcion}")
+
+                try:
+                    seleccion = int(input("Ingresa el número de tu clase: "))
+                    if 1 <= seleccion <= len(opciones):
+                        clase_nombre = opciones[seleccion - 1]
+                        self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip")
+                        print(f"✨ Has elegido la clase {clase_nombre}.")
+                        if self.gestor_usuarios:
+                            self.gestor_usuarios.actualizar_usuario(self)
+                    else:
+                        print(Fore.RED + "⚠️ Selección inválida. No se asignó clase." + Style.RESET_ALL)
+                except ValueError:
+                    print(Fore.RED + "⚠️ Entrada inválida. No se asignó clase." + Style.RESET_ALL)
+
+        # Lógica de nivel 100
         if self.nivel_usuario == 100:
             print("🏆 Has alcanzado el nivel máximo (100).")
             opcion_lvl = input("🔄 ¿Deseas reiniciar tu nivel a 1 y obtener un tag especial? (s/n): ")
@@ -361,13 +436,13 @@ class Usuario:
             if self.gestor_usuarios:
                 self.gestor_usuarios.actualizar_usuario(self)
 
-    def sumar_xp_coins(self, xp, coins):
-        self.sumar_xp(xp)
-        self.sumar_coins(coins)
+    # def sumar_xp_coins(self, xp, coins):
+    #     self.sumar_xp(xp)
+    #     self.sumar_coins(coins)
 
-        # 🔹 Persistir cambios en usuarios.json
-        if self.gestor_usuarios:
-            self.gestor_usuarios.actualizar_usuario(self)
+    #     # 🔹 Persistir cambios en usuarios.json
+    #     if self.gestor_usuarios:
+    #         self.gestor_usuarios.actualizar_usuario(self)
 
     #--------------------------------
     # Atributos_totales, se calculan las mejoras activas
@@ -415,7 +490,8 @@ class Usuario:
             "buff_defensa": 5,
             "buff_velocidad": 5,
             "buff_fuerza": 5,
-            "bonus_diario": 15
+            "bonus_diario": 15,
+            "bonus_mana": 0.8
         }
 
         # Si ya era VIP, verificamos continuidad
@@ -458,7 +534,7 @@ class Usuario:
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
 
-        print(Fore.GREEN + f"🌟 ¡Felicitaciones! Ahora eres VIP (Mes {self.contador_vip} consecutivo)." + Style.RESET_ALL)
+        print(Fore.GREEN + f"🌟 ¡Felicitaciones! Ahora eres VIP (Mes {self.contador_vip} consecutivo). ¡Sigue la cadena para más recompensas!" + Style.RESET_ALL)
 
     #Desactivo rango VIP
 
@@ -522,12 +598,33 @@ class Usuario:
             self.xp_usuario -= xp_req
             self.nivel_usuario += 1
             niveles_subidos += 1
-            self.vida_usuario = vida_maxima()  # función global
+            self.vida_usuario = vida_maxima()  # función global vida maxima
+            self.mana_usuario = mana_maximo()  # función global mana maximo
 
             # Desbloqueo de maná en nivel 10
             if self.nivel_usuario == 10:
                 self.mana_usuario = mana_maximo()
                 print(f"🔮 Has desbloqueado el atributo MANÁ ({self.mana_usuario}/{mana_maximo()}).")
+
+                # 🔹 Bucle obligatorio hasta que seleccione una clase
+                clase_nombre = None
+                while not clase_nombre:
+                    print("\nElige tu clase:")
+                    opciones = ["Guerrero", "Sanador", "Mago", "Pícaro"]
+                    for i, clase in enumerate(opciones, start=1):
+                        print(f"{i}. {clase}")
+
+                    try:
+                        seleccion = int(input("Ingresa el número de tu clase: "))
+                        if 1 <= seleccion <= len(opciones):
+                            clase_nombre = opciones[seleccion - 1]
+                            self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip")
+                            print(f"✨ Ahora eres {clase_nombre}. ¡Puedes comenzar a usar poderes!")
+                            print("ℹ️ Recuerda que luego puedes cambiar tu clase desde la opción 6 (Perfil).")
+                        else:
+                            print(Fore.RED + "⚠️ Selección inválida. Debes elegir una clase para continuar." + Style.RESET_ALL)
+                    except ValueError:
+                        print(Fore.RED + "⚠️ Entrada inválida. Ingresa un número válido." + Style.RESET_ALL)
 
             # Nivel máximo alcanzado
             if self.nivel_usuario == 100:
@@ -547,6 +644,7 @@ class Usuario:
         if niveles_subidos > 0:
             print(f"🎉 ¡Has subido {niveles_subidos} niveles! Ahora eres nivel {self.nivel_usuario}.")
             print(f"✨ Vida restaurada: {self.vida_usuario}/{vida_maxima()}")
+            print(f"✨ Maná restaurado: {self.mana_usuario}/{mana_maximo()}")
 
         # Mostrar progreso hacia el siguiente nivel
         if self.nivel_usuario < 100:
@@ -651,4 +749,6 @@ class Usuario:
         elif self.contador_vip % 3 == 0:
             print(Fore.MAGENTA + f"🎁 Recompensa VIP mes {self.contador_vip}: {item_random['nombre']}" + Style.RESET_ALL)
 
-
+    # Usa el poder de su clase:
+    def usar_poder(self, nombre_poder, tarea=None):
+            return self.clase.usar_poder(nombre_poder, self, tarea)

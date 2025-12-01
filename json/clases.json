@@ -1,0 +1,115 @@
+{
+    "Guerrero": {
+        "vip": false,
+        "descripcion": "Especialista en fuerza física, gana más XP.",
+        "poderes": {
+            "Golpe crítico": {
+                "coste": 15,
+                "efectos": { "xp": "double" },
+                "descripcion": "Duplica la XP obtenida en la tarea actual."
+            },
+            "Furia indomable": {
+                "coste": 35,
+                "efectos": { "xp": "double_next", "coins": "double_next" },
+                "descripcion": "La próxima tarea completada otorgará XP y Coins duplicadas."
+            }
+        }
+    },
+    "Sanador": {
+        "vip": false,
+        "descripcion": "Recupera vida y protege al grupo.",
+        "poderes": {
+            "Curación menor": {
+                "coste": 10,
+                "efectos": { "vida": 10 },
+                "descripcion": "Recupera 10 puntos de vida."
+            },
+            "Gran curación": {
+                "coste": 25,
+                "efectos": { "vida": "full" },
+                "descripcion": "Restaura la vida al máximo."
+            }
+        }
+    },
+    "Mago": {
+        "vip": false,
+        "descripcion": "Usa maná para potenciar XP y Coins.",
+        "poderes": {
+            "Inspiración": {
+                "coste": 12,
+                "efectos": { "coins": "25%" },
+                "descripcion": "Otorga un 25% extra de Coins en la tarea actual."
+            },
+            "Tormenta Arcana": {
+                "coste": 30,
+                "efectos": { "xp": 20, "vida": 10 },
+                "descripcion": "Inflige daño mágico y otorga +20 XP y +10 Vida."
+            }
+        }
+    },
+    "GuerreroVIP": {
+        "vip": true,
+        "descripcion": "Versión avanzada del Guerrero, con poderes legendarios.",
+        "poderes": {
+            "Rugido legendario": {
+                "coste": 45,
+                "efectos": { "xp": "double", "coins": "double" },
+                "descripcion": "Duplica XP y Coins de la tarea actual."
+            }
+        }
+    },
+    "SanadorVIP": {
+        "vip": true,
+        "descripcion": "Versión avanzada del Sanador, con curaciones divinas y regeneración de maná.",
+        "poderes": {
+            "Curación divina": {
+                "coste": 40,
+                "efectos": { "vida": "full", "mana": 20 },
+                "descripcion": "Restaura la vida al máximo y recupera 20 de maná."
+            }
+        }
+    },
+    "MagoVIP": {
+        "vip": true,
+        "descripcion": "Versión avanzada del Mago, con tormentas arcanas más poderosas.",
+        "poderes": {
+            "Tormenta Arcana+": {
+                "coste": 40,
+                "efectos": { "xp": 30, "vida": 15, "coins": 10 },
+                "descripcion": "Inflige gran daño mágico y otorga +30 XP, +15 Vida y +10 Coins."
+            }
+        }
+    },
+    "Picaro": {
+        "vip": false,
+        "descripcion": "Robos y bonificaciones en Coins.",
+        "poderes": {
+            "Robo rápido": {
+                "coste": 15,
+                "efectos": { "coins": "steal_20" },
+                "descripcion": "Robas el 20% de las Coins de la tarea actual."
+            },
+            "Golpe furtivo": {
+                "coste": 20,
+                "efectos": { "xp": "double_next" },
+                "descripcion": "La próxima tarea completada otorgará XP duplicada."
+            }
+        }
+    },
+    "PicaroVIP": {
+        "vip": true,
+        "descripcion": "Versión avanzada del Pícaro, con robos más efectivos y poderes letales.",
+        "poderes": {
+            "Maestro del robo": {
+                "coste": 40,
+                "efectos": { "coins": "steal_50" },
+                "descripcion": "Robas el 50% de las Coins de la tarea actual."
+            },
+            "Sombra letal": {
+                "coste": 45,
+                "efectos": { "xp": "double", "coins": "double", "vida": 15 },
+                "descripcion": "Duplica XP y Coins de la tarea actual y recupera 15 de vida."
+            }
+        }
+    }
+}

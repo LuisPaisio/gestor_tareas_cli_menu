@@ -115,7 +115,7 @@ class Tienda:
             usuario.activar_vip()  # maneja contador_vip, fechas y recompensas
             usuario.gestor_inventario.actualizar_inventario(inventario)
             gestor_usuarios.actualizar_usuario(usuario)
-            print(Fore.GREEN + f"🌟 Renovaste tu membresía VIP (Mes {usuario.contador_vip} consecutivo). ¡Sigue la cadena para más recompensas!" + Style.RESET_ALL)
+            #print(Fore.GREEN + f"🌟 Renovaste tu membresía VIP (Mes {usuario.contador_vip} consecutivo). ¡Sigue la cadena para más recompensas!" + Style.RESET_ALL)
 
 
     def vender_item(self, usuario, gestor_usuarios):
