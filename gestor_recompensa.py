@@ -31,11 +31,14 @@ class GestorRecompensas:
         with open(ARCHIVO_RECOMPENSAS, "w", encoding="utf-8") as archivo:
             json.dump([r.__dict__ for r in self.historial], archivo, indent=4, ensure_ascii=False)
 
-    def aplicar_recompensas(self, usuario, recompensas: list[Recompensa]):
+    def aplicar_recompensas(self, usuario, recompensas: list[Recompensa], es_penalizacion=False):
         if not recompensas:
             return
 
-        print(Fore.LIGHTYELLOW_EX + "\n🎁 ¡Recompensas obtenidas!" + Style.RESET_ALL)
+        if es_penalizacion:
+            print(Fore.LIGHTYELLOW_EX + "\n⚠️ ¡Penalizaciones aplicadas!" + Style.RESET_ALL)
+        else:
+            print(Fore.LIGHTYELLOW_EX + "\n🎁 ¡Recompensas obtenidas!" + Style.RESET_ALL)
 
         for recompensa in recompensas:
             resultado = recompensa.aplicar_usuario(usuario)  # dict con base, bonus, total
@@ -95,6 +98,9 @@ class GestorRecompensas:
                 print(Fore.MAGENTA + f"🔹 {recompensa.nombre} ({recompensa.tipo}: {resultado['total']})" + Style.RESET_ALL)
 
         self.guardar_historial()
-
+        
         print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
-        print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/{vida_maxima()} | Maná {usuario.mana_usuario}/{mana_maximo()}" + Style.RESET_ALL)
+        if usuario.nivel_usuario < 10:
+            print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/{vida_maxima()}" + Style.RESET_ALL)
+        else:
+            print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {usuario.nivel_usuario} | XP {usuario.xp_usuario} | Coins {usuario.coin_usuario} | Vida {usuario.vida_usuario}/{vida_maxima()} | Maná {usuario.mana_usuario}/{mana_maximo()}" + Style.RESET_ALL)
