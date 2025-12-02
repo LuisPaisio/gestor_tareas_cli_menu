@@ -5,41 +5,41 @@ Gestor de tareas en consola desarrollado en Python, con sistema de usuarios, tie
 ---
 
 ## 🚀 Características
-- Sistema de usuarios:
+#### 👤 Sistema de usuarios:
 - Registro, inicio de sesión y eliminación de cuenta (GestorUsuarios)
 - Estadísticas por usuario: vida, XP, coins, Maná, Clase, Poderes, Mascotas, Inventario, etc
 
-- Gestión de tareas (GestorTareas):
+#### ✅ Gestión de tareas (GestorTareas):
 - Crear, listar, editar, marcar y eliminar tareas
 - Tipos de tareas: hábitos, diarias y pendientes
 - Recompensas por completar y penalizaciones por fallar
 
-- Gamificación:
+#### 🎮 Gamificación:
 - Hábito positivo/negativo con impacto en stats
 - Diarias que vencen cada día y aplican penalización si no se completan
 - Pendientes con fecha de vencimiento
 - Mensajes claros y consistentes en colores (colorama)
 
-- Inventario y Tienda:
+#### 🛒 Inventario y Tienda:
 - Comprar ítems con coins
 - Vender ítems para recuperar parte del valor
 - Persistencia en inventarios.json
 - Catálogo definido en items.json
 
-- Clases y Poderes:
+#### ⚔️ Clases y Poderes:
 - Al llegar al nivel 10 se desbloquea el maná
 - Cada clase tiene sus propios poderes, los cuales pueden utilizarse con el maná del usuario
 - El usuario puede recuperar mana completando tareas diarias, pendientes o habitos
 - A su vez hay objetos que se compran en la tienda que te dan un boost de maná
 - Los poderes se pueden equipar desde el menú de poderes
 
-- Mascotas:
+#### 🐾 Mascotas:
 - Al ir completando tareas hay una posibilidad de que esas tareas te suelten un 'huevo de mascota'
 - En el menú mascotas podes eclocionar dicho huevo, siempre y cuando tengas una posión de eclosion, la cual puede soltarte aleatoriamente o comprandola en la Tienda
 - Las mascotas comienzan como huevo, las eclosionas y pasan a ser bebé, luego adultas, y luego montura
 - Dandole de comer genera xp que lo ayuda a pasar por las fases anteriormente mencionadas. La comida se obtiene aleatoriamente al completar tareas o comprandola en la Tienda
 
-- Persistencia en JSON:
+#### 📂 Persistencia en JSON:
 - Conversión objeto ↔ diccionario (to_dict() / from_dict())
 - Archivos: usuarios, tareas, inventarios, recompensas
 
