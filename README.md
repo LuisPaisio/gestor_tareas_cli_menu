@@ -149,8 +149,7 @@ gestor-tareas-cli/
 - Abre un Pull Request.
 
 ## 📄 Licencia
--Este proyecto está bajo la licencia MIT.
--Puedes usarlo, modificarlo y distribuirlo libremente, siempre mencionando al autor original.
+- Este proyecto está bajo la licencia MIT. Ver el archivo LICENSE para más detalles.
 
 ## 📦 Requisitos
 - Python 3.10 o superior
