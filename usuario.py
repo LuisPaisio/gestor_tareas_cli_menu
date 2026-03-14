@@ -478,9 +478,9 @@ class Usuario:
                 print(Fore.YELLOW + f"💰 +{bonus_diario} Coins (Bonus Diario)" + Style.RESET_ALL)
                 print(Fore.LIGHTYELLOW_EX + "---------------------------------" + Style.RESET_ALL)
                 if self.nivel_usuario < 10:
-                    print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/{vida_maxima}" + Style.RESET_ALL)
+                    print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/{vida_maxima()}" + Style.RESET_ALL)
                 else:
-                    print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/{vida_maxima} | Maná {self.mana_usuario}/{mana_maximo()}" + Style.RESET_ALL)
+                    print(Fore.LIGHTYELLOW_EX + f"📊 Estado actual → Nivel {self.nivel_usuario} | XP {self.xp_usuario} | Coins {self.coin_usuario} | Vida {self.vida_usuario}/{vida_maxima()} | Maná {self.mana_usuario}/{mana_maximo()}" + Style.RESET_ALL)
 
     #activo rango VIP
     def activar_vip(self):

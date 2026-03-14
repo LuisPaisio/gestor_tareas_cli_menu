@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login-container">
+    <h1>¡Bienvenido al Gestor de Tareas!</h1>
+    <p>Inicia sesión o regístrate para continuar.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form action="{{ url_for('login') }}" method="post">
+        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <form action="{{ url_for('register') }}" method="post">
+        <input type="text" name="username" placeholder="Nuevo Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit">Registrarse</button>
+    </form>
+</div>
+{% endblock %}
