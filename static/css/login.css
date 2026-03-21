@@ -1,0 +1,172 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #b341e0, #4B0082);
+}
+
+/* Fondo general */
+.login-page {
+    display: flex;
+    justify-content: center;   /* centra horizontalmente */
+    align-items: center;       /* centra verticalmente */
+    gap: 200px;                 /* espacio entre imagen y formulario */
+    padding: 20px;
+}
+
+/* Imagen */
+.container-img {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    max-width: 500px;
+}
+
+.login-img {
+    height: 220px;   /* tamaño fijo */
+    width: auto;
+    margin-bottom: 15px;
+}
+
+.login-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    line-height: 1.4;
+}
+
+/* Formulario */
+.login-container {
+    max-width: 400px;
+    background-color: #4B0082; /* mantiene tu estética */
+    padding: 30px;
+    border-radius: 10px;
+    color: #f2f2f2;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+
+.login-container h1 {
+    margin-bottom: 15px;
+}
+
+.login-container p {
+    margin-bottom: 20px;
+}
+
+.login-container form {
+    margin-bottom: 20px;
+}
+
+.login-container .error {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.login-divider {
+    border: none;
+    border-top: 2px solid #b341e0;
+    margin: 20px 0;
+}
+
+.login, .register {
+    margin-top: 15px;
+}
+
+.bajo-register {
+    text-align: left;
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+/* Bloque central */
+.hero-section {
+    text-align: center;
+    padding: 60px 20px;
+    color: #fff;
+}
+
+.hero-section h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+.hero-section p {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+/* Bloques en fila */
+.features-section {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 30px;
+    margin-bottom: 50px;
+    color: #fff;
+}
+
+.feature {
+    flex: 1;
+    max-width: 400px;
+    background-color: rgba(255,255,255,0.05); /* leve contraste */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.feature h3 {
+    margin-bottom: 15px;
+    font-size: 22px;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
+}
+
+.feature p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.feature-img {
+    height: 200px;
+    width: auto;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+    .features-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .feature {
+        max-width: 90%;
+    }
+}
+
+.arrow-down {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.fa-angles-down {
+    font-size: 40px;       /* tamaño grande */
+    color: #fff;           /* blanco para contraste */
+    text-shadow: 0 0 8px rgba(0,0,0,0.6); /* glow sutil */
+    margin-top: 80px;
+}
+
+.unete {
+    font-size: 18px;
+    height: 50px;
+    width: 400px;
+}

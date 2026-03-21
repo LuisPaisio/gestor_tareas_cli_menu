@@ -1,23 +1,128 @@
 {% extends "base.html" %}
-{% block content %}
-<div class="login-container">
-    <h1>¡Bienvenido al Gestor de Tareas!</h1>
-    <p>Inicia sesión o regístrate para continuar.</p>
 
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
+{% block title %}Login{% endblock %}
 
-    <form action="{{ url_for('login') }}" method="post">
-        <input type="text" name="username" placeholder="Usuario" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit">Iniciar Sesión</button>
-    </form>
-
-    <form action="{{ url_for('register') }}" method="post">
-        <input type="text" name="username" placeholder="Nuevo Usuario" required>
-        <input type="password" name="password" placeholder="Contraseña" required>
-        <button type="submit">Registrarse</button>
-    </form>
-</div>
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 {% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="container-img">
+        <img src="{{ url_for('static', filename='images/PersonajesLogin.png') }}" class="login-img">
+        <p class="login-text">
+            Motívate para alcanzar tus objetivos.<br>
+            ¡Ha llegado el momento de divertirte mientras cumples con tus tareas!<br>
+            Únete a Progresia y mejora tu vida tarea a tarea.
+        </p>
+    </div>
+
+    <div class="login-container">
+        <h1>¡Bienvenido viajero!</h1>
+        <p>Inicia sesión o regístrate para comenzar tu aventura.</p>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form action="{{ url_for('login') }}" method="post">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="bajo-register">
+                <input type="checkbox" name="mantener-sesion"> Mantener sesión iniciada.
+            </div>
+            <button type="submit" class="login boton1">Iniciar Sesión</button>
+        </form>
+
+        <hr class="login-divider">
+
+        <form action="{{ url_for('register') }}" method="post">
+            <input type="text" name="username" placeholder="Nuevo Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="bajo-register">
+                <input type="checkbox" name="acepto-terminos"> Acepto los términos y condiciones.
+            </div>
+            <button type="submit" class="register boton1">Registrarse</button>
+        </form>
+    </div>
+</div>
+
+<div class="arrow-down">
+    <i class="fa-solid fa-angles-down"></i>
+</div>
+
+<section class="hero-section">
+    <h2>Convierte tu vida en un juego</h2>
+    <p>
+        Progresia es una app gratuita de construcción de hábitos y productividad que se toma tu vida real como un juego. 
+        Con recompensas y castigos en el juego para motivarte y una fuerte red social para inspirarte, Progresia puede ayudarte a conseguir tus metas para ser saludable, trabajador y feliz.
+    </p>
+</section>
+
+<section class="features-section">
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/registratushabitos.png') }}" class="feature-img">
+        <h3>Registra tus Hábitos y Objetivos</h3>
+        <p>
+            Mantente responsable siguiendo y manteniendo tus Hábitos, Tareas Diarias y Tareas Pendientes con las apps para móvil de Progresia y la página web, ambas fáciles de usar.
+        </p>
+    </div>
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/consiguerecompensas.png') }}" class="feature-img">
+        <h3>Consigue Recompensas por tus Objetivos</h3>
+        <p>
+            ¡Tacha las tareas para subir el nivel de tu Avatar, y desbloquea características dentro del juego como armaduras de batalla, mascotas misteriosas, habilidades mágicas e incluso misiones!
+        </p>
+    </div>
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/luchacontramonstruos.png') }}" class="feature-img">
+        <h3>Lucha contra monstruos con tus amigos</h3>
+        <p>
+            ¡Lucha contra monstruos con otros usuarios de Progresia! Utiliza el Oro que ganes para comprar recompensas del juego o personalizadas, como ver un capítulo de tu serie de televisión favorita.
+        </p>
+    </div>
+</section>
+
+<div class="arrow-down">
+    <i class="fa-solid fa-angles-down"></i>
+</div>
+
+<section class="hero-section">
+    <h2>Los jugadores utilizan Progresia para mejorar</h2>
+</section>
+
+<section class="features-section">
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/saludybienestar.png') }}" class="feature-img">
+        <h3>Salud y Bienestar</h3>
+        <p>
+            ¿Sin motivación para usar hilo dental? ¿No hay manera de que vayas al gimnasio? Habitica por fin hace que mantenerse sano sea divertido.
+        </p>
+    </div>
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/estudioytrabajo.png') }}" class="feature-img">
+        <h3>Estudios y Trabajo</h3>
+        <p>
+            Si estás preparando un informe para tu profesor o para tu jefe, es sencillo mantenerte al día con tu progreso abordando tus tareas más complicadas.
+        </p>
+    </div>
+    <div class="feature">
+        <img src="{{ url_for('static', filename='images/muchomas.png') }}" class="feature-img">
+        <h3>¡Y mucho, mucho más!</h3>
+        <p>
+            Nuestra lista de tareas completamente personalizable implica que puedes adaptar Habitica para que encaje con tus objetivos personales, haga énfasis en el cuidado de ti mismo o te ayude a perseguir un sueño distinto -- todo depende de ti.
+        </p>
+    </div>
+</section>
+
+<div class="arrow-down">
+    <i class="fa-solid fa-angles-down"></i>
+</div>
+
+<section class="hero-section">
+    <h2>¡Únete a Progresia y diviertete mientras consigues tus objetivos!</h2>
+    <button type="submit" class="register boton1 unete">Únete hoy a Progresia</button>
+</section>
+
+{% endblock %}
+

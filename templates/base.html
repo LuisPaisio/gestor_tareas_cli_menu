@@ -2,10 +2,108 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestor RPG</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Progresia{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
 </head>
-<body>
-    {% block content %}{% endblock %}
+<body class="container">
+    <header>
+        {% if usuario %}
+            <!-- Header para usuarios logueados -->
+            <nav>
+                <div class="nav-left">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Progresia"> 
+                    <ul>
+                        <li><a href="/">Tareas</a></li>
+                        <li><a href="/inventario">Inventario</a></li>
+                        <li><a href="/tienda">Tienda</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-right">
+                    <i class="fa-solid fa-coins"></i>
+                    <i class="fa-solid fa-bell"></i>
+                    <i class="fa-solid fa-user"></i>
+                    <i class="fa-solid fa-rotate-right"></i>
+                </div>
+            </nav>
+
+            <div class="header-perfil">
+                <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto de Perfil" class="perfil-img">
+
+                <div class="perfil-info">
+                    <h3>{{ usuario.username }}</h3>
+                    <div class="perfil-infoabajo">
+                        <p>@{{ usuario.username }}</p>
+                        <p>•</p>
+                        <p>Nivel {{ usuario.nivel }} {{ usuario.clase }}</p>
+                    </div>
+
+                    <div class="barra-contenedor vida">
+                        <i class="fa-solid fa-heart barra-icono"></i>
+                        <div class="barra"><span style="width: 80%"></span></div>
+                        <p class="barra-valor">80 / 100 HP</p>
+                    </div>
+                    <div class="barra-contenedor exp">
+                        <i class="fa-solid fa-star barra-icono"></i>
+                        <div class="barra"><span style="width: 45%"></span></div>
+                        <p class="barra-valor">45 / 100 EXP</p>
+                    </div>
+                    <div class="barra-contenedor mana">
+                        <i class="fa-solid fa-gem barra-icono"></i>
+                        <div class="barra"><span style="width: 60%"></span></div>
+                        <p class="barra-valor">30 / 50 MP</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Header para visitantes -->
+            <nav>
+                <div class="nav-left">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Progresia"> 
+                    <ul>
+                        <li><a href="#comencemos">Comencemos</a></li>
+                        <li><a href="#sabermas">Saber más</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-right">
+                    <a href="{{ url_for('home') }}" class="btn-login">Iniciar sesión</a>
+                </div>
+            </nav>
+        {% endif %}
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Mapa del sitio</h4>
+                <ul>
+                    <li><a href="#inicio">Tareas</a></li>
+                    <li><a href="#inventario">Inventario</a></li>
+                    <li><a href="#tienda">Tienda</a></li>
+                    <li><a href="#login">Iniciar Sesión / Registrarse</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="/privacidad">Política de Privacidad</a></li>
+                    <li><a href="/terminos">Términos del Servicio</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Progresia. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </body>
 </html>
