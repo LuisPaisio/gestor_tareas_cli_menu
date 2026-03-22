@@ -10,7 +10,7 @@ def home():
     # si ya hay usuario en sesión, mostrar menú
     if "usuario" in session:
         return redirect(url_for("menu_tareas"))
-    return render_template("login.html")
+    return render_template("home.html")
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -26,7 +26,7 @@ def login():
         }
         return redirect(url_for("menu_tareas"))
     else:
-        return render_template("login.html", error="Usuario o contraseña incorrectos")
+        return render_template("home.html", error="Usuario o contraseña incorrectos")
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -41,7 +41,7 @@ def register():
         }
         return redirect(url_for("menu_tareas"))
     else:
-        return render_template("login.html", error="No se pudo registrar")
+        return render_template("home.html", error="No se pudo registrar")
 
 @app.route("/menu")
 def menu_tareas():
@@ -55,6 +55,14 @@ def menu_tareas():
 def logout():
     session.pop("usuario", None)
     return redirect(url_for("home"))
+
+@app.route("/register_page")
+def register_page():
+    return render_template("soloregister.html")
+
+@app.route("/login_page")
+def login_page():
+    return render_template("solologin.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

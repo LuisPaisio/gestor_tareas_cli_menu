@@ -5,10 +5,19 @@ html,body {
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     background-color: #f4f4f4;
+    scroll-behavior: smooth;
 }
 
 main {
     padding: 20px;
+}
+
+a {
+    color: #ccc;
+}
+
+a:hover {
+    color: #b341e0;
 }
 
 /*HEADER*/
@@ -247,7 +256,8 @@ footer {
 /*INPUTS*/
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="email"] {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
@@ -259,7 +269,8 @@ input[type="password"] {
 }
 
 input[type="text"]:focus,
-input[type="password"]:focus {
+input[type="password"]:focus,
+input[type="email"]:focus {
     border-color: #b341e0;
     box-shadow: 0 0 8px rgba(179,65,224,0.5);
     outline: none;

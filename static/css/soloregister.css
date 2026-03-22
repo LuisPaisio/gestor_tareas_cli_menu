@@ -1,0 +1,10 @@
+html, body {
+    margin: 0 auto;
+    padding: 0;
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    margin: 50px 0;
+}

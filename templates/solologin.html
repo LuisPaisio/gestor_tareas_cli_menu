@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/soloregister.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='images/logo.ico') }}" class="logo-img">
+        
+        <h3>Inicia sesión para continuar tu aventura.</h3>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <hr class="login-divider">
+
+        <form action="{{ url_for('login') }}" method="post">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <div class="bajo-register">
+                <input type="checkbox" name="mantener-sesion"> Mantener sesión iniciada.
+            </div>
+            <button type="submit" class="login boton1">Iniciar Sesión</button>
+        </form>
+        <p>¿No tienes una cuenta Progresia? <a href="{{ url_for('register_page') }}">Regístrate.</a></p>
+    </div>
+</div>
+
+{% endblock %}

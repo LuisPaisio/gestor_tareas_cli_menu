@@ -11,6 +11,7 @@ html, body {
     align-items: center;       /* centra verticalmente */
     gap: 200px;                 /* espacio entre imagen y formulario */
     padding: 20px;
+    margin-top: 50px;
 }
 
 /* Imagen */
@@ -169,4 +170,13 @@ html, body {
     font-size: 18px;
     height: 50px;
     width: 400px;
+    text-decoration: none;
+}
+
+a {
+    color: #fff;
+}
+
+a:hover {
+    color: #fff;
 }

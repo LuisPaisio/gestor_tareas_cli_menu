@@ -3,7 +3,7 @@
 {% block title %}Login{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -38,6 +38,7 @@
 
         <form action="{{ url_for('register') }}" method="post">
             <input type="text" name="username" placeholder="Nuevo Usuario" required>
+            <input type="email" name="email" placeholder="Correo Electrónico" required>
             <input type="password" name="password" placeholder="Contraseña" required>
             <div class="bajo-register">
                 <input type="checkbox" name="acepto-terminos"> Acepto los términos y condiciones.
@@ -51,7 +52,7 @@
     <i class="fa-solid fa-angles-down"></i>
 </div>
 
-<section class="hero-section">
+<section class="hero-section" id="hero-section">
     <h2>Convierte tu vida en un juego</h2>
     <p>
         Progresia es una app gratuita de construcción de hábitos y productividad que se toma tu vida real como un juego. 
@@ -120,8 +121,8 @@
 </div>
 
 <section class="hero-section">
-    <h2>¡Únete a Progresia y diviertete mientras consigues tus objetivos!</h2>
-    <button type="submit" class="register boton1 unete">Únete hoy a Progresia</button>
+    <h2 class="hero-section-unete">¡Únete a Progresia y diviertete mientras consigues tus objetivos!</h2>
+    <a href="{{ url_for('register_page') }}" class="register boton1 unete">Únete hoy a Progresia</a>
 </section>
 
 {% endblock %}
