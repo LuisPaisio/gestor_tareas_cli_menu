@@ -1,0 +1,17 @@
+# Entornos virtuales
+venv/
+.env/
+
+# Archivos de cache de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de VS Code
+.vscode/
+
+# Archivos de logs
+*.log
+
+# Archivos temporales
+*.tmp
