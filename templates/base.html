@@ -18,9 +18,11 @@
                         <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Progresia">
                     </a>
                     <ul>
-                        <li><a href="/">Tareas</a></li>
-                        <li><a href="/inventario">Inventario</a></li>
-                        <li><a href="/tienda">Tienda</a></li>
+                        <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
+                        <li><a href="{{ url_for('menu_poderes') }}">Poderes de Clase</a></li>
+                        <li><a href="{{ url_for('menu_inventario') }}">Inventario</a></li>
+                        <li><a href="{{ url_for('menu_mascotas') }}">Mascotas</a></li>
+                        <li><a href="{{ url_for('menu_tienda') }}">Tienda</a></li>
                     </ul>
                 </div>
 
@@ -29,16 +31,23 @@
                     <i class="fa-solid fa-bell"></i>
                     <i class="fa-solid fa-user"></i>
                     <i class="fa-solid fa-rotate-right"></i>
+                    <a href="{{ url_for('logout') }}" class="btn-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
                 </div>
             </nav>
 
             <div class="header-perfil">
-                <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto de Perfil" class="perfil-img">
+                {% if usuario.foto_perfil %}
+                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" class="perfil-img">
+                {% endif %}
 
                 <div class="perfil-info">
-                    <h3>{{ usuario.username }}</h3>
+                    <h3>{{ usuario.usuario }}</h3>
                     <div class="perfil-infoabajo">
-                        <p>@{{ usuario.username }}</p>
+                        <p>@{{ usuario.usuario }}</p>
                         <p>•</p>
                         <p>Nivel {{ usuario.nivel }} {{ usuario.clase }}</p>
                     </div>
@@ -74,7 +83,7 @@
                 </div>
 
                 <div class="nav-right">
-                    <a href="{{ url_for('login_page') }}" class="btn-login">Iniciar sesión</a>
+                    <a href="{{ url_for('login_page') }}" class="btn-logout"> <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
                 </div>
             </nav>
         {% endif %}
@@ -87,28 +96,53 @@
     <!-- Hacer un footer general-->
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-section">
-                <h4>Mapa del sitio</h4>
-                <ul>
-                    <li><a href="#inicio">Tareas</a></li>
-                    <li><a href="#inventario">Inventario</a></li>
-                    <li><a href="#tienda">Tienda</a></li>
-                </ul>
+        {% if usuario %}
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h4>Mapa del sitio</h4>
+                    <ul>
+                        <li><a href="#inicio">Tareas</a></li>
+                        <li><a href="#inventario">Inventario</a></li>
+                        <li><a href="#tienda">Tienda</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/privacidad">Política de Privacidad</a></li>
+                        <li><a href="/terminos">Términos del Servicio</a></li>
+                    </ul>
+                </div>
             </div>
 
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <ul>
-                    <li><a href="/privacidad">Política de Privacidad</a></li>
-                    <li><a href="/terminos">Términos del Servicio</a></li>
-                </ul>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Progresia. Todos los derechos reservados.</p>
             </div>
-        </div>
+        {% else %}
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h4>Mapa del sitio</h4>
+                    <ul>
+                        <li><a href="{{ url_for('login_page') }}">Iniciar sesión</a></li>
+                        <li><a href="{{ url_for('register_page') }}">Registrarse</a></li>
+                        <li><a href="{{ url_for('home') }}">Saber más</a></li>
+                    </ul>
+                </div>
 
-        <div class="footer-bottom">
-            <p>&copy; 2026 Progresia. Todos los derechos reservados.</p>
-        </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/privacidad">Política de Privacidad</a></li>
+                        <li><a href="/terminos">Términos del Servicio</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Progresia. Todos los derechos reservados.</p>
+            </div>
+        {% endif %}
     </footer>
 </body>
 </html>

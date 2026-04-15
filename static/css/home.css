@@ -10,8 +10,8 @@ html, body {
     justify-content: center;   /* centra horizontalmente */
     align-items: center;       /* centra verticalmente */
     gap: 200px;                 /* espacio entre imagen y formulario */
-    padding: 20px;
-    margin-top: 50px;
+    height: 100vh;
+    position: relative;
 }
 
 /* Imagen */
@@ -86,8 +86,9 @@ html, body {
 /* Bloque central */
 .hero-section {
     text-align: center;
-    padding: 60px 20px;
+    padding: 15px 20px;
     color: #fff;
+    margin: 0;
 }
 
 .hero-section h2 {
@@ -101,6 +102,10 @@ html, body {
     margin: 0 auto;
     font-size: 18px;
     line-height: 1.6;
+}
+
+.hero-section-unete {
+    padding-bottom: 15px;
 }
 
 /* Bloques en fila */
@@ -151,12 +156,30 @@ html, body {
     }
 }
 
+.arrow-down1 {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%);
+    font-size: 32px;
+    color: #fff;
+    animation: bounce 1.5s infinite;
+    margin: 0;
+}
+
 .arrow-down {
     display: flex;
-    align-items: center;
     justify-content: center;
-    text-align: center;
     width: 100%;
+    font-size: 32px;
+    color: #fff;
+    animation: bounce 1.5s infinite;
+    margin: 20px 0;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
 }
 
 .fa-angles-down {

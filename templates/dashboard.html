@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-top">
+    <form class="search-bar">
+        <input type="text" placeholder="Buscar tarea...">
+        <select>
+            <option value="">Todas</option>
+            <option value="habito">Hábitos</option>
+            <option value="diaria">Diarias</option>
+            <option value="pendiente">Pendientes</option>
+            <option value="recompensa">Recompensas</option>
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+    <a href="{{ url_for('nueva_tarea') }}" class="boton1"> + Añadir tarea</a>
+</div>
+
+<div class="dashboard">
+    <!-- Hábitos -->
+    <div class="card">
+        <h3>Hábitos <span class="contador">{{ habitos|length }}</span></h3>
+        <input type="text" placeholder="Añadir un hábito">
+
+        <div class="tarea-item">
+            <div class="accion-izq">
+                <button class="positivo">+</button>
+            </div>
+            <span class="titulo">Acostarme antes de las 23:00hs</span>
+            <div class="accion-der">
+                <button class="negativo">-</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diarias -->
+    <div class="card">
+        <h3>Tareas Diarias <span class="contador">{{ diarias|length }}</span></h3>
+        <input type="text" placeholder="Añadir una tarea diaria">
+
+        <div class="tarea-item">
+            <div class="accion-izq"><input type="checkbox"></div>
+            <span class="titulo">Hacer 15 sentadillas</span>
+            <div class="accion-der"></div>
+        </div>
+    </div>
+
+    <!-- Pendientes -->
+    <div class="card">
+        <h3>Tareas Pendientes <span class="contador">{{ pendientes|length }}</span></h3>
+        <input type="text" placeholder="Añadir una tarea pendiente">
+
+        <div class="tarea-item">
+            <div class="accion-izq"><input type="checkbox"></div>
+            <span class="titulo">Comenzar curso de JAVA</span>
+            <div class="accion-der"></div>
+        </div>
+    </div>
+
+    <!-- Recompensas -->
+    <div class="card">
+        <h3>Recompensas</h3>
+        <input type="text" placeholder="Añadir una recompensa">
+        
+        <div class="tarea-item">
+            <div class="accion-izq"></div>
+            <span class="titulo">Jugar 1-2 horas a la PC</span>
+            <div class="accion-der">
+                <span class="monedas">
+                    <i class="fas fa-coins"></i> 10
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

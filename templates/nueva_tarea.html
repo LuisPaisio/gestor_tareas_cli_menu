@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Tarea{% endblock %}
+
+{% block content %}
+<h2>Crear nueva tarea</h2>
+<form method="POST">
+    <label for="titulo">Título:</label>
+    <input type="text" name="titulo" required>
+
+    <label for="tipo">Tipo:</label>
+    <select name="tipo">
+        <option value="1">Hábito</option>
+        <option value="2">Diaria</option>
+        <option value="3">Pendiente</option>
+    </select>
+
+    <label for="dificultad">Dificultad:</label>
+    <select name="dificultad">
+        <option value="facil">Fácil</option>
+        <option value="intermedia">Intermedia</option>
+        <option value="dificil">Difícil</option>
+    </select>
+
+    <button type="submit">Guardar</button>
+</form>
+{% endblock %}

@@ -1,19 +1,14 @@
 import json
 import os
-from colorama import Fore, Style
 from usuario import Usuario
 from utils_rutas import ruta_json
-
-# ARCHIVO_USUARIOS = os.path.join("json", "usuarios.json")
-# ARCHIVO_TAREAS = os.path.join("json", "tareas.json")
 
 ARCHIVO_USUARIOS = ruta_json("usuarios.json")
 ARCHIVO_TAREAS = ruta_json("tareas.json")
 
 class GestorUsuarios:
     def __init__(self):
-        # Carga inicial de usuarios
-        self.usuarios = self.cargar_usuarios() #Se asigna a self.usuarios la lista de objetos Usuarios que se obtuvo de return [Usuario.from_dict(u) for u in data]
+        self.usuarios = self.cargar_usuarios()
 
     # -------------------------------
     # Manejo de usuarios
@@ -25,17 +20,15 @@ class GestorUsuarios:
                     contenido = archivo.read().strip()
                     if not contenido:
                         return []
-                    data = json.loads(contenido) #Convierte el texto del JSON en una lista de diccionarios.
-                    return [Usuario.from_dict(u) for u in data] #list comprehension | Recorro cada elemento u dentro de data. | El metodo Usuario.from_dict(u) convierte el diccionario en un objeto Usuario.
+                    data = json.loads(contenido)
+                    return [Usuario.from_dict(u) for u in data]
             except json.JSONDecodeError:
-                print(Fore.RED + "⚠️ El archivo de usuarios está corrupto o vacío. Se iniciará una lista nueva." + Style.RESET_ALL)
                 return []
         return []
 
     def guardar_usuarios(self):
         with open(ARCHIVO_USUARIOS, "w", encoding="utf-8") as archivo:
             json.dump([u.to_dict() for u in self.usuarios], archivo, indent=4, ensure_ascii=False)
-        # Refresco la lista para mantener consistencia
         self.usuarios = self.cargar_usuarios()
 
     def actualizar_usuario(self, usuario):
@@ -46,73 +39,40 @@ class GestorUsuarios:
         self.guardar_usuarios()
 
     # -------------------------------
-    # Métodos principales
+    # Métodos para la web
     # -------------------------------
-    def login(self):
-        user = input("Ingresa tu nombre de usuario: ")
-        password = input("Ingresa tu contraseña: ")
+    def login_web(self, username, password):
+        """Login para Flask: recibe username y password desde formulario"""
         for usuario in self.usuarios:
-            if usuario.usuario == user and usuario.contraseña == password:
-                print(Fore.GREEN + f"\n¡Inicio de sesión exitoso!" + Style.RESET_ALL)
-                
-                # Asignar el gestor central al usuario que inicia sesión
+            if usuario.usuario == username and usuario.contraseña == password:
                 usuario.gestor_usuarios = self
-                
-                return usuario  # devolvemos el objeto Usuario ya vinculado al gestor
-        print(Fore.RED + "\nNombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
+                return usuario
         return None
 
-
-    def register(self):
-        user = input("Elige un nombre de usuario: ")
-        password = input("Elige una contraseña: ")
-
-        if len(user) < 8 or len(password) < 8 or user.strip() == "" or password.strip() == "":
-            print(Fore.RED + "\nEl nombre de usuario y la contraseña no puede contener menos de 8 caracteres o ser vacía." + Style.RESET_ALL)
+    def register_web(self, username, password):
+        """Registro para Flask: recibe username y password desde formulario"""
+        if len(username) < 8 or len(password) < 8 or username.strip() == "" or password.strip() == "":
             return None
 
         for usuario in self.usuarios:
-            if usuario.usuario == user:
-                print(Fore.RED + "\nEl nombre de usuario ya existe." + Style.RESET_ALL)
+            if usuario.usuario == username:
                 return None
 
         ultimo_id = max([u.id_usuario for u in self.usuarios], default=0)
-        nuevo_usuario = Usuario(id_usuario=ultimo_id + 1, usuario=user, contraseña=password)
+        nuevo_usuario = Usuario(id_usuario=ultimo_id + 1, usuario=username, contraseña=password)
+        nuevo_usuario.gestor_usuarios = self
 
-        nuevo_usuario.gestor_usuarios = self # Asignar el gestor central al usuario
-        
         self.usuarios.append(nuevo_usuario)
         self.guardar_usuarios()
-
-        print(Fore.GREEN + f"\n¡Registro exitoso!" + Style.RESET_ALL)
         return nuevo_usuario
 
-    def eliminar_usuario(self, gestor_tareas, gestor_inventario):
-        confirmar = input(
-            "\nAdvertencia: Esta acción eliminará tu cuenta permanentemente. "
-            "Presiona Enter para continuar o N para cancelar: "
-        )
-        if confirmar.lower() == "n":
-            print(Fore.YELLOW + "\nOperación cancelada." + Style.RESET_ALL)
-            return None
-
-        user = input("Ingresa tu nombre de usuario para eliminar la cuenta: ")
-        password = input("Ingresa tu contraseña: ")
-
+    def eliminar_usuario_web(self, username, password, gestor_tareas, gestor_inventario):
+        """Eliminar usuario desde la web, validando credenciales"""
         for usuario in self.usuarios:
-            if usuario.usuario == user and usuario.contraseña == password:
-                # Elimino las tareas del usuario
+            if usuario.usuario == username and usuario.contraseña == password:
                 gestor_tareas.eliminar_tareas_de_usuario(usuario.id_usuario)
-
-                # Elimino el inventario del usuario
                 gestor_inventario.eliminar_inventario_de_usuario(usuario.id_usuario)
-
-                # Elimino el usuario de la lista
                 self.usuarios.remove(usuario)
                 self.guardar_usuarios()
-
-                print(Fore.GREEN + f"\n✅ Cuenta '{user}' eliminada exitosamente junto con sus tareas e inventario." + Style.RESET_ALL)
                 return True
-
-        print(Fore.RED + "\n❌ Nombre de usuario o contraseña incorrectos." + Style.RESET_ALL)
-        return None
+        return False
