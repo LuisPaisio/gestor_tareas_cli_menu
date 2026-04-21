@@ -19,53 +19,111 @@
         </select>
         <button type="submit">Filtrar</button>
     </form>
-    <a href="{{ url_for('nueva_tarea') }}" class="boton1"> + Añadir tarea</a>
+    <a href="#" class="boton1" id="openModal"> + Añadir tarea</a>
+</div>
+
+<!-- Modal oculto -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Crear tarea nueva</h2>
+    <form id="taskForm" method="POST" action="{{ url_for('nueva_tarea') }}">
+      <input type="text" name="titulo" placeholder="Añadir una tarea" required>
+
+      <label for="tipo">Tipo:</label>
+      <select name="tipo" id="tipo">
+        <option value="1">Hábito</option>
+        <option value="2">Diaria</option>
+        <option value="3">Pendiente</option>
+      </select>
+
+      <!-- Solo si es hábito -->
+      <div id="habito-options" class="habito-options" style="display:none;">
+        <label>Hábito:</label>
+        <input type="radio" name="habito" value="+" checked> Positivo
+        <input type="radio" name="habito" value="-"> Negativo
+      </div>
+
+      <!-- Solo si es diaria -->
+      <div id="dias-options" class="dias-options" style="display:none;">
+        <label>Días de la semana:</label>
+        <label><input type="checkbox" name="dias" value="lunes"> Lunes</label>
+        <label><input type="checkbox" name="dias" value="martes"> Martes</label>
+        <label><input type="checkbox" name="dias" value="miercoles"> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="jueves"> Jueves</label>
+        <label><input type="checkbox" name="dias" value="viernes"> Viernes</label>
+        <label><input type="checkbox" name="dias" value="sabado"> Sábado</label>
+        <label><input type="checkbox" name="dias" value="domingo"> Domingo</label>
+      </div>
+
+      <!-- Solo si es pendiente -->
+      <div id="fecha-options" class="fecha-options" style="display:none;">
+        <label for="fecha_vencimiento">Fecha de vencimiento:</label>
+        <input type="date" class="fecha" name="fecha_vencimiento">
+      </div>
+
+      <label for="dificultad">Dificultad:</label>
+      <select name="dificultad">
+        <option value="1">Fácil</option>
+        <option value="2">Intermedia</option>
+        <option value="3">Difícil</option>
+      </select>
+
+      <button id="guardar-tarea" type="submit" class="boton1">Guardar</button>
+    </form>
+  </div>
 </div>
 
 <div class="dashboard">
     <!-- Hábitos -->
     <div class="card">
-        <h3>Hábitos <span class="contador">{{ habitos|length }}</span></h3>
-        <input type="text" placeholder="Añadir un hábito">
+      <h3>Hábitos <span class="contador">{{ habitos|length }}</span></h3>
+      <input type="text" placeholder="Añadir un hábito">
 
-        <div class="tarea-item">
-            <div class="accion-izq">
-                <button class="positivo">+</button>
-            </div>
-            <span class="titulo">Acostarme antes de las 23:00hs</span>
-            <div class="accion-der">
-                <button class="negativo">-</button>
-            </div>
+      {% for h in habitos %}
+      <div class="tarea-item">
+        <div class="accion-izq">
+          <button class="positivo">+</button>
         </div>
+        <span class="titulo">{{ h.titulo }}</span>
+        <div class="accion-der">
+          <button class="negativo">-</button>
+        </div>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- Diarias -->
     <div class="card">
-        <h3>Tareas Diarias <span class="contador">{{ diarias|length }}</span></h3>
-        <input type="text" placeholder="Añadir una tarea diaria">
+      <h3>Tareas Diarias <span class="contador">{{ diarias|length }}</span></h3>
+      <input type="text" placeholder="Añadir una tarea diaria">
 
-        <div class="tarea-item">
-            <div class="accion-izq"><input type="checkbox"></div>
-            <span class="titulo">Hacer 15 sentadillas</span>
-            <div class="accion-der"></div>
-        </div>
+      {% for d in diarias %}
+      <div class="tarea-item">
+        <div class="accion-izq"><input type="checkbox" {% if d.completada %}checked{% endif %}></div>
+        <span class="titulo">{{ d.titulo }}</span>
+        <div class="accion-der">Días: {{ d.dias|join(', ') }}</div>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- Pendientes -->
     <div class="card">
-        <h3>Tareas Pendientes <span class="contador">{{ pendientes|length }}</span></h3>
-        <input type="text" placeholder="Añadir una tarea pendiente">
+      <h3>Tareas Pendientes <span class="contador">{{ pendientes|length }}</span></h3>
+      <input type="text" placeholder="Añadir una tarea pendiente">
 
-        <div class="tarea-item">
-            <div class="accion-izq"><input type="checkbox"></div>
-            <span class="titulo">Comenzar curso de JAVA</span>
-            <div class="accion-der"></div>
-        </div>
+      {% for p in pendientes %}
+      <div class="tarea-item">
+        <div class="accion-izq"><input type="checkbox" {% if p.completada %}checked{% endif %}></div>
+        <span class="titulo">{{ p.titulo }}</span>
+        <div class="accion-der">Vence: {{ p.fecha_vencimiento }}</div>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- Recompensas -->
     <div class="card">
-        <h3>Recompensas</h3>
+        <h3>Tienda</h3>
         <input type="text" placeholder="Añadir una recompensa">
         
         <div class="tarea-item">
@@ -79,4 +137,147 @@
         </div>
     </div>
 </div>
+
+<script>
+  const modal = document.getElementById("modal");
+  const btn = document.getElementById("openModal");
+  const span = document.querySelector(".close");
+  const form = document.getElementById("taskForm");
+  const tipoSelect = document.getElementById("tipo");
+  const habitoOptions = document.getElementById("habito-options");
+  const diasOptions = document.getElementById("dias-options");
+  const fechaOptions = document.getElementById("fecha-options");
+
+  // abrir modal
+  btn.onclick = () => {
+    modal.style.display = "block";
+    form.reset();
+    tipoSelect.dispatchEvent(new Event("change"));
+  };
+
+  // cerrar modal
+  span.onclick = () => {
+    modal.style.display = "none";
+    form.reset();
+  };
+
+  window.onclick = (event) => {
+    if (event.target == modal) {
+      modal.style.display = "none";
+      form.reset();
+    }
+  };
+
+  // interceptar submit con validaciones
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const tipo = form.querySelector("select[name='tipo']").value;
+    let valido = true;
+    let mensajeError = "";
+
+    if (tipo === "1") { // hábito
+      const habito = form.querySelector("input[name='habito']:checked");
+      if (!habito) {
+        valido = false;
+        mensajeError = "Debes seleccionar si el hábito es positivo o negativo.";
+      }
+    }
+
+    if (tipo === "2") { // diaria
+      const dias = form.querySelectorAll("input[name='dias']:checked");
+      if (dias.length === 0) {
+        valido = false;
+        mensajeError = "Debes seleccionar al menos un día para la tarea diaria.";
+      }
+    }
+
+    if (tipo === "3") { // pendiente
+      const fecha = form.querySelector("input[name='fecha_vencimiento']").value;
+      if (!fecha) {
+        valido = false;
+        mensajeError = "Debes ingresar una fecha de vencimiento para la tarea pendiente.";
+      }
+    }
+
+    if (!valido) {
+      alert(mensajeError);
+      return; // no envía nada si hay error
+    }
+
+    // si todo está bien, enviar al backend
+    const formData = new FormData(form);
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData
+    });
+
+    if (response.ok) {
+      modal.style.display = "none";
+      form.reset();
+      location.reload(); // refrescar lista
+    } else {
+      alert("Error al guardar la tarea");
+    }
+  });
+
+  // Mostrar/ocultar según tipo
+  tipoSelect.addEventListener("change", () => {
+    habitoOptions.style.display = "none";
+    diasOptions.style.display = "none";
+    fechaOptions.style.display = "none";
+
+    if (tipoSelect.value === "1") {
+      habitoOptions.style.display = "block";
+    } else if (tipoSelect.value === "2") {
+      diasOptions.style.display = "block";
+    } else if (tipoSelect.value === "3") {
+      fechaOptions.style.display = "block";
+    }
+  });
+
+  // Inputs rápidos en cada card
+  document.querySelectorAll(".card input[type='text']").forEach(input => {
+    input.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter" && input.value.trim() !== "") {
+        const titulo = input.value.trim();
+        let tipo, extra = {};
+
+        if (input.placeholder.includes("hábito")) {
+          tipo = 1;
+          extra = { habito: "+", dificultad: 1 };
+        } else if (input.placeholder.includes("diaria")) {
+          tipo = 2;
+          extra = { dias: ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"], dificultad: 1 };
+        } else if (input.placeholder.includes("pendiente")) {
+          tipo = 3;
+          const fecha = new Date();
+          fecha.setDate(fecha.getDate() + 7);
+          extra = { fecha_vencimiento: fecha.toISOString().split("T")[0], dificultad: 1 };
+        }
+
+        const data = new FormData();
+        data.append("titulo", titulo);
+        data.append("tipo", tipo);
+        for (const [k,v] of Object.entries(extra)) {
+          if (Array.isArray(v)) {
+            v.forEach(d => data.append(k, d));
+          } else {
+            data.append(k, v);
+          }
+        }
+
+        const response = await fetch("/nueva_tarea", { method: "POST", body: data });
+        if (response.ok) {
+          input.value = ""; // limpiar campo
+          location.reload(); // refrescar lista
+        } else {
+          alert("Error al crear la tarea");
+        }
+      }
+    });
+  });
+
+</script>
+
 {% endblock %}

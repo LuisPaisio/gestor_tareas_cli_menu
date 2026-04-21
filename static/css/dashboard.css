@@ -196,3 +196,124 @@
     border-radius: 12px;
     margin-left: 8px;
 }
+
+/* Fondo del modal */
+.modal {
+  display: none; /* oculto por defecto */
+  position: fixed;
+  z-index: 1000; /* encima de todo */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* scroll si es necesario */
+  background-color: rgba(0,0,0,0.6); /* fondo semi-transparente */
+}
+
+/* Contenedor del modal */
+.modal-content {
+  background-color: #4B0082;
+  margin: 10% auto;
+  padding: 25px 30px;
+  border-radius: 10px;
+  width: 420px;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  text-align: center; /* alinear etiquetas e inputs a la izquierda */
+}
+
+/* Título */
+.modal-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo general de labels e inputs */
+#taskForm label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+#taskForm input[type="date"] {
+  width: 100%;          /* ocupa todo el ancho disponible */
+  box-sizing: border-box; /* incluye padding y borde en el cálculo del ancho */
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  display: block;
+}
+
+#taskForm input[type="text"],
+#taskForm select,
+#taskForm input[type="date"] {
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  display: block; /* asegura que cada uno quede en su línea */
+}
+
+/* Radios de hábito */
+.habito-options {
+  margin-top: 10px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Checkboxes de días en columna */
+.dias-options {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column; /* uno debajo del otro */
+  gap: 6px;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.dias-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* separa el checkbox del texto */
+}
+
+/* Fecha */
+.fecha-options {
+  margin-top: 10px;
+}
+
+/* Botón de cierre */
+.close {
+  color: #fff;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #b341e0;
+}
+
+select, .fecha {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+/* Botón guardar abajo del todo */
+#modal .boton1 {
+    margin: 0;
+    width: 100%;
+    margin-top: 20px;
+    display: block;
+}

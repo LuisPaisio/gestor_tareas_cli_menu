@@ -76,3 +76,19 @@ class GestorUsuarios:
                 self.guardar_usuarios()
                 return True
         return False
+    
+    def get_usuario_por_id(self, id_usuario):
+        """Devuelve el objeto Usuario con el id_usuario indicado"""
+        for usuario in self.usuarios:
+            if int(usuario.id_usuario) == int(id_usuario):
+                usuario.gestor_usuarios = self
+                return usuario
+        return None
+
+    def get_usuario_por_nombre(self, nombre_usuario):
+        """Devuelve el objeto Usuario con el nombre indicado"""
+        for usuario in self.usuarios:
+            if usuario.usuario == nombre_usuario:
+                usuario.gestor_usuarios = self
+                return usuario
+        return None
