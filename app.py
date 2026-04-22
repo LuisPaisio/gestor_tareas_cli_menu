@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from gestor_usuarios import GestorUsuarios
 from gestor_tareas import GestorTareas
 from gestor_recompensa import GestorRecompensas
+from constantes_tareas import vida_maxima, mana_maximo
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
@@ -25,7 +26,7 @@ def login():
             "nombre": usuario_actual.usuario,  # identificador real
             "usuario": usuario_actual.nombre_publico if usuario_actual.nombre_publico else usuario_actual.usuario,
             "nivel": usuario_actual.nivel_usuario,
-            "clase": usuario_actual.clase.nombre if usuario_actual.clase else None,
+            "clase_nombre": usuario_actual.clase_nombre,
             "foto_perfil": usuario_actual.foto_perfil
         }
         return redirect(url_for("dashboard"))  # directo al dashboard
@@ -43,7 +44,7 @@ def register():
             "nombre": usuario_actual.usuario,
             "usuario": usuario_actual.nombre_publico if usuario_actual.nombre_publico else usuario_actual.usuario,
             "nivel": usuario_actual.nivel_usuario,
-            "clase": usuario_actual.clase.nombre if usuario_actual.clase else None,
+            "clase_nombre": usuario_actual.clase_nombre,
             "foto_perfil": usuario_actual.foto_perfil
         }
         return redirect(url_for("dashboard"))  # directo al dashboard
@@ -65,7 +66,6 @@ def login_page():
 
 @app.route("/dashboard")
 def dashboard():
-    print("DEBUG: Entrando al route /dashboard")
     usuario_dict = session.get("usuario")
     if not usuario_dict:
         return redirect(url_for("home"))
@@ -79,34 +79,22 @@ def dashboard():
     gestor_recompensas = GestorRecompensas()
     recompensas_usuario = []
 
+    # valores máximos y xp requerida
+    vida_max = vida_maxima()
+    mana_max = mana_maximo()
+    xp_req = usuario_obj.xp_requerida()
+
     return render_template(
         "dashboard.html",
-        usuario=usuario_dict,
+        usuario=usuario_obj,          # objeto completo
         habitos=tareas["habitos"],
         diarias=tareas["diarias"],
         pendientes=tareas["pendientes"],
-        recompensas=recompensas_usuario
+        recompensas=recompensas_usuario,
+        vida_maxima=vida_max,
+        mana_maximo=mana_max,
+        xp_requerida=xp_req
     )
-
-@app.route("/nueva_recompensa", methods=["GET", "POST"])
-def nueva_recompensa():
-    usuario_dict = session.get("usuario")
-    if not usuario_dict:
-        return redirect(url_for("home"))
-
-    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
-
-    if request.method == "POST":
-        titulo = request.form["titulo"]
-        costo = int(request.form["costo"])
-
-        gestor_recompensas = GestorRecompensas()
-        gestor_recompensas.nueva_recompensa(usuario_obj, titulo, costo)
-
-        flash("Recompensa creada exitosamente.", "success")
-        return redirect(url_for("dashboard"))
-
-    return render_template("nueva_recompensa.html", usuario=usuario_dict)
 
 @app.route("/estadisticas")
 def estadisticas():
@@ -160,7 +148,7 @@ def nueva_tarea():
 
     # Defaults según tipo
     if tipo == 1:  # hábito
-        habito = habito or "+"
+        habito = habito or "+-"   # por defecto mixto
         dificultad = dificultad or "1"
     elif tipo == 2:  # diaria
         dificultad = dificultad or "1"
@@ -183,21 +171,73 @@ def nueva_tarea():
     flash("Tarea creada exitosamente.", "success")
     return redirect(url_for("dashboard"))
 
+
 @app.route("/usar_recompensa", methods=["POST"])
 def usar_recompensa():
     usuario_dict = session.get("usuario")
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
 
     gestor_recompensas = GestorRecompensas()
-    recompensas = gestor_recompensas.aplicar_recompensas(usuario_obj, [...])  # lista de recompensas
+    # Aquí deberías pasar la lista real de recompensas seleccionadas
+    recompensas = gestor_recompensas.aplicar_recompensas(usuario_obj, [...], es_penalizacion=False)
 
     # Pasar resultados como flash messages
     for r in recompensas:
-        mensaje = f"{r['tipo'].upper()} {r['resultado']['total']} obtenido"
-        flash(mensaje, "success")
+        total = r['resultado']['total']
+        tipo = r['tipo'].upper()
+
+        # Usar categorías estándar para los toasts
+        if r['tipo'] == "xp":
+            flash(f"{tipo} +{total} obtenido", "success")
+        elif r['tipo'] == "coin":
+            flash(f"{tipo} +{total} obtenido", "success")
+        elif r['tipo'] == "vida":
+            flash(f"{tipo} +{total} obtenido", "info")  # vida como info, porque es recuperación
+        else:
+            flash(f"{tipo} +{total} obtenido", "success")
+
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/marcar_tarea/<int:tarea_id>/<accion>", methods=["POST"])
+def marcar_tarea(tarea_id, accion):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
+
+    resultado = gestor_tareas.marcar_tarea_web(tarea_id, accion)
+
+    if "error" in resultado:
+        flash(resultado["error"], "error")
+    else:
+        # mensaje general
+        flash(resultado["mensaje"], "info")
+
+        # recompensas
+        for r in resultado.get("recompensas", []):
+            flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r['tipo'])
+
+        # penalizaciones
+        for p in resultado.get("penalizaciones", []):
+            tipo = p['tipo']
+            total = p['resultado']['total']
+
+            if tipo == "vida":
+                base = p['resultado']['base']
+                bonus = p['resultado']['bonus']
+                if total == 0:
+                    flash(f"DEFENSA absorbió todo el daño (bloqueado {abs(base)})", "defensa")
+                else:
+                    flash(f"VIDA {total} (daño base {abs(base)} - defensa {bonus})", "vida-neg")
+            else:
+                flash(f"{tipo.upper()} {total}", f"{tipo}-neg")
 
     return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
+

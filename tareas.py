@@ -55,7 +55,7 @@ class Tarea:
         recompensas = []
 
         # --- Hábito positivo ---
-        if self.tipo == 1 and self.habito == "+":
+        if self.tipo == 1 and self.habito in ["+", "+-"]:
             recompensas.append(Recompensa(None, f"XP hábito {self.titulo}", "xp", int(constantes_tareas.xp_habito() * mult)))
             recompensas.append(Recompensa(None, f"Coins hábito {self.titulo}", "coins", int(constantes_tareas.coin_habito() * mult)))
 
@@ -108,7 +108,7 @@ class Tarea:
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
         recompensas = []
 
-        if self.tipo == 1 and self.habito == "-":  # Hábito negativo
+        if self.tipo == 1 and self.habito in ["-", "+-"]:  # Hábito negativo
             vida_perdida = int(constantes_tareas.vida_habito() * mult)
             recompensas.append(Recompensa(None, f"Penalización hábito negativo {self.titulo}", "vida", -vida_perdida))
 

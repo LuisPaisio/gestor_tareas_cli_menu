@@ -317,3 +317,23 @@ select, .fecha {
     margin-top: 20px;
     display: block;
 }
+
+.tarea-contenido {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* título arriba, info abajo */
+    justify-content: center;
+    padding: 0 10px;
+}
+
+.tarea-contenido .subinfo {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+    margin: 0;
+}

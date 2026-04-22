@@ -39,7 +39,7 @@ class GestorRecompensas:
             self.historial.append(recompensa)
 
             resultados.append({
-                "id": recompensa.id,
+                "id": recompensa.id_recompensa,
                 "nombre": recompensa.nombre,
                 "tipo": recompensa.tipo,
                 "valor": recompensa.valor,
@@ -50,26 +50,3 @@ class GestorRecompensas:
         self.guardar_historial()
         return resultados
 
-    def nueva_recompensa(self, usuario, titulo, costo):
-        """Crear recompensa personalizada desde la web."""
-        nueva = Recompensa(
-            id=None,
-            nombre=titulo,
-            tipo="custom",
-            valor=costo,
-            id_usuario=usuario.id_usuario
-        )
-        self.historial.append(nueva)
-        self.guardar_historial()
-
-    def recompensas_usuario(self, usuario):
-        """Devuelve las recompensas asociadas al usuario para mostrarlas en el dashboard."""
-        return [
-            {
-                "id": r.id,
-                "nombre": r.nombre,
-                "tipo": r.tipo,
-                "valor": r.valor
-            }
-            for r in self.historial if int(r.id_usuario) == int(usuario.id_usuario)
-        ]

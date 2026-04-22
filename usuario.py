@@ -82,6 +82,7 @@ class Usuario:
             self.ventajas_vip = None
 
         # Inicializar clase RPG
+        self.clase_nombre = clase_nombre
         self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip") if clase_nombre else None
 
         self.gestor_inventario = GestorInventario(self)
@@ -112,7 +113,7 @@ class Usuario:
             "tags": self.tags,
             "mana_usuario": self.mana_usuario,
             "fecha_expiracion_vip": self.fecha_expiracion_vip,
-            "clase_nombre": self.clase.nombre if self.clase else None
+            "clase_nombre": self.clase_nombre if self.clase_nombre else None
         }
 
     @staticmethod

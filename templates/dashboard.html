@@ -40,8 +40,9 @@
       <!-- Solo si es hábito -->
       <div id="habito-options" class="habito-options" style="display:none;">
         <label>Hábito:</label>
-        <input type="radio" name="habito" value="+" checked> Positivo
+        <input type="radio" name="habito" value="+"> Positivo
         <input type="radio" name="habito" value="-"> Negativo
+        <input type="radio" name="habito" value="+-"> Ambos
       </div>
 
       <!-- Solo si es diaria -->
@@ -82,13 +83,25 @@
 
       {% for h in habitos %}
       <div class="tarea-item">
+        <!-- Botón positivo -->
+        {% if h.habito == '+' or h.habito == '+-' %}
         <div class="accion-izq">
-          <button class="positivo">+</button>
+          <form action="{{ url_for('marcar_tarea', tarea_id=h.id, accion='positivo') }}" method="post" style="display:inline;">
+            <button type="submit" class="positivo">+</button>
+          </form>
         </div>
+        {% endif %}
+
         <span class="titulo">{{ h.titulo }}</span>
+
+        <!-- Botón negativo -->
+        {% if h.habito == '-' or h.habito == '+-' %}
         <div class="accion-der">
-          <button class="negativo">-</button>
+          <form action="{{ url_for('marcar_tarea', tarea_id=h.id, accion='negativo') }}" method="post" style="display:inline;">
+            <button type="submit" class="negativo">-</button>
+          </form>
         </div>
+        {% endif %}
       </div>
       {% endfor %}
     </div>
@@ -100,9 +113,16 @@
 
       {% for d in diarias %}
       <div class="tarea-item">
-        <div class="accion-izq"><input type="checkbox" {% if d.completada %}checked{% endif %}></div>
-        <span class="titulo">{{ d.titulo }}</span>
-        <div class="accion-der">Días: {{ d.dias|join(', ') }}</div>
+        <div class="accion-izq">
+          <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
+            <input type="checkbox" {% if d.completada %}checked{% endif %}
+                   onchange="this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='incompleta') if d.completada else url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}'; this.form.submit();">
+          </form>
+        </div>
+        <div class="tarea-contenido">
+          <span class="titulo">{{ d.titulo }}</span>
+          <p class="subinfo">Días: {{ d.dias|join(', ') }}</p>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -114,9 +134,16 @@
 
       {% for p in pendientes %}
       <div class="tarea-item">
-        <div class="accion-izq"><input type="checkbox" {% if p.completada %}checked{% endif %}></div>
-        <span class="titulo">{{ p.titulo }}</span>
-        <div class="accion-der">Vence: {{ p.fecha_vencimiento }}</div>
+        <div class="accion-izq">
+          <form action="{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}" method="post" style="display:inline;">
+            <input type="checkbox" {% if p.completada %}checked{% endif %}
+                   onchange="this.form.action='{{ url_for('marcar_tarea', tarea_id=p.id, accion='incompleta') if p.completada else url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}'; this.form.submit();">
+          </form>
+        </div>
+        <div class="tarea-contenido">
+          <span class="titulo">{{ p.titulo }}</span>
+          <p class="subinfo">Vence: {{ p.fecha_vencimiento }}</p>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -130,9 +157,7 @@
             <div class="accion-izq"></div>
             <span class="titulo">Jugar 1-2 horas a la PC</span>
             <div class="accion-der">
-                <span class="monedas">
-                    <i class="fas fa-coins"></i> 10
-                </span>
+                <span class="monedas"><i class="fas fa-coins"></i> 10</span>
             </div>
         </div>
     </div>
@@ -180,7 +205,7 @@
       const habito = form.querySelector("input[name='habito']:checked");
       if (!habito) {
         valido = false;
-        mensajeError = "Debes seleccionar si el hábito es positivo o negativo.";
+        mensajeError = "Debes seleccionar si el hábito es positivo, negativo o ambos.";
       }
     }
 
@@ -245,7 +270,7 @@
 
         if (input.placeholder.includes("hábito")) {
           tipo = 1;
-          extra = { habito: "+", dificultad: 1 };
+          extra = { habito: "+-", dificultad: 1 }; // por defecto mixto
         } else if (input.placeholder.includes("diaria")) {
           tipo = 2;
           extra = { dias: ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"], dificultad: 1 };
@@ -277,7 +302,6 @@
       }
     });
   });
-
 </script>
 
 {% endblock %}

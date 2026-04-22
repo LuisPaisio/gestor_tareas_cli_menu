@@ -9,6 +9,18 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div id="toast-container">
+            {% for category, message in messages %}
+            <div class="toast {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    {{ messages }}
+
+
     <header>
         {% if usuario %}
             <!-- Header para usuarios logueados -->
@@ -27,7 +39,9 @@
                 </div>
 
                 <div class="nav-right">
-                    <i class="fa-solid fa-coins"></i>
+                    <div class="nav-coins" title="Coins">
+                        <i class="fa-solid fa-coins"></i> {{ usuario.coin_usuario }}
+                    </div>
                     <i class="fa-solid fa-bell"></i>
                     <i class="fa-solid fa-user"></i>
                     <i class="fa-solid fa-rotate-right"></i>
@@ -35,8 +49,8 @@
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </a>
                 </div>
-            </nav>
 
+            </nav>
             <div class="header-perfil">
                 {% if usuario.foto_perfil %}
                     <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img">
@@ -45,28 +59,52 @@
                 {% endif %}
 
                 <div class="perfil-info">
-                    <h3>{{ usuario.usuario }}</h3>
+                    <h3>{{ usuario.nombre_publico or usuario.usuario }}</h3>
                     <div class="perfil-infoabajo">
                         <p>@{{ usuario.usuario }}</p>
                         <p>•</p>
-                        <p>Nivel {{ usuario.nivel }} {{ usuario.clase }}</p>
+                        <p>{{ usuario.clase_nombre or 'Sin clase' }}</p>
+                        <p>•</p>
+                        <p>Nivel {{ usuario.nivel_usuario }}</p>
+                        <p>•</p>
+                        <p>Prestigio: {{ usuario.contador_100 }}/3</p>
                     </div>
 
+                    <!-- Barra de Vida -->
                     <div class="barra-contenedor vida">
                         <i class="fa-solid fa-heart barra-icono"></i>
-                        <div class="barra"><span style="width: 80%"></span></div>
-                        <p class="barra-valor">80 / 100 HP</p>
+                        <div class="barra">
+                            <span style="width: {{ (usuario.vida_usuario / vida_maxima) * 100 }}%"></span>
+                        </div>
+                        <p class="barra-valor">{{ usuario.vida_usuario }} / {{ vida_maxima }} HP</p>
                     </div>
+
+                    <!-- Barra de XP -->
                     <div class="barra-contenedor exp">
                         <i class="fa-solid fa-star barra-icono"></i>
-                        <div class="barra"><span style="width: 45%"></span></div>
-                        <p class="barra-valor">45 / 100 EXP</p>
+                        <div class="barra">
+                            <span style="width: {{ (usuario.xp_usuario / xp_requerida) * 100 }}%"></span>
+                        </div>
+                        <p class="barra-valor">{{ usuario.xp_usuario }} / {{ xp_requerida }} EXP</p>
                     </div>
+
+                    <!-- Barra de Maná -->
                     <div class="barra-contenedor mana">
                         <i class="fa-solid fa-gem barra-icono"></i>
-                        <div class="barra"><span style="width: 60%"></span></div>
-                        <p class="barra-valor">30 / 50 MP</p>
+                        <div class="barra">
+                            <span style="width: {{ (usuario.mana_usuario / mana_maximo) * 100 }}%"></span>
+                        </div>
+                        <p class="barra-valor">{{ usuario.mana_usuario }} / {{ mana_maximo }} MP</p>
                     </div>
+
+                    <!-- Botón de Prestigio -->
+                    {% if usuario.nivel_usuario == 100 and usuario.contador_100 < 3 %}
+                        <form action="{{ url_for('prestigiar') }}" method="post">
+                            <button type="submit" class="btn-prestigio">
+                                🔄 Subir de Prestigio
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
         {% else %}
@@ -144,17 +182,38 @@
             </div>
         {% endif %}
     </footer>
-
-    <!-- Contenedor de notificaciones (toast) -->
-    <div id="toast-container">
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="toast {{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
-    </div>
     
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("toast-container");
+    const MAX_TOASTS = 4;
+
+    function addToast(toast) {
+        if (container.children.length >= MAX_TOASTS) {
+        container.removeChild(container.firstElementChild);
+        }
+        container.appendChild(toast);
+
+        // cerrar con animación al hacer click
+        toast.addEventListener("click", () => {
+        toast.classList.add("hide");
+        toast.addEventListener("animationend", () => {
+            toast.remove();
+        }, { once: true });
+        });
+
+        // auto-remover al terminar animación fadeInOut
+        toast.addEventListener("animationend", () => {
+        if (!toast.classList.contains("hide")) {
+            toast.remove();
+        }
+        });
+    }
+
+    Array.from(container.children).forEach(toast => {
+        addToast(toast);
+    });
+    });
+</script>
 </body>
 </html>
