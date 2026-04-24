@@ -42,14 +42,48 @@
                     <div class="nav-coins" title="Coins">
                         <i class="fa-solid fa-coins"></i> {{ usuario.coin_usuario }}
                     </div>
-                    <i class="fa-solid fa-bell"></i>
+
+                    <!-- 🔔 Notificaciones -->
+                    <div class="nav-notifications" title="Notificaciones">
+                        <i class="fa-solid fa-bell"></i>
+                        {% set no_leidas = notificaciones | selectattr("leido", "equalto", false) | list %}
+                        {% if no_leidas %}
+                            <span class="badge">{{ no_leidas|length }}</span>
+                        {% endif %}
+
+                        <!-- Submenu desplegable -->
+                        <div id="dropdown-notificaciones" class="dropdown">
+                            <ul>
+                                {% for notif in notificaciones %}
+                                    <li class="{{ 'no-leida' if not notif.leido else 'leida' }}">
+                                        <div class="notif-text">{{ notif.mensaje }}</div>
+                                        <div class="notif-actions">
+                                            <a href="{{ url_for('marcar_leida', id_notificacion=notif.id) }}">✔</a>
+                                            <a href="{{ url_for('eliminar_notificacion', id_notificacion=notif.id) }}">✖</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <!-- Paginador -->
+                            <div class="paginador">
+                                Página {{ pagina_actual }}/{{ total_paginas }}
+                                {% if pagina_actual > 1 %}
+                                    <a href="{{ url_for('notificaciones', pagina=pagina_actual-1) }}">Anterior</a>
+                                {% endif %}
+                                {% if pagina_actual < total_paginas %}
+                                    <a href="{{ url_for('notificaciones', pagina=pagina_actual+1) }}">Siguiente</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
                     <i class="fa-solid fa-user"></i>
                     <i class="fa-solid fa-rotate-right"></i>
                     <a href="{{ url_for('logout') }}" class="btn-logout">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </a>
                 </div>
-
             </nav>
             <div class="header-perfil">
                 {% if usuario.foto_perfil %}

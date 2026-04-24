@@ -3,6 +3,7 @@ from gestor_usuarios import GestorUsuarios
 from gestor_tareas import GestorTareas
 from gestor_recompensa import GestorRecompensas
 from constantes_tareas import vida_maxima, mana_maximo
+from gestor_notificaciones import GestorNotificaciones
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
@@ -103,18 +104,28 @@ def dashboard():
     mana_max = mana_maximo()
     xp_req = usuario_obj.xp_requerida()
 
+    # 🔹 Cargar notificaciones del usuario (ya devuelve lista de dicts con id incluido)
+    gestor_notificaciones = GestorNotificaciones()
+    notificaciones_lista = gestor_notificaciones.obtener_notificaciones(usuario_obj.id_usuario)[:5]
+
+    # 🔹 Paginación básica (por ahora fija en 1/1)
+    pagina_actual = 1
+    total_paginas = 1
+
     return render_template(
         "dashboard.html",
-        usuario=usuario_obj,          # objeto completo
+        usuario=usuario_obj,
         habitos=tareas["habitos"],
         diarias=tareas["diarias"],
         pendientes=tareas["pendientes"],
         recompensas=recompensas_usuario,
         vida_maxima=vida_max,
         mana_maximo=mana_max,
-        xp_requerida=xp_req
+        xp_requerida=xp_req,
+        notificaciones=notificaciones_lista,   # lista de dicts con id
+        pagina_actual=pagina_actual,
+        total_paginas=total_paginas
     )
-
 
 @app.route("/estadisticas")
 def estadisticas():
@@ -305,6 +316,32 @@ def activar_vip():
 
     return redirect(url_for("dashboard"))
 
+@app.route("/notificacion/<int:id_notificacion>/leer", methods=["POST", "GET"])
+def marcar_leida(id_notificacion):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_notificaciones = GestorNotificaciones()
+    gestor_notificaciones.marcar_leida(usuario_obj.id_usuario, str(id_notificacion))
+
+    flash("Notificación marcada como leída", "success")
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/notificacion/<int:id_notificacion>/eliminar", methods=["POST", "GET"])
+def eliminar_notificacion(id_notificacion):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_notificaciones = GestorNotificaciones()
+    gestor_notificaciones.eliminar_notificacion(usuario_obj.id_usuario, str(id_notificacion))
+
+    flash("Notificación eliminada", "success")
+    return redirect(url_for("dashboard"))
 
 if __name__ == "__main__":
     app.run(debug=True)
