@@ -75,6 +75,65 @@
   </div>
 </div>
 
+{% if diarias_vencidas or pendientes_vencidas %}
+<div class="modal" id="tareasVencidasModal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalVencidas()">&times;</span>
+    <h3>Tareas vencidas</h3>
+    <p>Estas tareas quedaron pendientes de ayer. ¿Qué deseas hacer?</p>
+
+    <!-- Diarias vencidas -->
+    <h4>Diarias vencidas</h4>
+    {% for d in diarias_vencidas %}
+      <div class="tarea-item">
+        <div class="accion-izq">
+          <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
+            <input type="hidden" name="retroactivo" value="true">
+            <input type="checkbox"
+                   onchange="if(this.checked){
+                                this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}';
+                              } else {
+                                this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='incompleta') }}';
+                              }
+                              this.form.submit();">
+          </form>
+        </div>
+        <div class="tarea-contenido">
+          <span class="titulo">{{ d.titulo }}</span>
+          {% if d.dias_semana %}
+            <p class="subinfo">Días: {{ d.dias_semana|join(', ') }}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <!-- Pendientes vencidas -->
+    <h4>Pendientes vencidas</h4>
+    {% for p in pendientes_vencidas %}
+      <div class="tarea-item">
+        <div class="accion-izq">
+          <form action="{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}" method="post" style="display:inline;">
+            <input type="hidden" name="retroactivo" value="true">
+            <input type="checkbox"
+                   onchange="if(this.checked){
+                                this.form.action='{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}';
+                              } else {
+                                this.form.action='{{ url_for('marcar_tarea', tarea_id=p.id, accion='incompleta') }}';
+                              }
+                              this.form.submit();">
+          </form>
+        </div>
+        <div class="tarea-contenido">
+          <span class="titulo">{{ p.titulo }}</span>
+          <p class="subinfo">Venció el {{ p.fecha_vencimiento }}</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
 <div class="dashboard">
     <!-- Hábitos -->
     <div class="card">
@@ -188,24 +247,17 @@
   const diasOptions = document.getElementById("dias-options");
   const fechaOptions = document.getElementById("fecha-options");
 
-  // abrir modal
+  // abrir modal de creación
   btn.onclick = () => {
     modal.style.display = "block";
     form.reset();
     tipoSelect.dispatchEvent(new Event("change"));
   };
 
-  // cerrar modal
+  // cerrar modal de creación
   span.onclick = () => {
     modal.style.display = "none";
     form.reset();
-  };
-
-  window.onclick = (event) => {
-    if (event.target == modal) {
-      modal.style.display = "none";
-      form.reset();
-    }
   };
 
   // interceptar submit con validaciones
@@ -242,7 +294,7 @@
 
     if (!valido) {
       alert(mensajeError);
-      return; // no envía nada si hay error
+      return;
     }
 
     // si todo está bien, enviar al backend
@@ -255,7 +307,7 @@
     if (response.ok) {
       modal.style.display = "none";
       form.reset();
-      location.reload(); // refrescar lista
+      location.reload();
     } else {
       alert("Error al guardar la tarea");
     }
@@ -285,7 +337,7 @@
 
         if (input.placeholder.includes("hábito")) {
           tipo = 1;
-          extra = { habito: "+-", dificultad: 1 }; // por defecto mixto
+          extra = { habito: "+-", dificultad: 1 };
         } else if (input.placeholder.includes("diaria")) {
           tipo = 2;
           extra = { dias: ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"], dificultad: 1 };
@@ -309,8 +361,8 @@
 
         const response = await fetch("/nueva_tarea", { method: "POST", body: data });
         if (response.ok) {
-          input.value = ""; // limpiar campo
-          location.reload(); // refrescar lista
+          input.value = "";
+          location.reload();
         } else {
           alert("Error al crear la tarea");
         }
@@ -325,6 +377,38 @@
     document.getElementById("modalClase").style.display = "none";
   }
 
+  // Mostrar automáticamente el modal de tareas vencidas si hay elementos
+  window.onload = function() {
+    var vencidasModal = document.getElementById("tareasVencidasModal");
+    if (vencidasModal) {
+      vencidasModal.style.display = "block";
+
+      // botón de cierre dentro del modal
+      var closeBtn = vencidasModal.querySelector(".close");
+      if (closeBtn) {
+        closeBtn.onclick = function() {
+          vencidasModal.style.display = "none";
+          fetch("/procesar_vencidas", { method: "POST" });
+        };
+      }
+    }
+  };
+
+  // cierre con clic fuera de los modales
+  window.onclick = function(event) {
+    var modal = document.getElementById("modal");
+    var vencidasModal = document.getElementById("tareasVencidasModal");
+
+    if (event.target == modal) {
+      modal.style.display = "none";
+      form.reset();
+    }
+
+    if (event.target == vencidasModal) {
+      vencidasModal.style.display = "none";
+      fetch("/procesar_vencidas", { method: "POST" });
+    }
+  };
 </script>
 
 {% endblock %}

@@ -4,6 +4,7 @@ from gestor_tareas import GestorTareas
 from gestor_recompensa import GestorRecompensas
 from constantes_tareas import vida_maxima, mana_maximo
 from gestor_notificaciones import GestorNotificaciones
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
@@ -71,7 +72,6 @@ def dashboard():
     if not usuario_dict:
         return redirect(url_for("home"))
 
-    # recuperar objeto usuario real desde gestor usando id_usuario
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
 
     # 🔹 Verificar si el VIP expiró
@@ -79,38 +79,42 @@ def dashboard():
     if eventos_expiracion:
         for e in eventos_expiracion:
             flash(e["mensaje"], e["accion"])
-        gestor.actualizar_usuario(usuario_obj)  # persistir cambios
+        gestor.actualizar_usuario(usuario_obj)
 
     gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
-    tareas = gestor_tareas.ver_tareas_web()  # devuelve habitos, diarias, pendientes
+    tareas = gestor_tareas.ver_tareas_web()
 
-    gestor_recompensas = GestorRecompensas()
-    recompensas_usuario = []
+    # 🔹 Detectar diarias y pendientes vencidas
+    vencidas = gestor_tareas.verificar_diarias_web()
+    diarias_vencidas = vencidas["diarias_vencidas"]
+    pendientes_vencidas = vencidas["pendientes_vencidas"]
 
-    # 🔹 Aplicar bonus diario VIP (si corresponde)
+    # 🔹 Bonus diario VIP
     bonus = usuario_obj.aplicar_bonus_diario()
     if bonus:
         flash(bonus["mensaje"], bonus["categoria"])
 
-    # 🔹 Aplicar recompensa VIP mensual (si corresponde)
+    # 🔹 Recompensa VIP mensual
     eventos_vip = usuario_obj.dar_recompensa_vip()
     if eventos_vip:
-        gestor.actualizar_usuario(usuario_obj)  # persistir cambios en usuario.json
+        gestor.actualizar_usuario(usuario_obj)
         for e in eventos_vip:
             flash(e["mensaje"], e["accion"])
 
-    # 🔹 Valores máximos y xp requerida
     vida_max = vida_maxima()
     mana_max = mana_maximo()
     xp_req = usuario_obj.xp_requerida()
 
-    # 🔹 Cargar notificaciones del usuario (ya devuelve lista de dicts con id incluido)
     gestor_notificaciones = GestorNotificaciones()
     notificaciones_lista = gestor_notificaciones.obtener_notificaciones(usuario_obj.id_usuario)[:5]
 
-    # 🔹 Paginación básica (por ahora fija en 1/1)
-    pagina_actual = 1
-    total_paginas = 1
+    # 🔹 Mostrar modal solo una vez al día
+    hoy = datetime.date.today().strftime("%Y-%m-%d")
+    mostrar_modal = False
+    if session.get("ultimo_modal") != hoy:
+        if diarias_vencidas or pendientes_vencidas:
+            mostrar_modal = True
+            session["ultimo_modal"] = hoy
 
     return render_template(
         "dashboard.html",
@@ -118,14 +122,17 @@ def dashboard():
         habitos=tareas["habitos"],
         diarias=tareas["diarias"],
         pendientes=tareas["pendientes"],
-        recompensas=recompensas_usuario,
         vida_maxima=vida_max,
         mana_maximo=mana_max,
         xp_requerida=xp_req,
-        notificaciones=notificaciones_lista,   # lista de dicts con id
-        pagina_actual=pagina_actual,
-        total_paginas=total_paginas
+        notificaciones=notificaciones_lista,
+        pagina_actual=1,
+        total_paginas=1,
+        diarias_vencidas=diarias_vencidas,       # 🔹 para el modal
+        pendientes_vencidas=pendientes_vencidas, # 🔹 para el modal
+        mostrar_modal=mostrar_modal              # 🔹 flag para abrir modal
     )
+
 
 @app.route("/estadisticas")
 def estadisticas():
@@ -229,7 +236,6 @@ def usar_recompensa():
 
     return redirect(url_for("dashboard"))
 
-
 @app.route("/marcar_tarea/<int:tarea_id>/<accion>", methods=["POST"])
 def marcar_tarea(tarea_id, accion):
     usuario_dict = session.get("usuario")
@@ -239,7 +245,17 @@ def marcar_tarea(tarea_id, accion):
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
     gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
 
-    resultado = gestor_tareas.marcar_tarea_web(tarea_id, accion)
+    # 🔹 Leer flags del formulario (hidden inputs en el modal)
+    retroactivo = request.form.get("retroactivo") == "true"
+    por_medianoche = request.form.get("por_medianoche") == "true"
+
+    # 🔹 Pasar los flags a marcar_tarea_web
+    resultado = gestor_tareas.marcar_tarea_web(
+        tarea_id,
+        accion,
+        retroactivo=retroactivo,
+        por_medianoche=por_medianoche
+    )
 
     if "error" in resultado:
         flash(resultado["error"], "error")
@@ -251,7 +267,7 @@ def marcar_tarea(tarea_id, accion):
         for r in resultado.get("recompensas", []):
             flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r['tipo'])
 
-        # penalizaciones (ya vienen con mensaje detallado desde gestor_tareas)
+        # penalizaciones
         for p in resultado.get("penalizaciones", []):
             flash(p.get("mensaje", f"{p['tipo'].upper()} {p['resultado']['total']}"), f"{p['tipo']}-neg")
 
@@ -260,7 +276,6 @@ def marcar_tarea(tarea_id, accion):
             flash(e["mensaje"], e["accion"])
 
     return redirect(url_for("dashboard"))
-
 
 @app.route("/elegir_clase", methods=["POST"])
 def elegir_clase():
@@ -342,6 +357,37 @@ def eliminar_notificacion(id_notificacion):
 
     flash("Notificación eliminada", "success")
     return redirect(url_for("dashboard"))
+
+@app.route("/procesar_vencidas", methods=["POST"])
+def procesar_vencidas():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
+
+    vencidas = gestor_tareas.verificar_diarias_web()
+    diarias_vencidas = vencidas["diarias_vencidas"]
+    pendientes_vencidas = vencidas["pendientes_vencidas"]
+
+    # Penalizar automáticamente las diarias como incompletas por medianoche
+    for d in diarias_vencidas:
+        resultado = gestor_tareas.marcar_tarea_web(
+            tarea_id=d.id,
+            accion="incompleta",
+            retroactivo=False,
+            por_medianoche=True
+        )
+        # 🔹 Flashear el mensaje para que aparezca el toast
+        flash(resultado["mensaje"], "vida" if resultado["penalizaciones"] else "info")
+
+    # Las pendientes vencidas se dejan sin tocar (solo acumulan bonificación)
+
+    gestor.actualizar_usuario(usuario_obj)
+    return ("", 204)  # respuesta vacía
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -41,12 +41,26 @@ class Tarea:
         self.titulo = nuevo_titulo
 
     def es_vencida(self):
-        if self.tipo == 3 and self.fecha_vencimiento:
+        # Si ya está completada, no se considera vencida
+        if self.completada:
+            return False
+
+        # Solo aplica a pendientes con fecha válida
+        if self.tipo == 3 and self.fecha_vencimiento and self.fecha_vencimiento != "Sin fecha":
+            fecha = None
             try:
+                # formato dd-mm-YYYY
                 fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
-                return datetime.date.today() > fecha
             except ValueError:
-                return False
+                try:
+                    # formato YYYY-mm-dd (ISO)
+                    fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%Y-%m-%d").date()
+                except ValueError:
+                    return False
+
+            # Si la fecha es anterior a hoy → vencida
+            return datetime.date.today() > fecha
+
         return False
     
     def completar(self, retroactivo=False):
@@ -86,12 +100,22 @@ class Tarea:
         elif self.tipo == 3:
             xp = int(constantes_tareas.xp_pendiente() * mult)
             coins = int(constantes_tareas.coin_pendiente() * mult)
+
             if self.es_vencida():
-                fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
-                dias_tarde = (datetime.date.today() - fecha).days
-                xp += dias_tarde * constantes_tareas.xp_bonus_vencida()
-                coins += dias_tarde * constantes_tareas.coin_bonus_vencida()
-                recompensas.append(Recompensa(None, f"Vida extra por pendiente vencida {self.titulo}", "vida", dias_tarde))
+                fecha = None
+                try:
+                    fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
+                except ValueError:
+                    try:
+                        fecha = datetime.datetime.strptime(self.fecha_vencimiento, "%Y-%m-%d").date()
+                    except ValueError:
+                        fecha = None
+
+                if fecha:
+                    dias_tarde = (datetime.date.today() - fecha).days
+                    xp += dias_tarde * constantes_tareas.xp_bonus_vencida()
+                    coins += dias_tarde * constantes_tareas.coin_bonus_vencida()
+                    recompensas.append(Recompensa(None, f"Vida extra por pendiente vencida {self.titulo}", "vida", dias_tarde))
 
             recompensas.append(Recompensa(None, f"XP pendiente {self.titulo}", "xp", xp))
             recompensas.append(Recompensa(None, f"Coins pendiente {self.titulo}", "coins", coins))
@@ -99,20 +123,22 @@ class Tarea:
         # Siempre regenerar maná al completar cualquier tarea
         recompensas.append(Recompensa(None, "Maná", "mana", constantes_tareas.mana_regeneracion()))
 
-
         self.completada = True
         return recompensas
+
 
     def fallar(self, por_medianoche=False):
         """Genera penalizaciones al fallar la tarea, sin aplicarlas directamente al usuario."""
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
         recompensas = []
 
-        if self.tipo == 1 and self.habito in ["-", "+-"]:  # Hábito negativo
+        # --- Hábito negativo ---
+        if self.tipo == 1 and self.habito in ["-", "+-"]:
             vida_perdida = int(constantes_tareas.vida_habito() * mult)
             recompensas.append(Recompensa(None, f"Penalización hábito negativo {self.titulo}", "vida", -vida_perdida))
 
-        elif self.tipo == 2:  # Diaria
+        # --- Diaria ---
+        elif self.tipo == 2:
             if por_medianoche:
                 vida_perdida = int(constantes_tareas.vida_diaria() * mult)
                 xp_perdido = int(constantes_tareas.xp_diaria() * mult)
@@ -128,10 +154,20 @@ class Tarea:
                 recompensas.append(Recompensa(None, f"XP perdida diaria {self.titulo}", "xp", -xp_perdido))
                 recompensas.append(Recompensa(None, f"Coins perdidos diaria {self.titulo}", "coins", -coins_perdidos))
 
-        elif self.tipo == 3:  # Pendiente vencida
+        # --- Pendiente ---
+        elif self.tipo == 3:
             vida_perdida = int(constantes_tareas.vida_pendiente() * mult)
             xp_perdido = int(constantes_tareas.xp_pendiente() * mult)
             coins_perdidos = int(constantes_tareas.coin_pendiente() * mult)
+
+            # Intentar parsear fecha en ambos formatos, aunque no se use para penalización
+            try:
+                _ = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
+            except ValueError:
+                try:
+                    _ = datetime.datetime.strptime(self.fecha_vencimiento, "%Y-%m-%d").date()
+                except ValueError:
+                    pass  # ignorar si no se puede parsear
 
             recompensas.append(Recompensa(None, f"Vida perdida pendiente {self.titulo}", "vida", -vida_perdida))
             recompensas.append(Recompensa(None, f"XP perdida pendiente {self.titulo}", "xp", -xp_perdido))

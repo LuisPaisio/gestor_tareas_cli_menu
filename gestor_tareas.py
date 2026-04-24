@@ -238,34 +238,27 @@ class GestorTareas:
             except ValueError:
                 print(Fore.RED + "⚠️ Entrada inválida. Por favor ingresa un número válido." + Style.RESET_ALL)
 
-    def verificar_diarias(self):
+    def verificar_diarias_web(self):
         hoy = datetime.date.today().strftime("%d-%m-%Y")
+        diarias_vencidas = []
+        pendientes_vencidas = []
 
         for tarea in self.tareas:
             if tarea.tipo == 2:  # Diaria
-                if tarea.fecha_creacion != hoy:
-                    if not tarea.completada:
-                        print(Fore.YELLOW + f"\nLa diaria '{tarea.titulo}' no fue completada ayer." + Style.RESET_ALL)
-                        opcion = input("¿Querés marcarla como completada retroactivamente? (s/n): ")
+                if tarea.fecha_creacion != hoy and not tarea.completada:
+                    diarias_vencidas.append(tarea)
+                tarea.completada = False
+                tarea.fecha_creacion = hoy
 
-                        if opcion.lower() == "s":
-                            recompensas = tarea.completar(retroactivo=True)
-                            self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
-                            self.usuario.subir_nivel()
-                            print(Fore.YELLOW + f"'{tarea.titulo}' marcada como completada retroactivamente." + Style.RESET_ALL)
-                        else:
-                            penalizaciones = tarea.fallar(por_medianoche=True)
-                            self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
-                            self.usuario.subir_nivel()
-                            print(Fore.RED + f"Diaria '{tarea.titulo}' marcada como fallida." + Style.RESET_ALL)
-
-                    tarea.completada = False
-                    tarea.fecha_creacion = hoy
+            elif tarea.tipo == 3 and tarea.es_vencida():
+                pendientes_vencidas.append(tarea)
 
         self.guardar_tareas()
         self.gestor_usuarios.actualizar_usuario(self.usuario)
 
-    def marcar_tarea_web(self, tarea_id, accion):
+        return {"diarias_vencidas": diarias_vencidas, "pendientes_vencidas": pendientes_vencidas}
+
+    def marcar_tarea_web(self, tarea_id, accion, retroactivo=False, por_medianoche=False):
         tarea = next(
             (t for t in self.tareas if int(t.id) == int(tarea_id) and int(t.id_usuario) == int(self.usuario.id_usuario)),
             None
@@ -284,29 +277,28 @@ class GestorTareas:
             elif accion == "negativo" and tarea.habito in ["-", "+-"]:
                 penalizaciones = tarea.fallar()
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
-                # enriquecer mensaje
                 for p in penalizaciones:
                     if p["tipo"] == "vida":
                         base = p["resultado"]["base"]
                         bonus = p["resultado"]["bonus"]
                         total = p["resultado"]["total"]
                         if total == 0:
-                            mensaje = f"Hábito negativo '{tarea.titulo}': DEFENSA absorbió todo el daño (bloqueado {abs(base)})."
+                            mensaje = f"Hábito negativo '{tarea.titulo}': DEFENSA absorbió todo el daño (bloqueado {abs(base)} HP)."
                         else:
-                            mensaje = f"Hábito negativo '{tarea.titulo}': pierdes {abs(total)} vida (daño base {abs(base)} - defensa {bonus})."
+                            mensaje = f"Hábito negativo '{tarea.titulo}': pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Hábito negativo '{tarea.titulo}': penalización en {p['tipo']} {p['resultado']['total']}."
+                        mensaje = f"Hábito negativo '{tarea.titulo}': penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
             else:
                 return {"error": "Acción inválida para este hábito"}
 
         # --- Diaria ---
         elif tarea.tipo == 2:
             if accion == "completar" and not tarea.completada:
-                recompensas = tarea.completar()
+                recompensas = tarea.completar(retroactivo=retroactivo)
                 recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
                 mensaje = f"Diaria '{tarea.titulo}' completada."
-            elif accion == "incompleta" and tarea.completada:
-                penalizaciones = tarea.fallar(por_medianoche=False)
+            elif accion == "incompleta":
+                penalizaciones = tarea.fallar(por_medianoche=por_medianoche)
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
                 tarea.marcar_incompleta()
                 for p in penalizaciones:
@@ -315,36 +307,49 @@ class GestorTareas:
                         bonus = p["resultado"]["bonus"]
                         total = p["resultado"]["total"]
                         if total == 0:
-                            mensaje = f"Diaria '{tarea.titulo}' incompleta: DEFENSA absorbió todo el daño (bloqueado {abs(base)})."
+                            mensaje = f"Diaria '{tarea.titulo}' incompleta: DEFENSA absorbió todo el daño (bloqueado {abs(base)} HP)."
                         else:
-                            mensaje = f"Diaria '{tarea.titulo}' incompleta: pierdes {abs(total)} vida (daño base {abs(base)} - defensa {bonus})."
+                            mensaje = f"Diaria '{tarea.titulo}' incompleta: pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Diaria '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']}."
+                        mensaje = f"Diaria '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
 
         # --- Pendiente ---
         elif tarea.tipo == 3:
             if accion == "completar" and not tarea.completada:
-                recompensas = tarea.completar()
+                recompensas = tarea.completar(retroactivo=retroactivo)
                 recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
                 mensaje = f"Pendiente '{tarea.titulo}' completada."
-            elif accion == "incompleta" and tarea.completada:
+            elif accion == "incompleta":
                 penalizaciones = tarea.fallar()
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
+                
+                # marcar como incompleta y ajustar fecha de vencimiento si corresponde
                 tarea.marcar_incompleta()
+                if tarea.fecha_vencimiento and tarea.fecha_vencimiento != "Sin fecha":
+                    try:
+                        fecha = datetime.datetime.strptime(tarea.fecha_vencimiento, "%d-%m-%Y").date()
+                    except ValueError:
+                        try:
+                            fecha = datetime.datetime.strptime(tarea.fecha_vencimiento, "%Y-%m-%d").date()
+                        except ValueError:
+                            fecha = None
+                    if fecha and fecha < datetime.date.today():
+                        tarea.fecha_vencimiento = datetime.date.today().strftime("%Y-%m-%d")
+
                 for p in penalizaciones:
                     if p["tipo"] == "vida":
                         base = p["resultado"]["base"]
                         bonus = p["resultado"]["bonus"]
                         total = p["resultado"]["total"]
                         if total == 0:
-                            mensaje = f"Pendiente '{tarea.titulo}' incompleta: DEFENSA absorbió todo el daño (bloqueado {abs(base)})."
+                            mensaje = f"Pendiente '{tarea.titulo}' incompleta: DEFENSA absorbió todo el daño (bloqueado {abs(base)} HP)."
                         else:
-                            mensaje = f"Pendiente '{tarea.titulo}' incompleta: pierdes {abs(total)} vida (daño base {abs(base)} - defensa {bonus})."
+                            mensaje = f"Pendiente '{tarea.titulo}' incompleta: pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Pendiente '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']}."
+                        mensaje = f"Pendiente '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
 
         # Guardar cambios y subir nivel
-        eventos = self.usuario.subir_nivel()  # devuelve lista de eventos
+        eventos = self.usuario.subir_nivel()
         self.guardar_tareas()
         self.gestor_usuarios.actualizar_usuario(self.usuario)
 
@@ -354,4 +359,3 @@ class GestorTareas:
             "penalizaciones": penalizaciones,
             "eventos": eventos
         }
-
