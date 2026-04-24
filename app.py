@@ -73,13 +73,32 @@ def dashboard():
     # recuperar objeto usuario real desde gestor usando id_usuario
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
 
+    # 🔹 Verificar si el VIP expiró
+    eventos_expiracion = usuario_obj.verificar_vip()
+    if eventos_expiracion:
+        for e in eventos_expiracion:
+            flash(e["mensaje"], e["accion"])
+        gestor.actualizar_usuario(usuario_obj)  # persistir cambios
+
     gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
     tareas = gestor_tareas.ver_tareas_web()  # devuelve habitos, diarias, pendientes
 
     gestor_recompensas = GestorRecompensas()
     recompensas_usuario = []
 
-    # valores máximos y xp requerida
+    # 🔹 Aplicar bonus diario VIP (si corresponde)
+    bonus = usuario_obj.aplicar_bonus_diario()
+    if bonus:
+        flash(bonus["mensaje"], bonus["categoria"])
+
+    # 🔹 Aplicar recompensa VIP mensual (si corresponde)
+    eventos_vip = usuario_obj.dar_recompensa_vip()
+    if eventos_vip:
+        gestor.actualizar_usuario(usuario_obj)  # persistir cambios en usuario.json
+        for e in eventos_vip:
+            flash(e["mensaje"], e["accion"])
+
+    # 🔹 Valores máximos y xp requerida
     vida_max = vida_maxima()
     mana_max = mana_maximo()
     xp_req = usuario_obj.xp_requerida()
@@ -95,6 +114,7 @@ def dashboard():
         mana_maximo=mana_max,
         xp_requerida=xp_req
     )
+
 
 @app.route("/estadisticas")
 def estadisticas():
@@ -213,27 +233,75 @@ def marcar_tarea(tarea_id, accion):
     if "error" in resultado:
         flash(resultado["error"], "error")
     else:
-        # mensaje general
+        # mensaje general enriquecido
         flash(resultado["mensaje"], "info")
 
         # recompensas
         for r in resultado.get("recompensas", []):
             flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r['tipo'])
 
-        # penalizaciones
+        # penalizaciones (ya vienen con mensaje detallado desde gestor_tareas)
         for p in resultado.get("penalizaciones", []):
-            tipo = p['tipo']
-            total = p['resultado']['total']
+            flash(p.get("mensaje", f"{p['tipo'].upper()} {p['resultado']['total']}"), f"{p['tipo']}-neg")
 
-            if tipo == "vida":
-                base = p['resultado']['base']
-                bonus = p['resultado']['bonus']
-                if total == 0:
-                    flash(f"DEFENSA absorbió todo el daño (bloqueado {abs(base)})", "defensa")
-                else:
-                    flash(f"VIDA {total} (daño base {abs(base)} - defensa {bonus})", "vida-neg")
-            else:
-                flash(f"{tipo.upper()} {total}", f"{tipo}-neg")
+        # eventos de progresión (nivel, maná, prestigio)
+        for e in resultado.get("eventos", []):
+            flash(e["mensaje"], e["accion"])
+
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/elegir_clase", methods=["POST"])
+def elegir_clase():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    clase_nombre = request.form["clase"]
+
+    # asignar clase al usuario
+    from clases import Clase
+    usuario_obj.clase = Clase.cargar_clase(clase_nombre, usuario_obj.rol == "vip")
+    usuario_obj.clase_nombre = clase_nombre
+
+    gestor.actualizar_usuario(usuario_obj)
+    flash(f"✨ Has elegido la clase {clase_nombre}. ¡Ya puedes usar poderes!", "success")
+
+    return redirect(url_for("dashboard"))
+
+@app.route("/prestigiar", methods=["POST"])
+def prestigiar():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    eventos = usuario_obj.reiniciar_nivel_100()  # ahora devuelve lista de eventos
+
+    gestor.actualizar_usuario(usuario_obj)
+
+    # flashear todos los eventos de prestigio
+    for e in eventos:
+        flash(e["mensaje"], e["accion"])
+
+    return redirect(url_for("dashboard"))
+
+@app.route("/activar_vip", methods=["POST"])
+def activar_vip():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    eventos = usuario_obj.activar_vip()
+
+    # flashear eventos de activación (ej. bienvenida, coins iniciales)
+    for e in eventos:
+        flash(e["mensaje"], e["accion"])
+
+    # persistir cambios
+    gestor.actualizar_usuario(usuario_obj)
 
     return redirect(url_for("dashboard"))
 

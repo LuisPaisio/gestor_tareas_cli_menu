@@ -59,7 +59,7 @@
                 {% endif %}
 
                 <div class="perfil-info">
-                    <h3>{{ usuario.nombre_publico or usuario.usuario }}</h3>
+                    <h3>{{ usuario.nombre_con_tags() | safe }}</h3>
                     <div class="perfil-infoabajo">
                         <p>@{{ usuario.usuario }}</p>
                         <p>•</p>
@@ -89,6 +89,7 @@
                     </div>
 
                     <!-- Barra de Maná -->
+                     {% if usuario.nivel_usuario >= 10 %}
                     <div class="barra-contenedor mana">
                         <i class="fa-solid fa-gem barra-icono"></i>
                         <div class="barra">
@@ -96,15 +97,38 @@
                         </div>
                         <p class="barra-valor">{{ usuario.mana_usuario }} / {{ mana_maximo }} MP</p>
                     </div>
-
-                    <!-- Botón de Prestigio -->
-                    {% if usuario.nivel_usuario == 100 and usuario.contador_100 < 3 %}
-                        <form action="{{ url_for('prestigiar') }}" method="post">
-                            <button type="submit" class="btn-prestigio">
-                                🔄 Subir de Prestigio
-                            </button>
-                        </form>
                     {% endif %}
+
+                    <!-- Botón de Prestigio en el perfil -->
+                    {% if usuario.nivel_usuario == 100 and usuario.contador_100 < 3 %}
+                        <button type="button" class="btn-prestigio" onclick="mostrarModalPrestigio()">
+                            🔄 Subir de Prestigio
+                        </button>
+                    {% endif %}
+
+                    <!-- Modal de Prestigio -->
+                    <div id="modalPrestigio" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="cerrarModalPrestigio()">&times;</span>
+                        <h2>Subir de Prestigio</h2>
+                        <p>
+                        Al prestigiar reinicias tu nivel a 1, restaurando tu vida y maná.  
+                        Cada prestigio te otorga recompensas especiales:
+                        </p>
+                        <ul style="text-align:left; margin: 15px 0;">
+                        <li>✨ Primer y segundo prestigio: recibes un ítem aleatorio de la tienda (no VIP).</li>
+                        <li>🏆 Tercer prestigio: obtienes membresía VIP permanente.</li>
+                        </ul>
+                        <p>
+                        Puedes prestigiar hasta 3 veces. Tu contador actual es 
+                        <strong>{{ usuario.contador_100 }}/3</strong>.
+                        </p>
+                        <form action="{{ url_for('prestigiar') }}" method="post" style="margin-top:20px;">
+                        <button type="submit" class="btn-prestigio">🔄 Confirmar Prestigio</button>
+                        <button type="button" class="btn-cancelar" onclick="cerrarModalPrestigio()">Cancelar</button>
+                        </form>
+                    </div>
+                    </div>
                 </div>
             </div>
         {% else %}
@@ -214,6 +238,12 @@
         addToast(toast);
     });
     });
+    function mostrarModalPrestigio() {
+    document.getElementById("modalPrestigio").style.display = "block";
+    }
+    function cerrarModalPrestigio() {
+    document.getElementById("modalPrestigio").style.display = "none";
+    }
 </script>
 </body>
 </html>

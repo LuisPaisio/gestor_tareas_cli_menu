@@ -161,6 +161,21 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de selección de clase -->
+    <div id="modalClase" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalClase()">&times;</span>
+        <h2>Elige tu clase</h2>
+        <form action="{{ url_for('elegir_clase') }}" method="post">
+          <button type="submit" name="clase" value="Guerrero">Guerrero</button>
+          <button type="submit" name="clase" value="Sanador">Sanador</button>
+          <button type="submit" name="clase" value="Mago">Mago</button>
+          <button type="submit" name="clase" value="Pícaro">Pícaro</button>
+        </form>
+      </div>
+    </div>
+
 </div>
 
 <script>
@@ -302,6 +317,14 @@
       }
     });
   });
+
+  function mostrarModalClase() {
+    document.getElementById("modalClase").style.display = "block";
+  }
+  function cerrarModalClase() {
+    document.getElementById("modalClase").style.display = "none";
+  }
+
 </script>
 
 {% endblock %}

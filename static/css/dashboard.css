@@ -337,3 +337,39 @@ select, .fecha {
     text-align: center;
     margin: 0;
 }
+
+/* Botones dentro del modal de clase */
+#modalClase button {
+  background-color: #5dade2;   /* celeste */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px 20px;
+  margin: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#modalClase button:hover {
+  background-color: #3498db;   /* azul más fuerte al pasar el mouse */
+}
+
+/* Botón de prestigio dentro del modal */
+#modalPrestigio button {
+  background-color: #e74c3c;   /* rojo */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 24px;
+  margin: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#modalPrestigio button:hover {
+  background-color: #c0392b;   /* rojo más oscuro */
+}

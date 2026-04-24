@@ -367,3 +367,44 @@ input[type="email"]:focus {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-20px); }
 }
+
+/* Botón de prestigio */
+.btn-prestigio {
+  background-color: #e74c3c; /* rojo */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 24px;
+  margin: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-prestigio:hover {
+  background-color: #c0392b; /* rojo más oscuro */
+}
+
+/* Botón cancelar */
+.btn-cancelar {
+  background-color: #7f8c8d; /* gris */
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 12px 24px;
+  margin: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancelar:hover {
+  background-color: #606060;
+}
+
+.tag.vip { color: gold; font-weight: bold; }
+.tag.ascendido { color: dodgerblue; font-weight: bold; }
+.tag.legendario { color: violet; font-weight: bold; }
+.tag.eterno { color: crimson; font-weight: bold; }
