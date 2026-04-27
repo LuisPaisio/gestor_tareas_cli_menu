@@ -39,7 +39,22 @@ def coin_habito(): return 5
 def coin_diaria(): return 10
 def coin_pendiente(): return 15
 
-# Penalizaciones de Vida
-def vida_habito(): return 2
-def vida_diaria(): return 3
-def vida_pendiente(): return 5
+# Penalizaciones dinámicas de Vida
+def vida_habito(usuario, dificultad):
+    base = 2
+    mult = multi_dificultad()[dificultad]
+    # Escala con nivel: cada 10 niveles +1
+    return int((base + usuario.nivel_usuario // 10) * mult)
+
+def vida_diaria(usuario, dificultad):
+    base = 3
+    mult = multi_dificultad()[dificultad]
+    # Escala con nivel: cada 8 niveles +1
+    return int((base + usuario.nivel_usuario // 8) * mult)
+
+def vida_pendiente(usuario, dificultad):
+    base = 5
+    mult = multi_dificultad()[dificultad]
+    # Escala con nivel: cada 5 niveles +1
+    return int((base + usuario.nivel_usuario // 5) * mult)
+

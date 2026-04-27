@@ -63,7 +63,7 @@ class Tarea:
 
         return False
     
-    def completar(self, retroactivo=False):
+    def completar(self, usuario, retroactivo=False):
         """Genera recompensas al completar la tarea, sin aplicarlas directamente al usuario."""
         mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
         recompensas = []
@@ -90,8 +90,8 @@ class Tarea:
                 dias_normalizados = [d.lower() for d in self.dias_semana]
 
                 if hoy_es not in dias_normalizados:
-                    print(Fore.RED + f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es})." + Style.RESET_ALL)
-                    return []
+                    mensaje = f"⚠️ La tarea '{self.titulo}' no puede completarse hoy ({hoy_es})."
+                    return [], mensaje   # 👈 lista vacía + mensaje de error
 
             recompensas.append(Recompensa(None, f"XP diaria {self.titulo}", "xp", int(constantes_tareas.xp_diaria() * mult)))
             recompensas.append(Recompensa(None, f"Coins diaria {self.titulo}", "coins", int(constantes_tareas.coin_diaria() * mult)))
@@ -115,66 +115,57 @@ class Tarea:
                     dias_tarde = (datetime.date.today() - fecha).days
                     xp += dias_tarde * constantes_tareas.xp_bonus_vencida()
                     coins += dias_tarde * constantes_tareas.coin_bonus_vencida()
-                    recompensas.append(Recompensa(None, f"Vida extra por pendiente vencida {self.titulo}", "vida", dias_tarde))
+
+                    vida_extra = dias_tarde + (usuario.nivel_usuario // 10)
+                    recompensas.append(Recompensa(None, f"Vida extra por pendiente vencida {self.titulo}", "vida", vida_extra))
 
             recompensas.append(Recompensa(None, f"XP pendiente {self.titulo}", "xp", xp))
             recompensas.append(Recompensa(None, f"Coins pendiente {self.titulo}", "coins", coins))
 
-        # Siempre regenerar maná al completar cualquier tarea
+        # Siempre regenerar maná
         recompensas.append(Recompensa(None, "Maná", "mana", constantes_tareas.mana_regeneracion()))
 
         self.completada = True
-        return recompensas
+        return recompensas, None   # 👈 lista + sin error
 
 
-    def fallar(self, por_medianoche=False):
+    def fallar(self, usuario, por_medianoche=False):
         """Genera penalizaciones al fallar la tarea, sin aplicarlas directamente al usuario."""
-        mult = constantes_tareas.multi_dificultad().get(self.dificultad, 1)
         recompensas = []
 
-        # --- Hábito negativo ---
         if self.tipo == 1 and self.habito in ["-", "+-"]:
-            vida_perdida = int(constantes_tareas.vida_habito() * mult)
+            vida_perdida = constantes_tareas.vida_habito(usuario, self.dificultad)
             recompensas.append(Recompensa(None, f"Penalización hábito negativo {self.titulo}", "vida", -vida_perdida))
 
-        # --- Diaria ---
         elif self.tipo == 2:
             if por_medianoche:
-                vida_perdida = int(constantes_tareas.vida_diaria() * mult)
-                xp_perdido = int(constantes_tareas.xp_diaria() * mult)
-                coins_perdidos = int(constantes_tareas.coin_diaria() * mult)
+                vida_perdida = constantes_tareas.vida_diaria(usuario, self.dificultad)
+                xp_perdido = int(constantes_tareas.xp_diaria() * constantes_tareas.multi_dificultad()[self.dificultad])
+                coins_perdidos = int(constantes_tareas.coin_diaria() * constantes_tareas.multi_dificultad()[self.dificultad])
 
                 recompensas.append(Recompensa(None, f"Vida perdida diaria {self.titulo}", "vida", -vida_perdida))
                 recompensas.append(Recompensa(None, f"XP perdida diaria {self.titulo}", "xp", -xp_perdido))
                 recompensas.append(Recompensa(None, f"Coins perdidos diaria {self.titulo}", "coins", -coins_perdidos))
             else:
-                xp_perdido = int(constantes_tareas.xp_diaria() * 0.5 * mult)
-                coins_perdidos = int(constantes_tareas.coin_diaria() * 0.5 * mult)
+                xp_perdido = int(constantes_tareas.xp_diaria() * 0.5 * constantes_tareas.multi_dificultad()[self.dificultad])
+                coins_perdidos = int(constantes_tareas.coin_diaria() * 0.5 * constantes_tareas.multi_dificultad()[self.dificultad])
 
                 recompensas.append(Recompensa(None, f"XP perdida diaria {self.titulo}", "xp", -xp_perdido))
                 recompensas.append(Recompensa(None, f"Coins perdidos diaria {self.titulo}", "coins", -coins_perdidos))
 
-        # --- Pendiente ---
         elif self.tipo == 3:
-            vida_perdida = int(constantes_tareas.vida_pendiente() * mult)
-            xp_perdido = int(constantes_tareas.xp_pendiente() * mult)
-            coins_perdidos = int(constantes_tareas.coin_pendiente() * mult)
-
-            # Intentar parsear fecha en ambos formatos, aunque no se use para penalización
-            try:
-                _ = datetime.datetime.strptime(self.fecha_vencimiento, "%d-%m-%Y").date()
-            except ValueError:
-                try:
-                    _ = datetime.datetime.strptime(self.fecha_vencimiento, "%Y-%m-%d").date()
-                except ValueError:
-                    pass  # ignorar si no se puede parsear
+            vida_perdida = constantes_tareas.vida_pendiente(usuario, self.dificultad)
+            xp_perdido = int(constantes_tareas.xp_pendiente() * constantes_tareas.multi_dificultad()[self.dificultad])
+            coins_perdidos = int(constantes_tareas.coin_pendiente() * constantes_tareas.multi_dificultad()[self.dificultad])
 
             recompensas.append(Recompensa(None, f"Vida perdida pendiente {self.titulo}", "vida", -vida_perdida))
             recompensas.append(Recompensa(None, f"XP perdida pendiente {self.titulo}", "xp", -xp_perdido))
             recompensas.append(Recompensa(None, f"Coins perdidos pendiente {self.titulo}", "coins", -coins_perdidos))
 
         self.completada = False
-        return recompensas
+        return recompensas, None   # 👈 lista + sin error
+
+
 
     # -------------------------------
     # Conversión a dict/objeto

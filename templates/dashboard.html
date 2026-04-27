@@ -76,9 +76,9 @@
 </div>
 
 {% if diarias_vencidas or pendientes_vencidas %}
-<div class="modal" id="tareasVencidasModal">
+<div class="modal" id="tareasVencidasModal" data-mostrar="{{ 'true' if session.get('mostrar_modal') else 'false' }}">
   <div class="modal-content">
-    <span class="close" onclick="cerrarModalVencidas()">&times;</span>
+    <span class="close">&times;</span>
     <h3>Tareas vencidas</h3>
     <p>Estas tareas quedaron pendientes de ayer. ¿Qué deseas hacer?</p>
 
@@ -87,15 +87,10 @@
     {% for d in diarias_vencidas %}
       <div class="tarea-item">
         <div class="accion-izq">
+          <!-- Solo completar retroactivo -->
           <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
             <input type="hidden" name="retroactivo" value="true">
-            <input type="checkbox"
-                   onchange="if(this.checked){
-                                this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}';
-                              } else {
-                                this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='incompleta') }}';
-                              }
-                              this.form.submit();">
+            <input type="checkbox" onchange="this.form.submit();">
           </form>
         </div>
         <div class="tarea-contenido">
@@ -112,15 +107,10 @@
     {% for p in pendientes_vencidas %}
       <div class="tarea-item">
         <div class="accion-izq">
+          <!-- Igual: solo completar retroactivo -->
           <form action="{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}" method="post" style="display:inline;">
             <input type="hidden" name="retroactivo" value="true">
-            <input type="checkbox"
-                   onchange="if(this.checked){
-                                this.form.action='{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}';
-                              } else {
-                                this.form.action='{{ url_for('marcar_tarea', tarea_id=p.id, accion='incompleta') }}';
-                              }
-                              this.form.submit();">
+            <input type="checkbox" onchange="this.form.submit();">
           </form>
         </div>
         <div class="tarea-contenido">
@@ -132,7 +122,6 @@
   </div>
 </div>
 {% endif %}
-
 
 <div class="dashboard">
     <!-- Hábitos -->
@@ -377,24 +366,25 @@
     document.getElementById("modalClase").style.display = "none";
   }
 
-  // Mostrar automáticamente el modal de tareas vencidas si hay elementos
+  // Mostrar automáticamente el modal de tareas vencidas si el flag lo permite
   window.onload = function() {
     var vencidasModal = document.getElementById("tareasVencidasModal");
-    if (vencidasModal) {
+    if (vencidasModal && vencidasModal.dataset.mostrar === "true") {
       vencidasModal.style.display = "block";
 
-      // botón de cierre dentro del modal
+      // botón de cierre dentro del modal (×)
       var closeBtn = vencidasModal.querySelector(".close");
       if (closeBtn) {
-        closeBtn.onclick = function() {
+        closeBtn.onclick = async function() {
           vencidasModal.style.display = "none";
-          fetch("/procesar_vencidas", { method: "POST" });
+          const response = await fetch("/procesar_vencidas", { method: "POST" });
+          if (response.ok) location.reload(); // recargar para mostrar toasts
         };
       }
     }
   };
 
-  // cierre con clic fuera de los modales
+  // cierre con clic fuera del modal
   window.onclick = function(event) {
     var modal = document.getElementById("modal");
     var vencidasModal = document.getElementById("tareasVencidasModal");
@@ -406,7 +396,10 @@
 
     if (event.target == vencidasModal) {
       vencidasModal.style.display = "none";
-      fetch("/procesar_vencidas", { method: "POST" });
+      fetch("/procesar_vencidas", { method: "POST" })
+        .then(response => {
+          if (response.ok) location.reload(); // recargar para mostrar toasts
+        });
     }
   };
 </script>

@@ -369,9 +369,12 @@ def procesar_vencidas():
 
     vencidas = gestor_tareas.verificar_diarias_web()
     diarias_vencidas = vencidas["diarias_vencidas"]
-    pendientes_vencidas = vencidas["pendientes_vencidas"]
+    # pendientes_vencidas = vencidas["pendientes_vencidas"]  # se dejan sin tocar
 
-    # Penalizar automáticamente las diarias como incompletas por medianoche
+    total_penalizaciones = {"vida": 0, "xp": 0, "coins": 0}
+    hoy = datetime.date.today().strftime("%d-%m-%Y")
+
+    # Penalizar solo diarias vencidas
     for d in diarias_vencidas:
         resultado = gestor_tareas.marcar_tarea_web(
             tarea_id=d.id,
@@ -379,14 +382,38 @@ def procesar_vencidas():
             retroactivo=False,
             por_medianoche=True
         )
-        # 🔹 Flashear el mensaje para que aparezca el toast
-        flash(resultado["mensaje"], "vida" if resultado["penalizaciones"] else "info")
+        for p in resultado["penalizaciones"]:
+            tipo = p["tipo"]
+            total_penalizaciones[tipo] += p["resultado"]["total"]
 
-    # Las pendientes vencidas se dejan sin tocar (solo acumulan bonificación)
+        d.fecha_creacion = hoy
+        d.completada = False
 
+        # 🔹 Guardar inmediatamente cada tarea
+        gestor_tareas.actualizar_tarea(d)
+
+    if diarias_vencidas:
+        mensaje = (
+            f"No completaste {len(diarias_vencidas)} diarias: pierdes "
+            f"{abs(total_penalizaciones['vida'])} HP, "
+            f"{abs(total_penalizaciones['xp'])} XP y "
+            f"{abs(total_penalizaciones['coins'])} COINS."
+        )
+        flash(mensaje, "vida")
+
+    # Marcar que ya se procesaron hoy
+    session["mostrar_modal"] = False
+    session["ultimo_procesado"] = hoy
+
+    #gestor_tareas.guardar_tareas()
     gestor.actualizar_usuario(usuario_obj)
-    return ("", 204)  # respuesta vacía
+    return ("", 204)
 
+@app.route("/simular_nuevo_dia")
+def simular_nuevo_dia():
+    session["ultimo_procesado"] = "26-04-2026"  # cualquier fecha distinta de hoy
+    session["mostrar_modal"] = True
+    return "Simulación de nuevo día aplicada."
 
 
 if __name__ == "__main__":

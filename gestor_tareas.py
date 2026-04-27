@@ -9,6 +9,7 @@ from constantes_tareas import (
 from tareas import Tarea
 from gestor_recompensa import GestorRecompensas
 from utils_rutas import ruta_json
+from flask import session
 
 ARCHIVO_TAREAS = ruta_json("tareas.json")
 
@@ -48,6 +49,13 @@ class GestorTareas:
         self.tareas = [t for t in self.tareas if t.id_usuario != id_usuario]
         self.guardar_tareas()
 
+    def actualizar_tarea(self, tarea):
+        for i, t in enumerate(self.tareas):
+            if t.id == tarea.id:
+                self.tareas[i] = tarea
+                break
+        self.guardar_tareas()
+
     # -------------------------------
     # Métodos principales
     # -------------------------------
@@ -56,16 +64,17 @@ class GestorTareas:
         fecha_str = fecha_str or None
 
         if tipo_tarea == 1:
-            xp_tarea, coin_tarea, life_restar = xp_habito(), coin_habito(), vida_habito()
+            xp_tarea, coin_tarea = xp_habito(), coin_habito()
+            life_restar = vida_habito(self.usuario, dificultad_tarea)
             dias_semana.append("todos")
-
-            # 🔹 Normalizar el campo habito
             if habito not in ["+", "-", "+-"]:
-                habito = "+-"  # por defecto, permitir ambos
+                habito = "+-"
         elif tipo_tarea == 2:
-            xp_tarea, coin_tarea, life_restar = xp_diaria(), coin_diaria(), vida_diaria()
+            xp_tarea, coin_tarea = xp_diaria(), coin_diaria()
+            life_restar = vida_diaria(self.usuario, dificultad_tarea)
         elif tipo_tarea == 3:
-            xp_tarea, coin_tarea, life_restar = xp_pendiente(), coin_pendiente(), vida_pendiente()
+            xp_tarea, coin_tarea = xp_pendiente(), coin_pendiente()
+            life_restar = vida_pendiente(self.usuario, dificultad_tarea)
             if not fecha_str:
                 fecha_str = "Sin fecha"
         else:
@@ -244,19 +253,28 @@ class GestorTareas:
         pendientes_vencidas = []
 
         for tarea in self.tareas:
+            if int(tarea.id_usuario) != int(self.usuario.id_usuario):
+                continue
+
             if tarea.tipo == 2:  # Diaria
+                # 🔹 Solo detectar, no modificar fecha ni estado
                 if tarea.fecha_creacion != hoy and not tarea.completada:
                     diarias_vencidas.append(tarea)
-                tarea.completada = False
-                tarea.fecha_creacion = hoy
 
             elif tarea.tipo == 3 and tarea.es_vencida():
                 pendientes_vencidas.append(tarea)
 
-        self.guardar_tareas()
-        self.gestor_usuarios.actualizar_usuario(self.usuario)
+        # 🔹 Flag en sesión: mostrar modal solo si no se procesó hoy
+        ultimo_procesado = session.get("ultimo_procesado")
+        if ultimo_procesado == hoy:
+            session["mostrar_modal"] = False
+        else:
+            session["mostrar_modal"] = True
 
-        return {"diarias_vencidas": diarias_vencidas, "pendientes_vencidas": pendientes_vencidas}
+        return {
+            "diarias_vencidas": diarias_vencidas,
+            "pendientes_vencidas": pendientes_vencidas
+        }
 
     def marcar_tarea_web(self, tarea_id, accion, retroactivo=False, por_medianoche=False):
         tarea = next(
@@ -271,11 +289,15 @@ class GestorTareas:
         # --- Hábito ---
         if tarea.tipo == 1:
             if accion == "positivo" and tarea.habito in ["+", "+-"]:
-                recompensas = tarea.completar()
+                recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
+                if error_msg:
+                    return {"error": error_msg}
                 recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
                 mensaje = f"Hábito positivo '{tarea.titulo}' completado."
             elif accion == "negativo" and tarea.habito in ["-", "+-"]:
-                penalizaciones = tarea.fallar()
+                penalizaciones, error_msg = tarea.fallar(self.usuario)
+                if error_msg:
+                    return {"error": error_msg}
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
                 for p in penalizaciones:
                     if p["tipo"] == "vida":
@@ -287,18 +309,22 @@ class GestorTareas:
                         else:
                             mensaje = f"Hábito negativo '{tarea.titulo}': pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Hábito negativo '{tarea.titulo}': penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
+                        mensaje = f"Hábito negativo '{tarea.titulo}':"
             else:
                 return {"error": "Acción inválida para este hábito"}
 
         # --- Diaria ---
         elif tarea.tipo == 2:
             if accion == "completar" and not tarea.completada:
-                recompensas = tarea.completar(retroactivo=retroactivo)
+                recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
+                if error_msg:
+                    return {"error": error_msg}
                 recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
                 mensaje = f"Diaria '{tarea.titulo}' completada."
             elif accion == "incompleta":
-                penalizaciones = tarea.fallar(por_medianoche=por_medianoche)
+                penalizaciones, error_msg = tarea.fallar(self.usuario, por_medianoche=por_medianoche)
+                if error_msg:
+                    return {"error": error_msg}
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
                 tarea.marcar_incompleta()
                 for p in penalizaciones:
@@ -311,19 +337,21 @@ class GestorTareas:
                         else:
                             mensaje = f"Diaria '{tarea.titulo}' incompleta: pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Diaria '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
+                        mensaje = f"Diaria '{tarea.titulo}' incompleta:"
 
         # --- Pendiente ---
         elif tarea.tipo == 3:
             if accion == "completar" and not tarea.completada:
-                recompensas = tarea.completar(retroactivo=retroactivo)
+                recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
+                if error_msg:
+                    return {"error": error_msg}
                 recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
                 mensaje = f"Pendiente '{tarea.titulo}' completada."
             elif accion == "incompleta":
-                penalizaciones = tarea.fallar()
+                penalizaciones, error_msg = tarea.fallar(self.usuario)
+                if error_msg:
+                    return {"error": error_msg}
                 penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
-                
-                # marcar como incompleta y ajustar fecha de vencimiento si corresponde
                 tarea.marcar_incompleta()
                 if tarea.fecha_vencimiento and tarea.fecha_vencimiento != "Sin fecha":
                     try:
@@ -346,7 +374,7 @@ class GestorTareas:
                         else:
                             mensaje = f"Pendiente '{tarea.titulo}' incompleta: pierdes {abs(total)} HP (daño base {abs(base)} - defensa {bonus})."
                     else:
-                        mensaje = f"Pendiente '{tarea.titulo}' incompleta: penalización en {p['tipo']} {p['resultado']['total']} {p['tipo'].upper()}."
+                        mensaje = f"Pendiente '{tarea.titulo}' incompleta:"
 
         # Guardar cambios y subir nivel
         eventos = self.usuario.subir_nivel()
