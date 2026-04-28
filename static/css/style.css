@@ -352,7 +352,7 @@ input[type="email"]:focus {
 .toast.mana-neg  { background-color: #e74c3c; }  /* rojo oscuro Mana negativo */
 .toast.progreso  {background-color: #f39c12;  }
 .toast.nivel_subido  {background-color: #f39c12;  }
-
+.mana_desbloqueado { background-color: #3498db; }
 
 @keyframes fadeInOut {
   0%   { opacity: 0; transform: translateY(-20px); }

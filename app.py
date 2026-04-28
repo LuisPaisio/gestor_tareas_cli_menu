@@ -116,6 +116,13 @@ def dashboard():
             mostrar_modal = True
             session["ultimo_modal"] = hoy
 
+    # 🔹 Mostrar modal de muerte si el flag está activo
+    mostrar_modal_muerte = False
+    if session.get("mostrar_modal_muerte"):
+        mostrar_modal_muerte = True
+        # limpiar flag para que no se repita en cada carga
+        session["mostrar_modal_muerte"] = False
+
     return render_template(
         "dashboard.html",
         usuario=usuario_obj,
@@ -128,9 +135,10 @@ def dashboard():
         notificaciones=notificaciones_lista,
         pagina_actual=1,
         total_paginas=1,
-        diarias_vencidas=diarias_vencidas,       # 🔹 para el modal
-        pendientes_vencidas=pendientes_vencidas, # 🔹 para el modal
-        mostrar_modal=mostrar_modal              # 🔹 flag para abrir modal
+        diarias_vencidas=diarias_vencidas,       #  para el modal de vencidas
+        pendientes_vencidas=pendientes_vencidas, #  para el modal de vencidas
+        mostrar_modal=mostrar_modal,             #  flag para modal de vencidas
+        mostrar_modal_muerte=mostrar_modal_muerte #  flag para modal de muerte
     )
 
 
@@ -369,43 +377,102 @@ def procesar_vencidas():
 
     vencidas = gestor_tareas.verificar_diarias_web()
     diarias_vencidas = vencidas["diarias_vencidas"]
-    # pendientes_vencidas = vencidas["pendientes_vencidas"]  # se dejan sin tocar
+    pendientes_vencidas = vencidas["pendientes_vencidas"]
 
+    ids_completadas = request.form.getlist("tareas_completadas[]")
+
+    total_recompensas = {"xp": 0, "coins": 0, "mana": 0, "vida": 0}
     total_penalizaciones = {"vida": 0, "xp": 0, "coins": 0}
-    hoy = datetime.date.today().strftime("%d-%m-%Y")
 
-    # Penalizar solo diarias vencidas
+    # 🔹 Dos formatos distintos según tipo de tarea
+    hoy_diaria = datetime.date.today().strftime("%d-%m-%Y")  # para diarias
+    hoy_pendiente = datetime.date.today() # para pendientes
+
+    # Procesar diarias vencidas
     for d in diarias_vencidas:
-        resultado = gestor_tareas.marcar_tarea_web(
-            tarea_id=d.id,
-            accion="incompleta",
-            retroactivo=False,
-            por_medianoche=True
-        )
-        for p in resultado["penalizaciones"]:
-            tipo = p["tipo"]
-            total_penalizaciones[tipo] += p["resultado"]["total"]
+        if str(d.id) in ids_completadas:
+            resultado = gestor_tareas.marcar_tarea_web(
+                tarea_id=d.id,
+                accion="completar",
+                retroactivo=True,
+                por_medianoche=False
+            )
+            for r in resultado["recompensas"]:
+                tipo = r["tipo"]
+                total_recompensas[tipo] += r["resultado"]["total"]
+        else:
+            resultado = gestor_tareas.marcar_tarea_web(
+                tarea_id=d.id,
+                accion="incompleta",
+                retroactivo=False,
+                por_medianoche=True
+            )
+            for p in resultado["penalizaciones"]:
+                tipo = p["tipo"]
+                total_penalizaciones[tipo] += p["resultado"]["total"]
 
-        d.fecha_creacion = hoy
+        d.fecha_creacion = hoy_diaria
         d.completada = False
-
-        # 🔹 Guardar inmediatamente cada tarea
         gestor_tareas.actualizar_tarea(d)
 
-    if diarias_vencidas:
-        mensaje = (
-            f"No completaste {len(diarias_vencidas)} diarias: pierdes "
-            f"{abs(total_penalizaciones['vida'])} HP, "
-            f"{abs(total_penalizaciones['xp'])} XP y "
-            f"{abs(total_penalizaciones['coins'])} COINS."
+    # Procesar pendientes vencidas
+    for p in pendientes_vencidas:
+        if str(p.id) in ids_completadas:
+            resultado = gestor_tareas.marcar_tarea_web(
+                tarea_id=p.id,
+                accion="completar",
+                retroactivo=True,
+                por_medianoche=False
+            )
+            for r in resultado["recompensas"]:
+                tipo = r["tipo"]
+                total_recompensas[tipo] += r["resultado"]["total"]
+
+            p.completada = True
+
+            # 👇 Comparar fechas en formato ISO
+            fecha_venc = datetime.date.fromisoformat(p.fecha_vencimiento)
+            if fecha_venc <= hoy_pendiente:
+                p.fecha_vencimiento = hoy_pendiente.strftime("%Y-%m-%d")
+
+        else:
+            resultado = gestor_tareas.marcar_tarea_web(
+                tarea_id=p.id,
+                accion="incompleta",
+                retroactivo=False,
+                por_medianoche=False
+            )
+            for pz in resultado["penalizaciones"]:
+                tipo = pz["tipo"]
+                total_penalizaciones[tipo] += pz["resultado"]["total"]
+            p.completada = False
+
+        gestor_tareas.actualizar_tarea(p)
+
+    # ✅ Toast resumen recompensas
+    if any(v != 0 for v in total_recompensas.values()):
+        flash(
+            f"Completaste {len(ids_completadas)} tareas retroactivamente: "
+            f"+{total_recompensas['xp']} XP, "
+            f"+{total_recompensas['coins']} COINS, "
+            f"+{total_recompensas['mana']} MANÁ.",
+            "xp"
         )
-        flash(mensaje, "vida")
 
-    # Marcar que ya se procesaron hoy
+    # ✅ Toast resumen penalizaciones
+    total_falladas = (len(diarias_vencidas) + len(pendientes_vencidas)) - len(ids_completadas)
+    if total_falladas > 0:
+        flash(
+            f"No completaste {total_falladas} tareas: "
+            f"{abs(total_penalizaciones['vida'])} HP, "
+            f"{abs(total_penalizaciones['xp'])} XP, "
+            f"{abs(total_penalizaciones['coins'])} COINS.",
+            "vida"
+        )
+
     session["mostrar_modal"] = False
-    session["ultimo_procesado"] = hoy
+    session["ultimo_procesado"] = hoy_diaria  # mantener coherencia con diarias
 
-    #gestor_tareas.guardar_tareas()
     gestor.actualizar_usuario(usuario_obj)
     return ("", 204)
 

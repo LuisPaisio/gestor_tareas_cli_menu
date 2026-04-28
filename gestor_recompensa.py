@@ -29,15 +29,25 @@ class GestorRecompensas:
             json.dump([r.__dict__ for r in self.historial], archivo, indent=4, ensure_ascii=False)
 
     def aplicar_recompensas(self, usuario, recompensas: list[Recompensa], es_penalizacion=False):
-        """Aplica recompensas o penalizaciones y devuelve resultados en formato dict para la web."""
+        """
+        Aplica recompensas o penalizaciones y devuelve:
+        - resultados en formato dict para la web
+        - flag murio (True si el usuario murió durante la aplicación)
+        """
         if not recompensas:
-            return []
+            return [], False
 
         resultados = []
-        for recompensa in recompensas:
-            resultado = recompensa.aplicar_usuario(usuario)  # dict con base, bonus, total
-            self.historial.append(recompensa)
+        murio = False
 
+        for recompensa in recompensas:
+            resultado = recompensa.aplicar_usuario(usuario)  # dict con base, bonus, total (+ murio en caso de vida)
+
+            # 👇 capturamos el flag de muerte si viene en el resultado
+            if resultado.get("murio"):
+                murio = True
+
+            self.historial.append(recompensa)
             resultados.append({
                 "id": recompensa.id_recompensa,
                 "nombre": recompensa.nombre,
@@ -48,5 +58,5 @@ class GestorRecompensas:
             })
 
         self.guardar_historial()
-        return resultados
+        return resultados, murio
 

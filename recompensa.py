@@ -56,11 +56,12 @@ class Recompensa:
             else:
                 daño_base = abs(self.valor)
                 daño_reducido = max(0, daño_base - usuario.defensa)
-                usuario.restar_vida(daño_reducido)
+                murio = usuario.restar_vida(daño_reducido)
                 return {
                     "base": -daño_base,
                     "bonus": usuario.defensa,
-                    "total": -daño_reducido
+                    "total": -daño_reducido,
+                    "murio": murio
                 }
 
         elif self.tipo == "mana":

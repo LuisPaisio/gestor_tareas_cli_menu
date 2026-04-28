@@ -1,5 +1,6 @@
 from gestor_inventario import GestorInventario
 from colorama import Fore, Style
+import datetime
 from datetime import date, timedelta
 import random
 from item import Item
@@ -29,7 +30,7 @@ class Usuario:
                 nombre_publico=None, foto_perfil=None, slots=None, rol="user",
                 ventajas_vip=None, fuerza=0, defensa=0, velocidad=0,
                 ultima_fecha_bonus=None, fecha_compra_vip=None, contador_vip=0,
-                tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None):
+                tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None, cooldown_equipamiento=None):
         
         self.id_usuario = id_usuario
         self.usuario = usuario
@@ -84,6 +85,9 @@ class Usuario:
         # Inicializar clase RPG
         self.clase_nombre = clase_nombre
         self.clase = Clase.cargar_clase(clase_nombre, self.rol == "vip") if clase_nombre else None
+        
+        #Cooldown de 3 minutos cuando el usuario pierde toda su HP, aquí se inicializa.
+        self.cooldown_equipamiento = cooldown_equipamiento
 
         self.gestor_inventario = GestorInventario(self)
         self.gestor_usuarios = None
@@ -113,7 +117,10 @@ class Usuario:
             "tags": self.tags,
             "mana_usuario": self.mana_usuario,
             "fecha_expiracion_vip": self.fecha_expiracion_vip,
-            "clase_nombre": self.clase_nombre if self.clase_nombre else None
+            "clase_nombre": self.clase_nombre if self.clase_nombre else None,
+            "cooldown_equipamiento": self.cooldown_equipamiento.strftime("%Y-%m-%d %H:%M:%S") 
+            if isinstance(self.cooldown_equipamiento, (datetime.date, datetime.datetime)) 
+            else self.cooldown_equipamiento
         }
 
     @staticmethod
@@ -125,6 +132,14 @@ class Usuario:
 
     @classmethod
     def from_dict(cls, data):
+        cooldown = data.get("cooldown_equipamiento")
+        if cooldown:
+            try:
+                # convertir string ISO a datetime
+                cooldown = datetime.datetime.strptime(cooldown, "%Y-%m-%d %H:%M:%S")
+            except (ValueError, TypeError):
+                cooldown = None
+
         return cls(
             id_usuario=data["id_usuario"],
             usuario=data["usuario"],
@@ -143,13 +158,14 @@ class Usuario:
             fuerza=int(data.get("fuerza", 0)),
             defensa=int(data.get("defensa", 0)),
             velocidad=int(data.get("velocidad", 0)),
-            ultima_fecha_bonus=str(data.get("ultima_fecha_bonus")) if data.get("ultima_fecha_bonus") else None,
+            ultima_fecha_bonus=data.get("ultima_fecha_bonus"),
             fecha_compra_vip=data.get("fecha_compra_vip"),
             contador_vip=data.get("contador_vip", 0),
             tags=data.get("tags", []),
             mana_usuario=data.get("mana_usuario", 0),
             fecha_expiracion_vip=data.get("fecha_expiracion_vip"),
-            clase_nombre=data.get("clase_nombre", None)  # None si no existe
+            clase_nombre=data.get("clase_nombre", None),
+            cooldown_equipamiento=cooldown
         )
 
     # -------------------------------
@@ -339,6 +355,11 @@ class Usuario:
 
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
+        
+        # En equipar recordar que debemos agregar el chequeo del cooldown (Recuerda ésto):
+        #if self.cooldown_equipamiento and datetime.datetime.now() < self.cooldown_equipamiento:
+        #    return {"error": "No puedes equipar objetos hasta que pasen 3 minutos tras tu muerte."}
+
 
     def desequipar(self, slot):
         slot_normalizado = slot.lower().replace(" ", "")
@@ -424,18 +445,35 @@ class Usuario:
         self.vida_usuario -= vida
         if self.vida_usuario <= 0:
             self.vida_usuario = 0
-            xp_perdido, coins_perdidos = 15, 10
+
+            # Penalización porcentual
+            xp_perdido = int(self.xp_usuario * 0.05)
+            coins_perdidos = int(self.coin_usuario * 0.10)
             self.sumar_xp(-xp_perdido)
             self.sumar_coins(-coins_perdidos)
-            # limpiar todos los slots
+
+            # 🔹 Bajada de nivel automática
+            if self.nivel_usuario > 1:
+                self.nivel_usuario -= 1
+                self.xp_usuario = self.xp_requerida(self.nivel_usuario) // 2
+
+            # Desequipar
             for slot in self.slots:
                 self.slots[slot] = None
-            # reiniciar vida
-            self.vida_usuario = 50
 
-            # 🔹 Persistir cambios en usuarios.json
+            # Cooldown
+            self.cooldown_equipamiento = datetime.datetime.now() + datetime.timedelta(minutes=3)
+
+            # Reiniciar vida y maná
+            self.vida_usuario = vida_maxima()
+            self.mana_usuario = mana_maximo()
+
             if self.gestor_usuarios:
                 self.gestor_usuarios.actualizar_usuario(self)
+
+            return True  # 👈 devuelve flag de muerte
+
+        return False
 
     #--------------------------------
     # Atributos_totales, se calculan las mejoras activas

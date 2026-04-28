@@ -80,48 +80,83 @@
   <div class="modal-content">
     <span class="close">&times;</span>
     <h3>Tareas vencidas</h3>
-    <p>Estas tareas quedaron pendientes de ayer. ¿Qué deseas hacer?</p>
+    <p>Estas tareas quedaron pendientes de ayer. Marca las que quieras considerar completadas retroactivamente y luego cierra el modal.</p>
 
-    <!-- Diarias vencidas -->
-    <h4>Diarias vencidas</h4>
-    {% for d in diarias_vencidas %}
-      <div class="tarea-item">
-        <div class="accion-izq">
-          <!-- Solo completar retroactivo -->
-          <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
-            <input type="hidden" name="retroactivo" value="true">
-            <input type="checkbox" onchange="this.form.submit();">
-          </form>
-        </div>
-        <div class="tarea-contenido">
-          <span class="titulo">{{ d.titulo }}</span>
-          {% if d.dias_semana %}
-            <p class="subinfo">Días: {{ d.dias_semana|join(', ') }}</p>
-          {% endif %}
-        </div>
-      </div>
-    {% endfor %}
+    <!-- Formulario único para enviar todas las selecciones -->
+    <form id="formVencidas" action="{{ url_for('procesar_vencidas') }}" method="post">
 
-    <!-- Pendientes vencidas -->
-    <h4>Pendientes vencidas</h4>
-    {% for p in pendientes_vencidas %}
-      <div class="tarea-item">
-        <div class="accion-izq">
-          <!-- Igual: solo completar retroactivo -->
-          <form action="{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}" method="post" style="display:inline;">
-            <input type="hidden" name="retroactivo" value="true">
-            <input type="checkbox" onchange="this.form.submit();">
-          </form>
+      <!-- Diarias vencidas -->
+      <h4>Diarias vencidas</h4>
+      {% for d in diarias_vencidas %}
+        <div class="tarea-item">
+          <div class="accion-izq">
+            <input type="checkbox" name="tareas_completadas[]" value="{{ d.id }}">
+          </div>
+          <div class="tarea-contenido">
+            <span class="titulo">{{ d.titulo }}</span>
+            {% if d.dias_semana %}
+              <p class="subinfo">Días: {{ d.dias_semana|join(', ') }}</p>
+            {% endif %}
+          </div>
         </div>
-        <div class="tarea-contenido">
-          <span class="titulo">{{ p.titulo }}</span>
-          <p class="subinfo">Venció el {{ p.fecha_vencimiento }}</p>
+      {% endfor %}
+
+      <!-- Pendientes vencidas -->
+      <h4>Pendientes vencidas</h4>
+      {% for p in pendientes_vencidas %}
+        <div class="tarea-item">
+          <div class="accion-izq">
+            <input type="checkbox" name="tareas_completadas[]" value="{{ p.id }}">
+          </div>
+          <div class="tarea-contenido">
+            <span class="titulo">{{ p.titulo }}</span>
+            <p class="subinfo">Venció el {{ p.fecha_vencimiento }}</p>
+          </div>
         </div>
-      </div>
-    {% endfor %}
+      {% endfor %}
+    </form>
   </div>
 </div>
 {% endif %}
+
+<!-- Modal de Muerte -->
+<div id="modalMuerte" class="modal" data-mostrar="{{ 'true' if mostrar_modal_muerte else 'false' }}">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalMuerte()">&times;</span>
+    <h2>💀 ¡Has caído en batalla!</h2>
+    
+    <!-- Imagen ilustrativa -->
+    <div style="text-align:center; margin: 15px 0;">
+      <img src="{{ url_for('static', filename='images/muerte_placeholder.png') }}" 
+           alt="Imagen de muerte" 
+           style="max-width: 250px; border-radius: 8px;">
+    </div>
+
+    <p>
+      Tu vida llegó a <strong>0 HP</strong> debido a tareas incompletas o hábitos negativos.  
+      Como consecuencia, se aplicaron las siguientes penalizaciones:
+    </p>
+
+    <ul style="text-align:left; margin: 15px 0;">
+      <li>📉 Pierdes automáticamente <strong>1 nivel</strong>.</li>
+      <li>⭐ Tu barra de experiencia se reinicia a la mitad del nuevo nivel.</li>
+      <li>💀 Se descuenta un <strong>5% de tu XP actual</strong>.</li>
+      <li>💰 Se descuenta un <strong>10% de tus Coins</strong>.</li>
+      <li>🛡️ Todo tu equipamiento fue desequipado.</li>
+      <li>⏳ Se activa un <strong>cooldown de 3 minutos</strong> antes de volver a equiparte.</li>
+      <li>❤️ Tu vida y maná fueron restaurados.</li>
+    </ul>
+
+    <p>
+      ¡Aprende de tus errores y vuelve más fuerte!  
+      Mantén tus hábitos positivos y completa tus tareas para evitar nuevas caídas.
+    </p>
+
+    <div style="text-align:center; margin-top:20px;">
+      <button type="button" class="btn-cancelar" onclick="cerrarModalMuerte()">Aceptar</button>
+    </div>
+  </div>
+</div>
 
 <div class="dashboard">
     <!-- Hábitos -->
@@ -229,7 +264,7 @@
 <script>
   const modal = document.getElementById("modal");
   const btn = document.getElementById("openModal");
-  const span = document.querySelector(".close");
+  const span = document.querySelector("#modal .close");
   const form = document.getElementById("taskForm");
   const tipoSelect = document.getElementById("tipo");
   const habitoOptions = document.getElementById("habito-options");
@@ -366,40 +401,57 @@
     document.getElementById("modalClase").style.display = "none";
   }
 
+  function cerrarModalMuerte() {
+    document.getElementById("modalMuerte").style.display = "none";
+  }
+
   // Mostrar automáticamente el modal de tareas vencidas si el flag lo permite
   window.onload = function() {
+  // Lógica para el modal de muerte
+  var muerteModal = document.getElementById("modalMuerte");
+  if (muerteModal && muerteModal.dataset.mostrar === "true") {
+    muerteModal.style.display = "block";
+
+    var closeBtn = muerteModal.querySelector(".close");
+    if (closeBtn) {
+      closeBtn.onclick = function() {
+        cerrarModalMuerte();
+      };
+    }
+  }
+    // Lógica de tareas vencidas
     var vencidasModal = document.getElementById("tareasVencidasModal");
     if (vencidasModal && vencidasModal.dataset.mostrar === "true") {
       vencidasModal.style.display = "block";
 
-      // botón de cierre dentro del modal (×)
       var closeBtn = vencidasModal.querySelector(".close");
       if (closeBtn) {
         closeBtn.onclick = async function() {
           vencidasModal.style.display = "none";
-          const response = await fetch("/procesar_vencidas", { method: "POST" });
-          if (response.ok) location.reload(); // recargar para mostrar toasts
+          const formVencidas = document.getElementById("formVencidas");
+          const formData = new FormData(formVencidas);
+          const response = await fetch(formVencidas.action, { method: "POST", body: formData });
+          if (response.ok) location.reload();
         };
       }
     }
   };
 
-  // cierre con clic fuera del modal
+  // cierre con clic fuera del modal vencidas
   window.onclick = function(event) {
-    var modal = document.getElementById("modal");
+    //Función para modal muerte.
+    var muerteModal = document.getElementById("modalMuerte");
+        if (event.target == muerteModal) {
+          cerrarModalMuerte();
+        }
+      //Función para modal de tareas vencidas.
     var vencidasModal = document.getElementById("tareasVencidasModal");
-
-    if (event.target == modal) {
-      modal.style.display = "none";
-      form.reset();
-    }
-
     if (event.target == vencidasModal) {
       vencidasModal.style.display = "none";
-      fetch("/procesar_vencidas", { method: "POST" })
-        .then(response => {
-          if (response.ok) location.reload(); // recargar para mostrar toasts
-        });
+      const formVencidas = document.getElementById("formVencidas");
+      const formData = new FormData(formVencidas);
+      fetch(formVencidas.action, { method: "POST", body: formData })
+        .then(response => { if (response.ok) location.reload(); });
     }
   };
 </script>

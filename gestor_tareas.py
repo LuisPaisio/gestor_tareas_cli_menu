@@ -62,6 +62,9 @@ class GestorTareas:
     def crear_tarea_web(self, titulo, tipo_tarea, dificultad, dias_semana=None, fecha_str=None, habito=None):
         dias_semana = dias_semana or []
         fecha_str = fecha_str or None
+        
+        dificultad_map = {"1": "facil", "2": "intermedia", "3": "dificil"}
+        dificultad_tarea = dificultad_map.get(str(dificultad), "facil")
 
         if tipo_tarea == 1:
             xp_tarea, coin_tarea = xp_habito(), coin_habito()
@@ -79,9 +82,6 @@ class GestorTareas:
                 fecha_str = "Sin fecha"
         else:
             raise ValueError("Tipo de tarea inválido")
-
-        dificultad_map = {"1": "facil", "2": "intermedia", "3": "dificil"}
-        dificultad_tarea = dificultad_map.get(str(dificultad), "facil")
 
         ultimo_id = max([t.id for t in self.tareas], default=0)
         nueva = Tarea(
@@ -249,6 +249,19 @@ class GestorTareas:
 
     def verificar_diarias_web(self):
         hoy = datetime.date.today().strftime("%d-%m-%Y")
+        dia_actual = datetime.date.today().strftime("%A").lower()  # ejemplo: "tuesday"
+
+        # mapear nombres a español si tus tareas usan "lunes", "martes", etc.
+        mapa_dias = {
+            "monday": "lunes",
+            "tuesday": "martes",
+            "wednesday": "miercoles",
+            "thursday": "jueves",
+            "friday": "viernes",
+            "saturday": "sabado",
+            "sunday": "domingo"
+        }
+
         diarias_vencidas = []
         pendientes_vencidas = []
 
@@ -257,11 +270,12 @@ class GestorTareas:
                 continue
 
             if tarea.tipo == 2:  # Diaria
-                # 🔹 Solo detectar, no modificar fecha ni estado
+                # 🔹 Solo detectar si está vencida y corresponde al día actual
                 if tarea.fecha_creacion != hoy and not tarea.completada:
-                    diarias_vencidas.append(tarea)
+                    if "todos" in tarea.dias_semana or mapa_dias[dia_actual] in tarea.dias_semana:
+                        diarias_vencidas.append(tarea)
 
-            elif tarea.tipo == 3 and tarea.es_vencida():
+            elif tarea.tipo == 3 and tarea.es_vencida() and not tarea.completada:
                 pendientes_vencidas.append(tarea)
 
         # 🔹 Flag en sesión: mostrar modal solo si no se procesó hoy
@@ -285,6 +299,7 @@ class GestorTareas:
             return {"error": "Tarea no encontrada"}
 
         recompensas, penalizaciones, mensaje = [], [], ""
+        murio = False  # 👈 flag de muerte
 
         # --- Hábito ---
         if tarea.tipo == 1:
@@ -292,13 +307,17 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
-                recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
+                recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, recompensas, es_penalizacion=False
+                )
                 mensaje = f"Hábito positivo '{tarea.titulo}' completado."
             elif accion == "negativo" and tarea.habito in ["-", "+-"]:
                 penalizaciones, error_msg = tarea.fallar(self.usuario)
                 if error_msg:
                     return {"error": error_msg}
-                penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
+                penalizaciones, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, penalizaciones, es_penalizacion=True
+                )
                 for p in penalizaciones:
                     if p["tipo"] == "vida":
                         base = p["resultado"]["base"]
@@ -319,13 +338,17 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
-                recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
+                recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, recompensas, es_penalizacion=False
+                )
                 mensaje = f"Diaria '{tarea.titulo}' completada."
             elif accion == "incompleta":
                 penalizaciones, error_msg = tarea.fallar(self.usuario, por_medianoche=por_medianoche)
                 if error_msg:
                     return {"error": error_msg}
-                penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
+                penalizaciones, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, penalizaciones, es_penalizacion=True
+                )
                 tarea.marcar_incompleta()
                 for p in penalizaciones:
                     if p["tipo"] == "vida":
@@ -345,14 +368,19 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
-                recompensas = self.gestor_recompensas.aplicar_recompensas(self.usuario, recompensas, es_penalizacion=False)
+                recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, recompensas, es_penalizacion=False
+                )
                 mensaje = f"Pendiente '{tarea.titulo}' completada."
             elif accion == "incompleta":
                 penalizaciones, error_msg = tarea.fallar(self.usuario)
                 if error_msg:
                     return {"error": error_msg}
-                penalizaciones = self.gestor_recompensas.aplicar_recompensas(self.usuario, penalizaciones, es_penalizacion=True)
+                penalizaciones, murio = self.gestor_recompensas.aplicar_recompensas(
+                    self.usuario, penalizaciones, es_penalizacion=True
+                )
                 tarea.marcar_incompleta()
+                # ajuste de fecha vencida
                 if tarea.fecha_vencimiento and tarea.fecha_vencimiento != "Sin fecha":
                     try:
                         fecha = datetime.datetime.strptime(tarea.fecha_vencimiento, "%d-%m-%Y").date()
@@ -381,9 +409,15 @@ class GestorTareas:
         self.guardar_tareas()
         self.gestor_usuarios.actualizar_usuario(self.usuario)
 
+        # 👇 si murió, setear flag en sesión
+        if murio:
+            from flask import session
+            session["mostrar_modal_muerte"] = True
+
         return {
             "mensaje": mensaje,
             "recompensas": recompensas,
             "penalizaciones": penalizaciones,
             "eventos": eventos
         }
+

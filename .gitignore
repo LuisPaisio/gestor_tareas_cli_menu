@@ -9,6 +9,8 @@ __pycache__/
 
 # Archivos de VS Code
 .vscode/
+.tareas_a_realizar.txt
+tareas_a_realizar.txt
 
 # Archivos de logs
 *.log
