@@ -12,12 +12,10 @@
         <input type="text" placeholder="Buscar tarea...">
         <select>
             <option value="">Todas</option>
-            <option value="habito">Hábitos</option>
+            <option value="hábitos">Hábitos</option>
             <option value="diaria">Diarias</option>
             <option value="pendiente">Pendientes</option>
-            <option value="recompensa">Recompensas</option>
         </select>
-        <button type="submit">Filtrar</button>
     </form>
     <a href="#" class="boton1" id="openModal"> + Añadir tarea</a>
 </div>
@@ -279,6 +277,47 @@
   const habitoOptions = document.getElementById("habito-options");
   const diasOptions = document.getElementById("dias-options");
   const fechaOptions = document.getElementById("fecha-options");
+  // --- Lógica de filtrado ---
+  const searchInput = document.querySelector(".search-bar input[type='text']");
+  const searchSelect = document.querySelector(".search-bar select");
+  const searchForm = document.querySelector(".search-bar");
+
+  // función de filtrado
+  function filtrarTareas() {
+    const texto = searchInput.value.toLowerCase();
+    const tipo = searchSelect.value;
+
+    document.querySelectorAll(".card").forEach(card => {
+      const cardTitulo = card.querySelector("h3")?.textContent.toLowerCase() || "";
+
+      // 👇 nunca ocultar la card de recompensas
+      if (cardTitulo.includes("tienda") || cardTitulo.includes("recompensa")) {
+        card.querySelectorAll(".tarea-item").forEach(item => {
+          item.style.display = "flex"; // siempre visible
+        });
+        return;
+      }
+
+      card.querySelectorAll(".tarea-item").forEach(item => {
+        const titulo = item.querySelector(".titulo")?.textContent.toLowerCase() || "";
+
+        let coincideTexto = !texto || titulo.includes(texto);
+        let coincideTipo = !tipo || cardTitulo.includes(tipo);
+
+        if (coincideTexto && coincideTipo) {
+          item.style.display = "flex";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+  }
+
+  // filtrar al cambiar el select
+  searchSelect.addEventListener("change", filtrarTareas);
+
+  // filtrar mientras escribe
+  searchInput.addEventListener("keyup", filtrarTareas);
 
   // abrir modal de creación
   btn.onclick = () => {
