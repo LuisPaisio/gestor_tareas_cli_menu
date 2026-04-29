@@ -173,6 +173,8 @@
             <button type="submit" class="positivo">+</button>
           </form>
         </div>
+        {% else %}
+        <div class="accion-izq placeholder-btn"></div>
         {% endif %}
 
         <span class="titulo">{{ h.titulo }}</span>
@@ -184,6 +186,8 @@
             <button type="submit" class="negativo">-</button>
           </form>
         </div>
+        {% else %}
+        <div class="accion-der placeholder-btn"></div>
         {% endif %}
       </div>
       {% endfor %}

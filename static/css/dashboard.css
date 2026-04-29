@@ -187,6 +187,16 @@
     font-size: 16px;
 }
 
+.placeholder-btn {
+  width: 45px;              /* mismo ancho que los botones + y - */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;  /* sin fondo */
+  border: none;             /* sin borde */
+}
+
 .contador {
     background-color: #4B0082;   /* mismo violeta del título */
     color: #fff;
