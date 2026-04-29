@@ -122,6 +122,18 @@ def dashboard():
         mostrar_modal_muerte = True
         # limpiar flag para que no se repita en cada carga
         session["mostrar_modal_muerte"] = False
+    
+    dias_semana = {
+        "Monday": "lunes",
+        "Tuesday": "martes",
+        "Wednesday": "miercoles",
+        "Thursday": "jueves",
+        "Friday": "viernes",
+        "Saturday": "sabado",
+        "Sunday": "domingo"
+    }
+    
+    hoy_dia = dias_semana[datetime.date.today().strftime("%A")]
 
     return render_template(
         "dashboard.html",
@@ -138,7 +150,8 @@ def dashboard():
         diarias_vencidas=diarias_vencidas,       #  para el modal de vencidas
         pendientes_vencidas=pendientes_vencidas, #  para el modal de vencidas
         mostrar_modal=mostrar_modal,             #  flag para modal de vencidas
-        mostrar_modal_muerte=mostrar_modal_muerte #  flag para modal de muerte
+        mostrar_modal_muerte=mostrar_modal_muerte, #  flag para modal de muerte
+        hoy=hoy_dia
     )
 
 

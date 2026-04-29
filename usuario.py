@@ -6,6 +6,8 @@ import random
 from item import Item
 from constantes_tareas import vida_maxima, mana_maximo
 from clases import Clase
+from notificaciones import Notificacion
+from gestor_notificaciones import GestorNotificaciones
 
 # Diccionario global de nombres bonitos
 NOMBRES_BONITOS = {
@@ -516,6 +518,7 @@ class Usuario:
 
     def activar_vip(self):
         hoy = date.today()
+        gestor_notificaciones = GestorNotificaciones()
 
         base_vip = {
             "bonus_xp": 0.2,
@@ -533,6 +536,14 @@ class Usuario:
             self.contador_vip = 0
             # Dar recompensa inicial
             recompensa_inicial = {"accion": "vip_inicial", "mensaje": "🎁 Bienvenido al VIP: recibes 500 coins de regalo"}
+            notif = Notificacion(
+                id_notificacion=None,
+                mensaje="🎁 Bienvenido al VIP: recibes 500 coins de regalo",
+                accion="vip_inicial",
+                fecha=date.today().isoformat(),
+                leido=False
+            )
+            gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
             self.coin_usuario += 500
         else:
             recompensa_inicial = None
@@ -554,12 +565,34 @@ class Usuario:
         eventos = []
         if recompensa_inicial:
             eventos.append(recompensa_inicial)
-
-        eventos.append({"accion": "vip_activado", "mensaje": "🌟 ¡Felicitaciones! Ahora eres VIP. ¡Sigue la cadena para más recompensas!"})
+        eventos.append({
+            "accion": "vip_activado",
+            "mensaje": "🌟 ¡Felicitaciones! Ahora eres VIP. Mantén tu membresía activa para obtener recompensas mensuales adicionales."
+        })
+        notif = Notificacion(
+            id_notificacion=None,
+            mensaje="🌟 ¡Felicitaciones! Ahora eres VIP. Mantén tu membresía activa para obtener recompensas mensuales adicionales.",
+            accion="vip_activado",
+            fecha=date.today().isoformat(),
+            leido=False
+        )
+        gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
+        
         return eventos
 
     def desactivar_vip(self):
+        gestor_notificaciones = GestorNotificaciones()
+        
         if self.rol != "vip":
+            notif = Notificacion(
+                id_notificacion=None,
+                mensaje="⚠️ El usuario no es VIP, no hay nada que desactivar.",
+                accion="vip_info",
+                fecha=date.today().isoformat(),
+                leido=False
+            )
+            gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
+            
             return [{"accion": "vip_info", "mensaje": "⚠️ El usuario no es VIP, no hay nada que desactivar."}]
 
         # Resetear rol y ventajas
@@ -575,6 +608,15 @@ class Usuario:
 
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
+            
+        notif = Notificacion(
+            id_notificacion=None,
+            mensaje="🔄 Tu membresía VIP ha expirado. Puedes renovarla desde la Tienda.",
+            accion="vip_expirado",
+            fecha=date.today().isoformat(),
+            leido=False
+        )
+        gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
         return [{"accion": "vip_expirado", "mensaje": "🔄 Tu membresía VIP ha expirado. Puedes renovarla desde la Tienda."}]
 
@@ -614,6 +656,7 @@ class Usuario:
         xp_req = self.xp_requerida()
         niveles_subidos = 0
         eventos = []  # lista de eventos para mostrar en la web
+        gestor_notificaciones = GestorNotificaciones()
 
         while self.xp_usuario >= xp_req and self.nivel_usuario < 100:
             self.xp_usuario -= xp_req
@@ -627,13 +670,29 @@ class Usuario:
                 self.mana_usuario = mana_maximo()
                 eventos.append({
                     "accion": "mana_desbloqueado",
-                    "mensaje": f"🔮 Has desbloqueado el atributo MANÁ ({self.mana_usuario}/{mana_maximo()})."
+                    "mensaje": f"🔮 Has desbloqueado el atributo MANÁ ({self.mana_usuario}/{mana_maximo()} MP)."
                 })
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🔮 Has desbloqueado el atributo MANÁ ({self.mana_usuario}/{mana_maximo()} MP).",
+                    accion="mana_desbloqueado",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
                 if not self.clase:
                     eventos.append({
                         "accion": "elegir_clase",
                         "mensaje": "✨ Debes elegir una clase para comenzar a usar poderes."
                     })
+                    notif = Notificacion(
+                        id_notificacion=None,
+                        mensaje="✨ Debes elegir una clase para comenzar a usar poderes.",
+                        accion="elegir_clase",
+                        fecha=date.today().isoformat(),
+                        leido=False
+                    )
+                    gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
             # Nivel 100 → prestigio disponible
             if self.nivel_usuario == 100:
@@ -641,6 +700,14 @@ class Usuario:
                     "accion": "prestigio_disponible",
                     "mensaje": "🏆 Has alcanzado el nivel máximo (100). Puedes reiniciar tu nivel a 1 y obtener un tag especial."
                 })
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje="🏆 Has alcanzado el nivel máximo (100). Puedes reiniciar tu nivel a 1 y obtener un tag especial.",
+                    accion="prestigio_disponible",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
             xp_req = self.xp_requerida()
 
@@ -687,6 +754,14 @@ class Usuario:
                     "accion": "prestigio",
                     "mensaje": f"🎁 Has recibido un objeto especial: {nuevo_item.nombre}. Puedes equiparlo desde tu inventario."
                 })
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🎁 Has recibido un objeto especial: {nuevo_item.nombre}. Puedes equiparlo desde tu inventario.",
+                    accion="prestigio",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
             else:
                 # Tercera vez → dar Membresía VIP
                 vip_item = next(i for i in catalogo if i["id_item"] == 51)
@@ -702,16 +777,40 @@ class Usuario:
                     "accion": "prestigio",
                     "mensaje": "🏆 ¡Has alcanzado el nivel 100 por tercera vez! 🎁 Has recibido la Membresía VIP equipada automáticamente. ✨ Disfrutarás de todas las ventajas VIP durante 30 días."
                 })
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje="🏆 ¡Has alcanzado el nivel 100 por tercera vez! 🎁 Has recibido la Membresía VIP equipada automáticamente. ✨ Disfrutarás de todas las ventajas VIP durante 30 días.",
+                    accion="prestigio",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
             eventos.append({
                 "accion": "prestigio",
                 "mensaje": f"🔄 Reiniciaste tu nivel. Nuevo tag: {self.obtener_tag()}"
             })
+            notif = Notificacion(
+                id_notificacion=None,
+                mensaje=f"🔄 Reiniciaste tu nivel. Nuevo tag: {self.obtener_tag()}",
+                accion="prestigio",
+                fecha=date.today().isoformat(),
+                leido=False
+            )
+            gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
         else:
             eventos.append({
                 "accion": "prestigio",
                 "mensaje": "⚠️ Ya alcanzaste el máximo de reinicios (3)."
             })
+            notif = Notificacion(
+                id_notificacion=None,
+                mensaje="⚠️ Ya alcanzaste el máximo de reinicios (3).",
+                accion="prestigio",
+                fecha=date.today().isoformat(),
+                leido=False
+            )
+            gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
         return eventos
 
@@ -758,16 +857,48 @@ class Usuario:
             # Mensajes según el mes
             if self.contador_vip == 1:
                 eventos.append({"accion": "vip_recompensa", "mensaje": f"🎁 Recompensa VIP mes 1: {item_random['nombre']}"})
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🎁 Recompensa VIP mes 1: {item_random['nombre']}",
+                    accion="vip_recompensa",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
             elif self.contador_vip == 2:
                 eventos.append({"accion": "vip_recompensa", "mensaje": f"🎁 Recompensa VIP mes 2: {item_random['nombre']}"})
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🎁 Recompensa VIP mes 2: {item_random['nombre']}",
+                    accion="vip_recompensa",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
             elif self.contador_vip == 3:
                 # Extender VIP 30 días más
                 fecha_expira = date.fromisoformat(self.fecha_expiracion_vip) if self.fecha_expiracion_vip else hoy
                 nueva_expira = fecha_expira + timedelta(days=30)
                 self.fecha_expiracion_vip = nueva_expira.isoformat()
                 eventos.append({"accion": "vip_recompensa", "mensaje": f"🎁 Recompensa VIP mes 3: {item_random['nombre']} + 30 días extra de VIP"})
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🎁 Recompensa VIP mes 3: {item_random['nombre']} + 30 días extra de VIP",
+                    accion="vip_recompensa",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
             elif self.contador_vip % 3 == 0:
                 eventos.append({"accion": "vip_recompensa", "mensaje": f"🎁 Recompensa VIP mes {self.contador_vip}: {item_random['nombre']}"})
+                notif = Notificacion(
+                    id_notificacion=None,
+                    mensaje=f"🎁 Recompensa VIP mes {self.contador_vip}: {item_random['nombre']}",
+                    accion="vip_recompensa",
+                    fecha=date.today().isoformat(),
+                    leido=False
+                )
+                gestor_notificaciones.agregar_notificacion(self.id_usuario, notif)
 
         return eventos
 

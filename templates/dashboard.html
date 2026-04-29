@@ -195,16 +195,21 @@
       <input type="text" placeholder="Añadir una tarea diaria">
 
       {% for d in diarias %}
-      <div class="tarea-item">
+      <div class="tarea-item {% if hoy not in d.dias and 'todos' not in d.dias %}tarea-inactiva{% endif %}">
         <div class="accion-izq">
           <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
-            <input type="checkbox" {% if d.completada %}checked{% endif %}
-                   onchange="this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='incompleta') if d.completada else url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}'; this.form.submit();">
+            <input type="checkbox"
+                  {% if d.completada %}checked{% endif %}
+                  {% if hoy not in d.dias and 'todos' not in d.dias %}disabled{% endif %}
+                  onchange="this.form.action='{{ url_for('marcar_tarea', tarea_id=d.id, accion='incompleta') if d.completada else url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}'; this.form.submit();">
           </form>
         </div>
         <div class="tarea-contenido">
           <span class="titulo">{{ d.titulo }}</span>
           <p class="subinfo">Días: {{ d.dias|join(', ') }}</p>
+          {% if hoy not in d.dias and 'todos' not in d.dias %}
+            <p class="subinfo">No disponible hoy</p>
+          {% endif %}
         </div>
       </div>
       {% endfor %}

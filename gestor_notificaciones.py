@@ -25,12 +25,19 @@ class GestorNotificaciones:
         data = self.cargar_notificaciones()
         usuario = next((u for u in data if u["id_usuario"] == id_usuario), None)
         if usuario:
-            nuevo_id = str(len(usuario["notificaciones"]) + 1)
-            usuario["notificaciones"][nuevo_id] = notificacion.to_dict()
+            if usuario["notificaciones"]:
+                nuevo_id = str(max(int(k) for k in usuario["notificaciones"].keys()) + 1)
+            else:
+                nuevo_id = "1"
+            notif_dict = notificacion.to_dict()
+            notif_dict["id"] = int(nuevo_id)
+            usuario["notificaciones"][nuevo_id] = notif_dict
         else:
+            notif_dict = notificacion.to_dict()
+            notif_dict["id"] = 1
             data.append({
                 "id_usuario": id_usuario,
-                "notificaciones": {"1": notificacion.to_dict()}
+                "notificaciones": {"1": notif_dict}
             })
         self.guardar_notificaciones(data)
 

@@ -435,3 +435,21 @@ select, .fecha {
 #modalMuerte strong {
   color: #ff4d4d;
 }
+
+/* Tareas diarias inhabilitadas (no corresponden al día actual) */
+.tarea-item.tarea-inactiva {
+  opacity: 0.6;              /* se ve más apagada */
+  background-color: #dcdcdc; /* gris claro */
+}
+
+.tarea-item.tarea-inactiva input[type="checkbox"] {
+  cursor: not-allowed;       /* cursor prohibido */
+  background-color: #ccc;    /* gris para el checkbox */
+  border: 2px solid #aaa;    /* borde gris */
+}
+
+.tarea-item.tarea-inactiva input[type="checkbox"]:checked::after {
+  content: "✔";
+  font-size: 20px;
+  color: #666;               /* tilde gris apagado */
+}

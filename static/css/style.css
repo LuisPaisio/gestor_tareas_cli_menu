@@ -334,6 +334,7 @@ input[type="email"]:focus {
     word-wrap: break-word;
 }
 
+/* Toast */
 .toast.xp { background-color: #4CAF50; }      /* verde */
 .toast.coins { background-color: #f1c40f; }  /* dorado */
 .toast.vida { background-color: #e74c3c; }   /* rojo */
@@ -344,15 +345,27 @@ input[type="email"]:focus {
 .toast.warning { background-color: #ffc107; }
 .toast.success { background-color: #4CAF50; }
 .toast.defensa { background-color: #4CAF50; }  /* verde para defensa exitosa */
+.toast.progreso  {background-color: #f39c12;  }
+.toast.nivel_subido  {background-color: #f39c12;  }
+.toast.vip_activado { background-color: #f1c40f; }
+.toast.vip_inicial { background-color: #f39c12; }
+.mana_desbloqueado { background-color: #3498db; }
+.toast.vip_info { background-color: #3498db; }
+.toast.vip_expirado { background-color: #7f8c8d; }
+.toast.prestigio { background-color: #8e44ad; color: #fff; font-weight: bold; border: 2px solid gold; }
+.toast.vip_recompensa { background-color: #27ae60; color: #fff; font-weight: bold; border: 2px solid gold; }
 
 /* Penalizaciones */
 .toast.xp-neg    { background-color: #e74c3c; }  /* rojo oscuro XP negativo */
 .toast.coins-neg { background-color: #e74c3c; }  /* rojo oscuro Coins negativo */
 .toast.vida-neg  { background-color: #e74c3c; }  /* rojo oscuro Vida negativo */
 .toast.mana-neg  { background-color: #e74c3c; }  /* rojo oscuro Mana negativo */
-.toast.progreso  {background-color: #f39c12;  }
-.toast.nivel_subido  {background-color: #f39c12;  }
-.mana_desbloqueado { background-color: #3498db; }
+
+/* Tags */
+.tag.vip { color: gold; font-weight: bold; }
+.tag.ascendido { color: dodgerblue; font-weight: bold; }
+.tag.legendario { color: violet; font-weight: bold; }
+.tag.eterno { color: crimson; font-weight: bold; }
 
 @keyframes fadeInOut {
   0%   { opacity: 0; transform: translateY(-20px); }
@@ -405,11 +418,6 @@ input[type="email"]:focus {
 .btn-cancelar:hover {
   background-color: #606060;
 }
-
-.tag.vip { color: gold; font-weight: bold; }
-.tag.ascendido { color: dodgerblue; font-weight: bold; }
-.tag.legendario { color: violet; font-weight: bold; }
-.tag.eterno { color: crimson; font-weight: bold; }
 
 .nav-notifications {
     position: relative;
