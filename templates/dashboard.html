@@ -253,7 +253,7 @@
         <span class="titulo"><span class="titulo-texto">{{ h.titulo }}</span></span>
 
         <!-- Menú de edición con tres puntitos -->
-        <div class="menu-tarea" 
+        <div class="menu-tarea" title="Editar tarea" 
             onclick='abrirModalEdicion({ 
               id: {{ h.id }}, 
               titulo: {{ h.titulo|tojson }}, 
@@ -300,7 +300,7 @@
           {% endif %}
         </div>
         <!-- Menú de edición con tres puntitos -->
-        <div class="menu-tarea" 
+        <div class="menu-tarea" title="Editar tarea" 
             onclick='abrirModalEdicion({ 
               id: {{ d.id }}, 
               titulo: {{ d.titulo|tojson }}, 
@@ -332,7 +332,7 @@
           <p class="subinfo">Vence: {{ p.fecha_vencimiento }}</p>
         </div>
         <!-- Menú de edición con tres puntitos -->
-        <div class="menu-tarea" 
+        <div class="menu-tarea" title="Editar tarea" 
             onclick='abrirModalEdicion({ 
               id: {{ p.id }}, 
               titulo: {{ p.titulo|tojson }}, 
