@@ -20,23 +20,28 @@
     <a href="#" class="boton1" id="openModal"> + Añadir tarea</a>
 </div>
 
-<!-- Modal oculto -->
+<!-- Modal oculto para crear tareas -->
 <div id="modal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
     <h2>Crear tarea nueva</h2>
     <form id="taskForm" method="POST" action="{{ url_for('nueva_tarea') }}">
-      <input type="text" name="titulo" placeholder="Añadir una tarea" required>
+      
+      <div class="section-box">
+        <input type="text" name="titulo" placeholder="Titulo de la tarea" required>
+      </div>
 
-      <label for="tipo">Tipo:</label>
-      <select name="tipo" id="tipo">
-        <option value="1">Hábito</option>
-        <option value="2">Diaria</option>
-        <option value="3">Pendiente</option>
-      </select>
+      <div class="section-box">
+        <label for="tipo">Tipo:</label>
+        <select name="tipo" id="tipo">
+          <option value="1">Hábito</option>
+          <option value="2">Diaria</option>
+          <option value="3">Pendiente</option>
+        </select>
+      </div>
 
       <!-- Solo si es hábito -->
-      <div id="habito-options" class="habito-options" style="display:none;">
+      <div id="habito-options" class="habito-options section-box" style="display:none;">
         <label>Hábito:</label>
         <input type="radio" name="habito" value="+"> Positivo
         <input type="radio" name="habito" value="-"> Negativo
@@ -44,7 +49,7 @@
       </div>
 
       <!-- Solo si es diaria -->
-      <div id="dias-options" class="dias-options" style="display:none;">
+      <div id="dias-options" class="dias-options section-box" style="display:none;">
         <label>Días de la semana:</label>
         <label><input type="checkbox" name="dias" value="lunes"> Lunes</label>
         <label><input type="checkbox" name="dias" value="martes"> Martes</label>
@@ -56,22 +61,27 @@
       </div>
 
       <!-- Solo si es pendiente -->
-      <div id="fecha-options" class="fecha-options" style="display:none;">
+      <div id="fecha-options" class="fecha-options section-box" style="display:none;">
         <label for="fecha_vencimiento">Fecha de vencimiento:</label>
-        <input type="date" class="fecha" name="fecha_vencimiento">
+        <input type="date" class="fecha" name="fecha_vencimiento"
+              min="{{ min_fecha }}">
+        <small class="info">No puedes seleccionar una fecha anterior a hoy.</small>
       </div>
 
-      <label for="dificultad">Dificultad:</label>
-      <select name="dificultad">
-        <option value="1">Fácil</option>
-        <option value="2">Intermedia</option>
-        <option value="3">Difícil</option>
-      </select>
+      <div class="section-box">
+        <label for="dificultad">Dificultad:</label>
+        <select name="dificultad">
+          <option value="1">Fácil</option>
+          <option value="2">Intermedia</option>
+          <option value="3">Difícil</option>
+        </select>
+      </div>
 
       <button id="guardar-tarea" type="submit" class="boton1">Guardar</button>
     </form>
   </div>
 </div>
+
 
 {% if diarias_vencidas or pendientes_vencidas %}
 <div class="modal" id="tareasVencidasModal" data-mostrar="{{ 'true' if session.get('mostrar_modal') else 'false' }}">
@@ -84,34 +94,39 @@
     <form id="formVencidas" action="{{ url_for('procesar_vencidas') }}" method="post">
 
       <!-- Diarias vencidas -->
-      <h4>Diarias vencidas</h4>
-      {% for d in diarias_vencidas %}
-        <div class="tarea-item">
-          <div class="accion-izq">
-            <input type="checkbox" name="tareas_completadas[]" value="{{ d.id }}">
+      <div class="section-box">
+        <h4>Diarias vencidas</h4>
+        {% for d in diarias_vencidas %}
+          <div class="tarea-item">
+            <div class="accion-izq">
+              <input type="checkbox" name="tareas_completadas[]" value="{{ d.id }}">
+            </div>
+            <div class="tarea-contenido">
+              <span class="titulo">{{ d.titulo }}</span>
+              {% if d.dias_semana %}
+                <p class="subinfo">Días: {{ d.dias_semana|join(', ') }}</p>
+              {% endif %}
+            </div>
           </div>
-          <div class="tarea-contenido">
-            <span class="titulo">{{ d.titulo }}</span>
-            {% if d.dias_semana %}
-              <p class="subinfo">Días: {{ d.dias_semana|join(', ') }}</p>
-            {% endif %}
-          </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
 
       <!-- Pendientes vencidas -->
-      <h4>Pendientes vencidas</h4>
-      {% for p in pendientes_vencidas %}
-        <div class="tarea-item">
-          <div class="accion-izq">
-            <input type="checkbox" name="tareas_completadas[]" value="{{ p.id }}">
+      <div class="section-box">
+        <h4>Pendientes vencidas</h4>
+        {% for p in pendientes_vencidas %}
+          <div class="tarea-item">
+            <div class="accion-izq">
+              <input type="checkbox" name="tareas_completadas[]" value="{{ p.id }}">
+            </div>
+            <div class="tarea-contenido">
+              <span class="titulo">{{ p.titulo }}</span>
+              <p class="subinfo">Venció el {{ p.fecha_vencimiento }}</p>
+            </div>
           </div>
-          <div class="tarea-contenido">
-            <span class="titulo">{{ p.titulo }}</span>
-            <p class="subinfo">Venció el {{ p.fecha_vencimiento }}</p>
-          </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
+
     </form>
   </div>
 </div>
@@ -156,6 +171,66 @@
   </div>
 </div>
 
+<!-- Modal de edición -->
+<div id="modalEdicion" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalEdicion()">&times;</span>
+    <h2>Editar tarea</h2>
+    <form id="formEditarTarea" method="POST">
+      <input type="hidden" name="id" id="edit-id">
+
+      <div class="section-box">
+        <label for="edit-titulo">Título:</label>
+        <input type="text" name="titulo" id="edit-titulo">
+      </div>
+
+      <!-- Campos dinámicos según tipo -->
+      <div id="edit-habito-options" class="section-box" style="display:none;">
+        <label>Tipo de hábito:</label>
+        <label><input type="radio" name="habito" value="+"> Positivo</label>
+        <label><input type="radio" name="habito" value="-"> Negativo</label>
+        <label><input type="radio" name="habito" value="+-"> Ambos</label>
+      </div>
+
+      <div id="edit-dias-options" class="section-box" style="display:none;">
+        <label>Días:</label>
+        <label><input type="checkbox" name="dias" value="lunes"> Lunes</label>
+        <label><input type="checkbox" name="dias" value="martes"> Martes</label>
+        <label><input type="checkbox" name="dias" value="miercoles"> Miércoles</label>
+        <label><input type="checkbox" name="dias" value="jueves"> Jueves</label>
+        <label><input type="checkbox" name="dias" value="viernes"> Viernes</label>
+        <label><input type="checkbox" name="dias" value="sabado"> Sábado</label>
+        <label><input type="checkbox" name="dias" value="domingo"> Domingo</label>
+      </div>
+
+      <div id="edit-fecha-options" class="section-box" style="display:none;">
+        <label for="edit-fecha">Fecha de vencimiento:</label>
+        <input type="date" name="fecha_vencimiento" id="edit-fecha" min="{{ min_fecha }}">
+        <small class="info">No puedes seleccionar una fecha anterior a hoy.</small>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="eliminarTarea()">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de selección de clase -->
+    <div id="modalClase" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalClase()">&times;</span>
+        <h2>Elige tu clase</h2>
+        <form action="{{ url_for('elegir_clase') }}" method="post">
+          <button type="submit" name="clase" value="Guerrero">Guerrero</button>
+          <button type="submit" name="clase" value="Sanador">Sanador</button>
+          <button type="submit" name="clase" value="Mago">Mago</button>
+          <button type="submit" name="clase" value="Pícaro">Pícaro</button>
+        </form>
+      </div>
+    </div>
+
 <div class="dashboard">
     <!-- Hábitos -->
     <div class="card">
@@ -175,7 +250,18 @@
         <div class="accion-izq placeholder-btn"></div>
         {% endif %}
 
-        <span class="titulo">{{ h.titulo }}</span>
+        <span class="titulo"><span class="titulo-texto">{{ h.titulo }}</span></span>
+
+        <!-- Menú de edición con tres puntitos -->
+        <div class="menu-tarea" 
+            onclick='abrirModalEdicion({ 
+              id: {{ h.id }}, 
+              titulo: {{ h.titulo|tojson }}, 
+              tipo: {{ h.tipo }}, 
+              habito: {{ h.habito|tojson }} 
+            })'>
+          ⋮
+        </div>
 
         <!-- Botón negativo -->
         {% if h.habito == '-' or h.habito == '+-' %}
@@ -207,12 +293,23 @@
           </form>
         </div>
         <div class="tarea-contenido">
-          <span class="titulo">{{ d.titulo }}</span>
+          <span class="titulo"><span class="titulo-texto">{{ d.titulo }}</span></span>
           <p class="subinfo">Días: {{ d.dias|join(', ') }}</p>
           {% if hoy not in d.dias and 'todos' not in d.dias %}
             <p class="subinfo">No disponible hoy</p>
           {% endif %}
         </div>
+        <!-- Menú de edición con tres puntitos -->
+        <div class="menu-tarea" 
+            onclick='abrirModalEdicion({ 
+              id: {{ d.id }}, 
+              titulo: {{ d.titulo|tojson }}, 
+              tipo: {{ d.tipo }}, 
+              dias: {{ d.dias|tojson }} 
+            })'>
+          ⋮
+        </div>
+        <div class="accion-der placeholder-btn"></div>
       </div>
       {% endfor %}
     </div>
@@ -231,9 +328,20 @@
           </form>
         </div>
         <div class="tarea-contenido">
-          <span class="titulo">{{ p.titulo }}</span>
+          <span class="titulo"><span class="titulo-texto">{{ p.titulo }}</span></span>
           <p class="subinfo">Vence: {{ p.fecha_vencimiento }}</p>
         </div>
+        <!-- Menú de edición con tres puntitos -->
+        <div class="menu-tarea" 
+            onclick='abrirModalEdicion({ 
+              id: {{ p.id }}, 
+              titulo: {{ p.titulo|tojson }}, 
+              tipo: {{ p.tipo }}, 
+              fecha_vencimiento: {{ p.fecha_vencimiento|tojson }} 
+            })'>
+          ⋮
+        </div>
+        <div class="accion-der placeholder-btn"></div>
       </div>
       {% endfor %}
     </div>
@@ -251,21 +359,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal de selección de clase -->
-    <div id="modalClase" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="cerrarModalClase()">&times;</span>
-        <h2>Elige tu clase</h2>
-        <form action="{{ url_for('elegir_clase') }}" method="post">
-          <button type="submit" name="clase" value="Guerrero">Guerrero</button>
-          <button type="submit" name="clase" value="Sanador">Sanador</button>
-          <button type="submit" name="clase" value="Mago">Mago</button>
-          <button type="submit" name="clase" value="Pícaro">Pícaro</button>
-        </form>
-      </div>
-    </div>
-
 </div>
 
 <script>
@@ -501,7 +594,75 @@
       fetch(formVencidas.action, { method: "POST", body: formData })
         .then(response => { if (response.ok) location.reload(); });
     }
+    var modalEdicion = document.getElementById("modalEdicion");
+    if (event.target == modalEdicion) {
+      cerrarModalEdicion();
+    }
   };
+
+  // --- Modal de edición ---
+  function abrirModalEdicion(tarea) {
+    const modalEdicion = document.getElementById("modalEdicion");
+    if (!modalEdicion) return;   // seguridad por si no existe
+    modalEdicion.style.display = "block";
+
+    // Cargar datos en el formulario
+    document.getElementById("edit-id").value = tarea.id;
+    document.getElementById("edit-titulo").value = tarea.titulo;
+    document.getElementById("formEditarTarea").action = `/editar_tarea/${tarea.id}`;
+
+    // Resetear campos
+    document.querySelectorAll("#edit-habito-options input[type=radio]").forEach(r => r.checked = false);
+    document.querySelectorAll("#edit-dias-options input[type=checkbox]").forEach(c => c.checked = false);
+    document.getElementById("edit-fecha").value = "";
+
+    // Mostrar y rellenar campos según tipo
+    if (tarea.tipo == 1) { // hábito
+      document.getElementById("edit-habito-options").style.display = "block";
+      const radio = document.querySelector(`#edit-habito-options input[value="${tarea.habito}"]`);
+      if (radio) radio.checked = true;
+    } else {
+      document.getElementById("edit-habito-options").style.display = "none";
+    }
+
+    if (tarea.tipo == 2) { // diaria
+      document.getElementById("edit-dias-options").style.display = "block";
+      if (tarea.dias) {
+        tarea.dias.forEach(dia => {
+          const checkbox = document.querySelector(`#edit-dias-options input[value="${dia}"]`);
+          if (checkbox) checkbox.checked = true;
+        });
+      }
+    } else {
+      document.getElementById("edit-dias-options").style.display = "none";
+    }
+
+    if (tarea.tipo == 3) { // pendiente
+      document.getElementById("edit-fecha-options").style.display = "block";
+      if (tarea.fecha_vencimiento && tarea.fecha_vencimiento !== "Sin fecha") {
+        document.getElementById("edit-fecha").value = tarea.fecha_vencimiento;
+      }
+    } else {
+      document.getElementById("edit-fecha-options").style.display = "none";
+    }
+  }
+
+  function cerrarModalEdicion() {
+    const modalEdicion = document.getElementById("modalEdicion");
+    if (modalEdicion) modalEdicion.style.display = "none";
+  }
+
+  async function eliminarTarea() {
+    const id = document.getElementById("edit-id").value;
+    if (!confirm("¿Seguro que deseas eliminar esta tarea?")) return;
+    const response = await fetch(`/eliminar_tarea/${id}`, { method: "POST" });
+    if (response.ok) {
+      location.reload();
+    } else {
+      alert("Error al eliminar la tarea");
+    }
+  }
+
 </script>
 
 {% endblock %}

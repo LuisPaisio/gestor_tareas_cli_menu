@@ -134,6 +134,7 @@ def dashboard():
     }
     
     hoy_dia = dias_semana[datetime.date.today().strftime("%A")]
+    hoy_iso = datetime.date.today().strftime("%Y-%m-%d")  # formato YYYY-MM-DD
 
     return render_template(
         "dashboard.html",
@@ -151,7 +152,8 @@ def dashboard():
         pendientes_vencidas=pendientes_vencidas, #  para el modal de vencidas
         mostrar_modal=mostrar_modal,             #  flag para modal de vencidas
         mostrar_modal_muerte=mostrar_modal_muerte, #  flag para modal de muerte
-        hoy=hoy_dia
+        hoy=hoy_dia,
+        min_fecha=hoy_iso
     )
 
 
@@ -491,9 +493,43 @@ def procesar_vencidas():
 
 @app.route("/simular_nuevo_dia")
 def simular_nuevo_dia():
-    session["ultimo_procesado"] = "26-04-2026"  # cualquier fecha distinta de hoy
+    session["ultimo_procesado"] = "28-04-2026"  # cualquier fecha distinta de hoy
     session["mostrar_modal"] = True
     return "Simulación de nuevo día aplicada."
+
+@app.route("/editar_tarea/<int:tarea_id>", methods=["POST"])
+def editar_tarea(tarea_id):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
+
+    nuevo_titulo = request.form.get("titulo")
+    nueva_fecha = request.form.get("fecha_vencimiento")
+    nuevos_dias = request.form.getlist("dias")
+    nuevo_habito = request.form.get("habito")
+
+    exito = gestor_tareas.editar_tarea(tarea_id, nuevo_titulo, nueva_fecha, nuevos_dias, nuevo_habito)
+    if exito:
+        flash("Tarea actualizada exitosamente.", "success")
+    else:
+        flash("No se encontró la tarea.", "error")
+    return redirect(url_for("dashboard"))
+
+@app.route("/eliminar_tarea/<int:tarea_id>", methods=["POST"])
+def eliminar_tarea(tarea_id):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
+
+    gestor_tareas.eliminar_tarea(tarea_id)
+    flash("Tarea eliminada.", "success")
+    return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":

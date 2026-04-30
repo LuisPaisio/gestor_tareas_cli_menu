@@ -93,6 +93,14 @@
     font-weight: bold;
 }
 
+.tarea-item .titulo-texto {
+  display: inline-block;
+  max-width: 35ch;           /* límite de caracteres aprox */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Botones de hábitos positivo/negativo */
 .positivo, .negativo {
     border: none;
@@ -218,6 +226,36 @@
   height: 100%;
   overflow: auto; /* scroll si es necesario */
   background-color: rgba(0,0,0,0.6); /* fondo semi-transparente */
+}
+
+/* Caja para secciones dentro del modal */
+.section-box {
+  background-color: rgba(179,65,224,0.15); /* violeta claro translúcido */
+  border: 1px solid #b341e0;               /* borde violeta claro */
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+/* Ajuste de labels */
+.section-box label {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Inputs y selects dentro de las cajas */
+.section-box input[type="text"],
+.section-box select,
+.section-box input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 6px;
+  box-sizing: border-box;
 }
 
 /* Contenedor del modal */
@@ -462,4 +500,94 @@ select, .fecha {
   content: "✔";
   font-size: 20px;
   color: #666;               /* tilde gris apagado */
+}
+
+.menu-tarea {
+  cursor: pointer;
+  font-size: 19px;
+  padding: 0 6px;
+  color: #000;
+  margin-left: 8px;
+}
+
+.menu-tarea:hover {
+  color: #000;
+}
+
+/* Modal de edición */
+
+#modalEdicion label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+#modalEdicion .modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#modalEdicion .modal-actions button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#modalEdicion .modal-actions button[type="submit"] {
+  background-color: #b341e0;   /* verde */
+  color: #fff;
+}
+
+#modalEdicion .modal-actions button[type="button"] {
+  background-color: #e74c3c;   /* rojo */
+  color: #fff;
+}
+
+/* Caja para secciones dentro del modal de edición */
+#modalEdicion .section-box {
+  background-color: rgba(179,65,224,0.15); /* violeta claro translúcido */
+  border: 1px solid #b341e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+#modalEdicion .section-box label {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 6px;
+  display: block;
+}
+
+#modalEdicion .section-box input[type="text"],
+#modalEdicion .section-box input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+/* Caja para secciones dentro del modal de vencidas */
+#tareasVencidasModal .section-box {
+  background-color: rgba(179,65,224,0.15); /* violeta claro translúcido */
+  border: 1px solid #b341e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+#tareasVencidasModal .section-box h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #fff;
 }
