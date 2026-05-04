@@ -367,6 +367,34 @@ input[type="email"]:focus {
 .tag.legendario { color: violet; font-weight: bold; }
 .tag.eterno { color: crimson; font-weight: bold; }
 
+/* Estilos para las alertas perfil */
+/* Contenedor general */
+.alerta-container {
+  margin: 20px 0;
+}
+
+/* Caja base */
+.alerta-box {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Diferenciación por tipo */
+.alerta-box.clase {
+  background-color: #f39c12;   /* naranja */
+  color: #fff;
+  border: 2px solid #e67e22;
+}
+
+.alerta-box.prestigio {
+  background-color: #8e44ad;   /* violeta */
+  color: #fff;
+  border: 2px solid gold;
+}
+
 @keyframes fadeInOut {
   0%   { opacity: 0; transform: translateY(-20px); }
   10%  { opacity: 1; transform: translateY(0); }
@@ -529,4 +557,265 @@ input[type="email"]:focus {
     font-size: 12px;
     background: #f5f5f5;
     border-top: 1px solid #ddd;
+}
+
+/* Fondo del modal de perfil */
+#modalPerfil {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: rgba(0,0,0,0.6);
+}
+
+/* Contenedor del modal */
+#modalPerfil .modal-content {
+  background-color: #4B0082; /* violeta */
+  margin: 8% auto;
+  padding: 25px 30px;
+  border-radius: 10px;
+  width: 420px;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  text-align: left;
+}
+
+/* Título centrado */
+#modalPerfil .modal-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #fff; /* amarillo para destacar */
+}
+
+/* Botón cerrar */
+#modalPerfil .close {
+  color: #ccc;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#modalPerfil .close:hover {
+  color: #fff;
+}
+
+/* Imagen de perfil grande */
+#modalPerfil .perfil-img-grande {
+  display: block;
+  margin: 0 auto 20px auto;
+  width: 200px;
+  height: 200px;
+  border-radius: 20px;
+  border: 4px solid #b341e0;
+  object-fit: cover;
+}
+
+/* Secciones internas (vista ver perfil) */
+#modalPerfil .section-box {
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid #b341e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+#modalPerfil .section-box h3 {
+  margin-bottom: 10px;
+  color: #fff;
+  text-decoration: underline;
+}
+
+#modalPerfil .section-box p,
+#modalPerfil .section-box ul {
+  margin: 6px 0;
+  color: #fff;
+}
+
+#modalPerfil .section-box ul {
+  padding-left: 20px;
+}
+
+/* 🔹 Vista de edición dentro del modalPerfil */
+#modalPerfil #vistaEditarPerfil label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #fff;
+}
+
+#modalPerfil #vistaEditarPerfil .modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#modalPerfil #vistaEditarPerfil .modal-actions button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#modalPerfil #vistaEditarPerfil .modal-actions button[type="submit"] {
+  background-color: #b341e0;
+  color: #fff;
+}
+
+#modalPerfil #vistaEditarPerfil .modal-actions button[type="button"] {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+/* Caja para secciones dentro de la edición */
+#modalPerfil #vistaEditarPerfil .section-box {
+  background-color: rgba(179,65,224,0.15);
+  border: 1px solid #b341e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+#modalPerfil #vistaEditarPerfil .section-box label {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Inputs dentro de la edición */
+#modalPerfil #vistaEditarPerfil input[type="text"],
+#modalPerfil #vistaEditarPerfil input[type="date"],
+#modalPerfil #vistaEditarPerfil select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+/* Fondo del modal de credenciales */
+#modalCredenciales {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background-color: rgba(0,0,0,0.6);
+}
+
+/* Contenedor del modal */
+#modalCredenciales .modal-content {
+  background-color: #2c3e50; /* 🔹 azul oscuro sobrio */
+  margin: 8% auto;
+  padding: 25px 30px;
+  border-radius: 10px;
+  width: 420px;
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+  text-align: left;
+}
+
+/* Título centrado */
+#modalCredenciales .modal-content h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ecf0f1; /* gris claro */
+}
+
+/* Botón cerrar */
+#modalCredenciales .close {
+  color: #ccc;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#modalCredenciales .close:hover {
+  color: #fff;
+}
+
+/* Inputs dentro de la edición */
+#modalCredenciales input[type="text"],
+#modalCredenciales input[type="password"],
+#modalCredenciales input[type="email"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+/* Botones */
+#modalCredenciales .modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+#modalCredenciales .modal-actions button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#modalCredenciales .modal-actions button[type="submit"] {
+  background-color: #2980b9; /* azul */
+  color: #fff;
+}
+
+#modalCredenciales .modal-actions button[type="button"] {
+  background-color: #e74c3c; /* rojo */
+  color: #fff;
+}
+
+.fa-user {
+    cursor: pointer
+}
+
+.texto-eliminar {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.aviso-eliminar {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-eliminar:hover {
+  background-color: #c0392b;
 }

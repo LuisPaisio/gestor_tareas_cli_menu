@@ -76,19 +76,165 @@
                         </div>
                     </div>
 
-                    <i class="fa-solid fa-user"></i>
+                    <i class="fa-solid fa-user" title="Credenciales de usuario" onclick="mostrarModalCredenciales()"></i>
                     <i class="fa-solid fa-rotate-right"></i>
                     <a href="{{ url_for('logout') }}" class="btn-logout">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </a>
                 </div>
             </nav>
+            <!-- Modal de credenciales -->
+            <div id="modalCredenciales" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="cerrarModalCredenciales()">&times;</span>
+                <h2>Datos de acceso</h2>
+                <form action="{{ url_for('editar_credenciales_route') }}" method="post">
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuario" name="usuario" value="{{ usuario.usuario }}">
+
+                <label for="contraseña">Contraseña:</label>
+                <input type="password" id="contraseña" name="contraseña">
+
+                <label for="correo_electronico">Correo electrónico de recuperación:</label>
+                <input type="email" id="correo_electronico" name="correo_electronico" value="{{ usuario.correo_electronico or '' }}">
+
+                <div class="modal-actions">
+                    <button type="submit">Guardar cambios</button>
+                    <button type="button" onclick="cerrarModalCredenciales()">Cancelar</button>
+                </div>
+                </form>
+
+                <!-- 🔹 Texto inicial de eliminar cuenta -->
+                <p class="texto-eliminar" onclick="mostrarBloqueEliminar()">Eliminar Cuenta</p>
+
+                <!-- 🔹 Bloque oculto que aparece al hacer clic -->
+                <div id="bloqueEliminar" class="bloque-eliminar" style="display:none;">
+                <p class="aviso-eliminar">
+                    ⚠️ Este proceso es irreversible. Si continúas, se borrarán todas tus tareas, inventario y datos asociados.
+                </p>
+                <form action="{{ url_for('eliminar_usuario') }}" method="post" onsubmit="return confirmarEliminacion();">
+                    <input type="hidden" name="usuario" value="{{ usuario.usuario }}">
+                    <label for="contraseña_eliminar">Confirma tu contraseña:</label>
+                    <input type="password" id="contraseña_eliminar" name="contraseña" required>
+                    <div class="modal-actions">
+                    <button type="submit" class="btn-eliminar">Aceptar y eliminar</button>
+                    <button type="button" onclick="ocultarBloqueEliminar()">Cancelar</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+
             <div class="header-perfil">
                 {% if usuario.foto_perfil %}
-                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img">
+                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img" onclick="mostrarModalPerfil()">
                 {% else %}
-                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" class="perfil-img">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" class="perfil-img" onclick="mostrarModalPerfil()">
                 {% endif %}
+
+                <!-- Modal de Perfil -->
+                <div id="modalPerfil" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="cerrarModalPerfil()">&times;</span>
+
+                    <!-- Vista de ver perfil -->
+                    <div id="vistaVerPerfil">
+                    <h2>Perfil de {{ usuario.nombre_con_tags() | safe }}</h2>
+
+                    <div class="section-box">
+                        <p><strong>Salud:</strong> {{ usuario.vida_usuario }}/{{ vida_maxima }} HP</p>
+                        <p><strong>Nivel:</strong> {{ usuario.nivel_usuario }}</p>
+                        <p><strong>XP:</strong> {{ usuario.xp_usuario }}/{{ xp_requerida }} EXP</p>
+                        <p><strong>Coins:</strong> {{ usuario.coin_usuario }}</p>
+                        <p><strong>Descripción:</strong> {{ usuario.descripcion or 'Sin Descripción' }}</p>
+                    </div>
+
+                    {% if usuario.clase_nombre %}
+                    <div class="section-box">
+                        <p><strong>Clase:</strong> {{ usuario.clase_nombre }}{% if usuario.rol == 'vip' %} (VIP){% endif %}</p>
+                        {% if usuario.clase and usuario.clase.poderes %}
+                        <h3>Poderes disponibles:</h3>
+                        <ul>
+                            {% for nombre_poder, datos in usuario.clase.poderes.items() %}
+                            <li>🪄 {{ nombre_poder }} (Coste: {{ datos.coste }} MP) — {{ datos.descripcion }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="section-box">
+                        {% if usuario.atributos_totales() %}
+                        <h3>Mejoras activas</h3>
+                        <ul>
+                            {% for atributo, valor in usuario.atributos_totales().items() %}
+                            <li>{{ atributo }}: +{{ valor }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p>Mejoras activas: Ninguna</p>
+                        {% endif %}
+                    </div>
+
+                    {% if usuario.foto_perfil %}
+                        <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img-grande">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" class="perfil-img-grande">
+                    {% endif %}
+
+                    <!-- Alertas especiales -->
+                    {% if perfil.alertas %}
+                    <div class="alerta-container">
+                        {% for alerta in perfil.alertas %}
+                        <div class="alerta-box {{ alerta.tipo }}">
+                            <p>{{ alerta.mensaje }}</p>
+                            {% if alerta.tipo == "clase" %}
+                            <button type="button" onclick="mostrarModalElegirClase()">Elegir Clase</button>
+                            {% elif alerta.tipo == "prestigio" %}
+                            <button type="button" onclick="mostrarModalPrestigio()">Prestigiar</button>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <button type="button" class="boton1" onclick="mostrarVistaEditarPerfil()">✏️ Editar Perfil</button>
+                    </div>
+                    </div>
+
+                    <!-- Vista de edición de perfil -->
+                    <div id="vistaEditarPerfil" style="display:none;">
+                    <h2>Editar Perfil</h2>
+                    <form action="{{ url_for('editar_perfil') }}" method="post">
+                        <label for="nombre_publico">Nombre Público:</label>
+                        <input type="text" id="nombre_publico" name="nombre_publico" value="{{ usuario.nombre_publico }}">
+
+                        <label for="descripcion">Sobre mí:</label>
+                        <input type="text" id="descripcion" name="descripcion" value="{{ usuario.descripcion }}">
+
+                        <label for="foto_perfil">URL de la imagen:</label>
+                        <input type="text" id="foto_perfil" name="foto_perfil" value="{{ usuario.foto_perfil }}">
+
+                        {% if usuario.nivel_usuario >= 10 %}
+                        <label for="clase">Clase:</label>
+                        <select id="clase" name="clase">
+                        <option value="">-- Mantener actual --</option>
+                        <option value="Guerrero">Guerrero</option>
+                        <option value="Sanador">Sanador</option>
+                        <option value="Mago">Mago</option>
+                        <option value="Pícaro">Pícaro</option>
+                        </select>
+                        {% endif %}
+
+                        <div class="modal-actions">
+                        <button type="submit">Guardar cambios</button>
+                        <button type="button" onclick="cancelarEdicionPerfil()">Cancelar</button>
+                        </div>
+                    </form>
+                    </div>
+                </div>
+                </div>
 
                 <div class="perfil-info">
                     <h3>{{ usuario.nombre_con_tags() | safe }}</h3>
@@ -270,11 +416,54 @@
         addToast(toast);
     });
     });
+
+    // Modal de Prestigio
     function mostrarModalPrestigio() {
     document.getElementById("modalPrestigio").style.display = "block";
     }
     function cerrarModalPrestigio() {
     document.getElementById("modalPrestigio").style.display = "none";
+    }
+
+    // Modal de Perfil
+    function mostrarModalPerfil() {
+        document.getElementById("modalPerfil").style.display = "block";
+        // por defecto mostrar vista de perfil
+        document.getElementById("vistaVerPerfil").style.display = "block";
+        document.getElementById("vistaEditarPerfil").style.display = "none";
+    }
+    function cerrarModalPerfil() {
+        document.getElementById("modalPerfil").style.display = "none";
+    }
+
+    // Alternar entre vistas dentro del modalPerfil
+    function mostrarVistaEditarPerfil() {
+        document.getElementById("vistaVerPerfil").style.display = "none";
+        document.getElementById("vistaEditarPerfil").style.display = "block";
+    }
+    function cancelarEdicionPerfil() {
+        document.getElementById("vistaEditarPerfil").style.display = "none";
+        document.getElementById("vistaVerPerfil").style.display = "block";
+    }
+
+    // Nuevo: Modal de Credenciales
+    function mostrarModalCredenciales() {
+        document.getElementById("modalCredenciales").style.display = "block";
+    }
+    function cerrarModalCredenciales() {
+        document.getElementById("modalCredenciales").style.display = "none";
+    }
+
+    function mostrarBloqueEliminar() {
+    document.getElementById("bloqueEliminar").style.display = "block";
+    }
+
+    function ocultarBloqueEliminar() {
+    document.getElementById("bloqueEliminar").style.display = "none";
+    }
+
+    function confirmarEliminacion() {
+    return confirm("⚠️ Este proceso es irreversible. ¿Seguro que deseas eliminar tu cuenta?");
     }
 </script>
 </body>

@@ -5,9 +5,11 @@ from gestor_recompensa import GestorRecompensas
 from constantes_tareas import vida_maxima, mana_maximo
 from gestor_notificaciones import GestorNotificaciones
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
+app.permanent_session_lifetime = datetime.timedelta(days=30) # Duración de vida de sesión permanente
 gestor = GestorUsuarios()
 
 @app.route("/")
@@ -20,8 +22,13 @@ def home():
 def login():
     nombre_usuario = request.form["username"]
     password = request.form["password"]
-    usuario_actual = gestor.login_web(nombre_usuario, password)
-    if usuario_actual:
+    mantener_sesion = request.form.get("mantener-sesion")
+
+    # 🔹 obtener el objeto Usuario por nombre
+    usuario_actual = gestor.get_usuario_por_nombre(nombre_usuario)
+
+    # 🔹 validar contraseña contra el hash
+    if usuario_actual and check_password_hash(usuario_actual.contraseña, password):
         # guardamos datos básicos en sesión
         session["usuario"] = {
             "id_usuario": usuario_actual.id_usuario,
@@ -31,6 +38,8 @@ def login():
             "clase_nombre": usuario_actual.clase_nombre,
             "foto_perfil": usuario_actual.foto_perfil
         }
+
+        session.permanent = bool(mantener_sesion)
         return redirect(url_for("dashboard"))  # directo al dashboard
     else:
         return render_template("home.html", error="Usuario o contraseña incorrectos")
@@ -39,7 +48,13 @@ def login():
 def register():
     nombre_usuario = request.form["username"]
     password = request.form["password"]
-    usuario_actual = gestor.register_web(nombre_usuario, password)
+    mantener_sesion = request.form.get("mantener-sesion")
+
+    # 🔹 Generar el hash de la contraseña antes de guardar
+    password_hash = generate_password_hash(password)
+
+    # Pasar el hash al gestor, no la contraseña en texto plano
+    usuario_actual = gestor.register_web(nombre_usuario, password_hash)
     if usuario_actual:
         session["usuario"] = {
             "id_usuario": usuario_actual.id_usuario,
@@ -49,13 +64,16 @@ def register():
             "clase_nombre": usuario_actual.clase_nombre,
             "foto_perfil": usuario_actual.foto_perfil
         }
+
+        session.permanent = bool(mantener_sesion)
         return redirect(url_for("dashboard"))  # directo al dashboard
     else:
         return render_template("home.html", error="No se pudo registrar")
 
 @app.route("/logout")
 def logout():
-    session.pop("usuario", None)
+    session.clear()  # 🔹 limpia toda la sesión, no solo el usuario
+    flash("Sesión cerrada correctamente", "info")  # 🔹 mensaje para el usuario
     return redirect(url_for("home"))
 
 @app.route("/register_page")
@@ -191,6 +209,75 @@ def menu_tienda():
     if not usuario:
         return redirect(url_for("home"))
     return render_template("tienda.html", usuario=usuario)
+
+@app.route("/perfil")
+def perfil():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    perfil_data = usuario_obj.ver_perfil_web()
+
+    return render_template("perfil.html", perfil=perfil_data)
+
+@app.route("/editar_perfil", methods=["POST"])
+def editar_perfil():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+
+    # Nombre y descripción
+    usuario_obj.nombre_publico = request.form.get("nombre_publico", usuario_obj.nombre_publico).strip() or usuario_obj.nombre_publico
+    usuario_obj.descripcion = request.form.get("descripcion", usuario_obj.descripcion).strip() or usuario_obj.descripcion
+
+    # Foto de perfil → mantener la anterior si el campo está vacío
+    foto_input = request.form.get("foto_perfil", "").strip()
+    if foto_input:
+        usuario_obj.foto_perfil = foto_input
+    # si no hay input, no se toca el valor actual
+
+    # Clase si nivel >= 10
+    if usuario_obj.nivel_usuario >= 10:
+        clase_nombre = request.form.get("clase")
+        if clase_nombre:
+            usuario_obj.clase = Clase.cargar_clase(clase_nombre, usuario_obj.rol == "vip")
+
+    gestor.actualizar_usuario(usuario_obj)
+    flash("Perfil actualizado exitosamente", "success")
+    return redirect(url_for("dashboard"))
+
+@app.route("/editar_credenciales", methods=["POST"])
+def editar_credenciales_route():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    usuario_obj.editar_credenciales(request.form)
+
+    flash("Credenciales actualizadas exitosamente", "success")
+    return redirect(url_for("dashboard"))
+
+@app.route("/eliminar_usuario", methods=["POST"])
+def eliminar_usuario():
+    nombre_usuario = request.form["usuario"]
+    password = request.form["contraseña"]
+
+    usuario_obj = gestor.eliminar_usuario_web(nombre_usuario)
+    if usuario_obj and check_password_hash(usuario_obj.contraseña, password):
+        gestor_tareas.eliminar_tareas_de_usuario(usuario_obj.id_usuario)
+        gestor_inventario.eliminar_inventario_de_usuario(usuario_obj.id_usuario)
+        gestor.usuarios.remove(usuario_obj)
+        gestor.guardar_usuarios()
+        session.clear()
+        flash("Cuenta eliminada exitosamente. Este proceso es irreversible.", "success")
+        return redirect(url_for("home"))
+    else:
+        flash("Credenciales inválidas. No se pudo eliminar la cuenta.", "error")
+        return redirect(url_for("dashboard"))
 
 @app.route("/nueva_tarea", methods=["POST"])
 def nueva_tarea():
@@ -531,6 +618,17 @@ def eliminar_tarea(tarea_id):
     flash("Tarea eliminada.", "success")
     return redirect(url_for("dashboard"))
 
+@app.context_processor
+def inject_perfil():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return {}  # no hay usuario en sesión, no se inyecta nada
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+    perfil_data = usuario_obj.ver_perfil_web()
+
+    # Esto hace que 'perfil' y 'usuario' estén disponibles en todas las plantillas
+    return dict(usuario=usuario_obj, perfil=perfil_data)
 
 if __name__ == "__main__":
     app.run(debug=True)

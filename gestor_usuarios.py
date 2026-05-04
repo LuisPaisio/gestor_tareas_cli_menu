@@ -41,17 +41,17 @@ class GestorUsuarios:
     # -------------------------------
     # Métodos para la web
     # -------------------------------
-    def login_web(self, username, password):
-        """Login para Flask: recibe username y password desde formulario"""
+    def login_web(self, username):
+        """Login para Flask: devuelve el objeto Usuario por nombre"""
         for usuario in self.usuarios:
-            if usuario.usuario == username and usuario.contraseña == password:
+            if usuario.usuario == username:
                 usuario.gestor_usuarios = self
                 return usuario
         return None
 
-    def register_web(self, username, password):
-        """Registro para Flask: recibe username y password desde formulario"""
-        if len(username) < 8 or len(password) < 8 or username.strip() == "" or password.strip() == "":
+    def register_web(self, username, password_hash):
+        """Registro para Flask: recibe username y password_hash"""
+        if len(username) < 8 or username.strip() == "":
             return None
 
         for usuario in self.usuarios:
@@ -59,23 +59,21 @@ class GestorUsuarios:
                 return None
 
         ultimo_id = max([u.id_usuario for u in self.usuarios], default=0)
-        nuevo_usuario = Usuario(id_usuario=ultimo_id + 1, usuario=username, contraseña=password)
+        nuevo_usuario = Usuario(id_usuario=ultimo_id + 1, usuario=username, contraseña=password_hash)
         nuevo_usuario.gestor_usuarios = self
 
         self.usuarios.append(nuevo_usuario)
         self.guardar_usuarios()
         return nuevo_usuario
 
-    def eliminar_usuario_web(self, username, password, gestor_tareas, gestor_inventario):
-        """Eliminar usuario desde la web, validando credenciales"""
+
+    def eliminar_usuario_web(self, username):
+        """Devuelve el objeto Usuario por nombre"""
         for usuario in self.usuarios:
-            if usuario.usuario == username and usuario.contraseña == password:
-                gestor_tareas.eliminar_tareas_de_usuario(usuario.id_usuario)
-                gestor_inventario.eliminar_inventario_de_usuario(usuario.id_usuario)
-                self.usuarios.remove(usuario)
-                self.guardar_usuarios()
-                return True
-        return False
+            if usuario.usuario == username:
+                usuario.gestor_usuarios = self
+                return usuario
+        return None
     
     def get_usuario_por_id(self, id_usuario):
         """Devuelve el objeto Usuario con el id_usuario indicado"""
