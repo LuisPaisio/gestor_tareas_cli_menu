@@ -38,7 +38,9 @@
         "descripcion": "Reduce el daño recibido por 10 turnos (+10 Defensa temporal → reduces daño al fallar tareas).",
         "precio": 150,
         "tipo": "consumible",
-        "efecto": {"defensa_temporal": 10}
+        "efecto": {"defensa_temporal": 10},
+        "efecto_temporal": {"defensa": 10},
+        "efecto_turnos": 10
     },
     {
         "id_item": 6,
@@ -226,7 +228,7 @@
         "descripcion": "Mejoran agarre y precisión (+2 Fuerza → más XP al completar tareas).",
         "precio": 70,
         "tipo": "equipable",
-        "slot": "manoizquierda",
+        "slot": "guantes",
         "efecto": {"fuerza": 2}
     },
     {
@@ -235,7 +237,7 @@
         "descripcion": "Incrementan fuerza de ataque (+5 Fuerza → más XP al completar tareas).",
         "precio": 150,
         "tipo": "equipable",
-        "slot": "manoizquierda",
+        "slot": "guantes",
         "efecto": {"fuerza": 5}
     },
     {
@@ -244,7 +246,7 @@
         "descripcion": "Mejoran poder mágico (+8 Maná → más energía para poderes).",
         "precio": 300,
         "tipo": "equipable",
-        "slot": "manoizquierda",
+        "slot": "guantes",
         "efecto": {"mana": 8}
     },
     {
@@ -253,7 +255,7 @@
         "descripcion": "Máxima mejora de habilidades (+5 Fuerza → más XP, +5 Maná → más energía, +5 Velocidad → más Coins).",
         "precio": 700,
         "tipo": "equipable",
-        "slot": "manoizquierda",
+        "slot": "guantes",
         "efecto": {"fuerza": 5, "mana": 5, "velocidad": 5}
     },
     {
@@ -424,7 +426,10 @@
         "descripcion": "Te vuelve invisible por 5 turnos (+10 Velocidad → más Coins al completar tareas).",
         "precio": 500,
         "tipo": "consumible",
-        "efecto": {"velocidad": 10}
+        "efecto": {"velocidad": 10},
+        "efecto_temporal": {"velocidad": 10},
+        "efecto_turnos": 5
+
     },
     {
         "id_item": 49,
@@ -432,7 +437,9 @@
         "descripcion": "Aumenta la velocidad de movimiento temporalmente (+15 Velocidad → más Coins al completar tareas).",
         "precio": 300,
         "tipo": "consumible",
-        "efecto": {"velocidad": 15}
+        "efecto": {"velocidad": 15},
+        "efecto_temporal": {"velocidad": 15},
+        "efecto_turnos": 5
     },
     {
         "id_item": 50,

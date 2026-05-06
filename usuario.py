@@ -17,7 +17,8 @@ NOMBRES_BONITOS = {
     "cabeza": "Cabeza",
     "pecho": "Pecho",
     "pies": "Pies",
-    "escudo": "Escudo"
+    "escudo": "Escudo",
+    "guantes": "Guantes"
 }
 
 EXPLICACIONES_ATRIBUTOS = {
@@ -33,7 +34,8 @@ class Usuario:
                 nombre_publico=None, foto_perfil=None, slots=None, rol="user",
                 ventajas_vip=None, fuerza=0, defensa=0, velocidad=0,
                 ultima_fecha_bonus=None, fecha_compra_vip=None, contador_vip=0,
-                tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None, cooldown_equipamiento=None, correo_electronico=None):
+                tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None, cooldown_equipamiento=None, correo_electronico=None,
+                defensa_temporal=0, velocidad_temporal=0, turnos_defensa_temporal=0, turnos_velocidad_temporal=0):
         
         self.id_usuario = id_usuario
         self.usuario = usuario
@@ -57,7 +59,11 @@ class Usuario:
         self.mana_usuario = mana_usuario
         self.fecha_expiracion_vip = fecha_expiracion_vip or None
         self.correo_electronico = correo_electronico
-
+        self.defensa_temporal = defensa_temporal
+        self.velocidad_temporal = velocidad_temporal
+        self.turnos_defensa_temporal = turnos_defensa_temporal
+        self.turnos_velocidad_temporal = turnos_velocidad_temporal
+        
         # Buffs temporales para poderes
         self.buff_xp = 1
         self.buff_coins = 1
@@ -69,7 +75,8 @@ class Usuario:
             "cabeza": None,
             "pecho": None,
             "pies": None,
-            "escudo": None
+            "escudo": None,
+            "guantes": None
         }
 
         # Inicializar ventajas VIP
@@ -125,7 +132,11 @@ class Usuario:
             "cooldown_equipamiento": self.cooldown_equipamiento.strftime("%Y-%m-%d %H:%M:%S") 
             if isinstance(self.cooldown_equipamiento, (datetime.date, datetime.datetime)) 
             else self.cooldown_equipamiento,
-            "correo_electronico": self.correo_electronico
+            "correo_electronico": self.correo_electronico,
+            "defensa_temporal": self.defensa_temporal,
+            "velocidad_temporal": self.velocidad_temporal,
+            "turnos_defensa_temporal": self.turnos_defensa_temporal,
+            "turnos_velocidad_temporal": self.turnos_velocidad_temporal
         }
 
     @staticmethod
@@ -171,7 +182,11 @@ class Usuario:
             fecha_expiracion_vip=data.get("fecha_expiracion_vip"),
             clase_nombre=data.get("clase_nombre", None),
             cooldown_equipamiento=cooldown,
-            correo_electronico=data.get("correo_electronico")
+            correo_electronico=data.get("correo_electronico"),
+            defensa_temporal=int(data.get("defensa_temporal", 0)),
+            velocidad_temporal=int(data.get("velocidad_temporal", 0)),
+            turnos_defensa_temporal=int(data.get("turnos_defensa_temporal", 0)),
+            turnos_velocidad_temporal=int(data.get("turnos_velocidad_temporal", 0))
         )
 
     # -------------------------------
@@ -231,11 +246,18 @@ class Usuario:
             if atributo in atributos_mostrar:
                 valor_base = mejoras.get(atributo, 0)
                 extra = ""
+                # VIP
                 if self.rol == "vip" and self.ventajas_vip:
                     buff_key = f"buff_{atributo}"
                     if buff_key in self.ventajas_vip:
                         buff_valor = self.ventajas_vip[buff_key]
-                        extra = f" (+{buff_valor} VIP)"
+                        extra += f" (+{buff_valor} VIP)"
+                # Buff temporal
+                if atributo == "defensa" and getattr(self, "turnos_defensa_temporal", 0) > 0:
+                    extra += f" (+{self.defensa_temporal} Temporal, {self.turnos_defensa_temporal} turnos)"
+                if atributo == "velocidad" and getattr(self, "turnos_velocidad_temporal", 0) > 0:
+                    extra += f" (+{self.velocidad_temporal} Temporal, {self.turnos_velocidad_temporal} turnos)"
+
                 if valor_base != 0 or extra:
                     perfil["mejoras"].append({
                         "atributo": atributo,
@@ -285,11 +307,9 @@ class Usuario:
     # -------------------------------
     # Inventario
     # -------------------------------
-    def ver_inventario(self, tienda=None, enumerado=False, modo="todos"):
+    def ver_inventario(self, modo="todos"): # A día de hoy no lo estamos utilizando, pero se adaptó de CLI a web por las dudas.
         inventario = self.gestor_inventario.inventario_usuario()
-        print(Fore.YELLOW + f"\nInventario de " + Style.RESET_ALL + f"{self.nombre_con_tags()}"+ Fore.YELLOW + ":" + Style.RESET_ALL)
 
-        # Filtrar según el modo
         if modo == "equipar":
             items_filtrados = {k:v for k,v in inventario.items.items()
                             if v.get("tipo") == "equipable"}
@@ -297,118 +317,99 @@ class Usuario:
             items_filtrados = {k:v for k,v in inventario.items.items()
                             if v.get("tipo") in ["consumible", "consumible_vip"]}
         else:
-            items_filtrados = inventario.items  # todos
+            items_filtrados = inventario.items
 
-        # Mostrar ítems filtrados
-        for idx, (id_item, datos) in enumerate(items_filtrados.items(), start=1):
-            print(f"{idx}. {datos['nombre']} ({datos['tipo']})")
+        return items_filtrados
 
-        # Guardar enumeración para equipar/usar
-        self.enumeracion_items = {
-            str(idx): id_item for idx, (id_item, _) in enumerate(items_filtrados.items(), start=1)
-        }
-
-
-    def equipar(self, indice):
-        id_item = (self.enumeracion_items or {}).get(str(indice))
-        if not id_item:
-            print(Fore.RED + "⚠️ Opción inválida." + Style.RESET_ALL)
-            return
-
+    def equipar(self, id_item):
         inventario = self.gestor_inventario.inventario_usuario()
         datos_item = inventario.items.get(str(id_item))
+
         if not datos_item:
-            print(Fore.YELLOW + "⚠️ No tienes ese ítem en tu inventario." + Style.RESET_ALL)
-            return
+            return {"error": "No tienes ese ítem en tu inventario."}
 
         if datos_item.get("tipo") != "equipable":
-            print(Fore.YELLOW + "⚠️ Este ítem no se puede equipar, solo usar." + Style.RESET_ALL)
-            return
+            return {"error": "Este ítem no se puede equipar, solo usar."}
 
         slot = datos_item.get("slot")
         if slot not in self.slots:
-            print(Fore.RED + "⚠️ Slot inválido para este ítem." + Style.RESET_ALL)
-            return
+            return {"error": "Slot inválido para este ítem."}
+
+        # 🔹 Chequeo de cooldown
+        if self.cooldown_equipamiento and datetime.datetime.now() < self.cooldown_equipamiento:
+            return {"error": "No puedes equipar objetos hasta que pasen 3 minutos tras tu muerte."}
 
         self.slots[slot] = id_item
-        nombre_slot = NOMBRES_BONITOS.get(slot, slot)
-        print(Fore.GREEN + f"✅ {datos_item['nombre']} equipado en {nombre_slot}." + Style.RESET_ALL)
-
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
-        
-        # En equipar recordar que debemos agregar el chequeo del cooldown (Recuerda ésto):
-        #if self.cooldown_equipamiento and datetime.datetime.now() < self.cooldown_equipamiento:
-        #    return {"error": "No puedes equipar objetos hasta que pasen 3 minutos tras tu muerte."}
 
+        return {"success": f"{datos_item['nombre']} equipado en {slot}", "categoria": "equipar"}
 
     def desequipar(self, slot):
         slot_normalizado = slot.lower().replace(" ", "")
         if slot_normalizado not in self.slots:
-            print(Fore.RED + "⚠️ Slot inválido." + Style.RESET_ALL)
-            return
+            return {"error": "Slot inválido."}
 
         id_item = self.slots[slot_normalizado]
-        nombre_slot = NOMBRES_BONITOS.get(slot_normalizado, slot_normalizado)
-
         if id_item:
             inventario = self.gestor_inventario.inventario_usuario()
             datos_item = inventario.items.get(str(id_item))
             nombre_item = datos_item["nombre"] if datos_item else id_item
 
-            print(Fore.GREEN + f"❎ Ítem {nombre_item} desequipado de {nombre_slot}." + Style.RESET_ALL)
             self.slots[slot_normalizado] = None
-
             if self.gestor_usuarios:
                 self.gestor_usuarios.actualizar_usuario(self)
+
+            return {"success": f"Ítem {nombre_item} desequipado de {slot_normalizado}", "categoria": "desequipar"}
         else:
-            print(Fore.YELLOW + f"⚠️ No tienes ningún ítem equipado en {nombre_slot}." + Style.RESET_ALL)
+            return {"error": f"No tienes ningún ítem equipado en {slot_normalizado}"}
 
-    def usar_item(self, indice):
-        id_item = (self.enumeracion_items or {}).get(str(indice))
-        if not id_item:
-            print(Fore.RED + "⚠️ Opción inválida." + Style.RESET_ALL)
-            return
-
+    def usar_item(self, id_item):
         inventario = self.gestor_inventario.inventario_usuario()
         datos_item = inventario.items.get(str(id_item))
+
         if not datos_item:
-            print(Fore.YELLOW + "⚠️ No tienes ese ítem en tu inventario." + Style.RESET_ALL)
-            return
+            return {"error": "No tienes ese ítem en tu inventario."}
 
-        if datos_item.get("tipo") != "consumible":
-            print(Fore.YELLOW + "⚠️ Este ítem no se puede usar directamente, debes equiparlo." + Style.RESET_ALL)
-            return
+        if datos_item.get("tipo") not in ["consumible", "consumible_vip"]:
+            return {"error": "Este ítem no se puede usar directamente, debes equiparlo."}
 
+        # --- Validar buffs temporales antes de quitar el ítem ---
+        if "efecto_temporal" in datos_item:
+            for clave, valor in datos_item["efecto_temporal"].items():
+                if clave == "defensa" and getattr(self, "turnos_defensa_temporal", 0) > 0:
+                    return {"error": "Ya tienes un buff de defensa activo. Espera a que expire antes de usar otro."}
+                if clave == "velocidad" and getattr(self, "turnos_velocidad_temporal", 0) > 0:
+                    return {"error": "Ya tienes un buff de velocidad activo. Espera a que expire antes de usar otro."}
+
+        # Si pasó la validación, recién ahora se descuenta
         inventario.quitar_item(id_item, 1)
-        print(Fore.GREEN + f"💥 Usaste {datos_item['nombre']} → {datos_item['descripcion']}" + Style.RESET_ALL)
+        self.gestor_inventario.actualizar_inventario(inventario)
 
+        # --- Efectos instantáneos ---
         if "efecto" in datos_item:
             for clave, valor in datos_item["efecto"].items():
                 if clave == "vida":
-                    inicial = self.vida_usuario
                     self.sumar_vida(valor)
-                    print(Fore.CYAN + f"❤️ HP: {inicial} → {self.vida_usuario}" + Style.RESET_ALL)
                 elif clave == "xp":
-                    inicial = self.xp_usuario
                     self.sumar_xp(valor)
-                    print(Fore.CYAN + f"⭐ XP: {inicial} → {self.xp_usuario}" + Style.RESET_ALL)
                 elif clave == "mana":
-                    inicial = getattr(self, "mana_usuario", 0)
-                    setattr(self, "mana_usuario", inicial + valor)
-                    print(Fore.CYAN + f"🔮 Maná: {inicial} → {self.mana_usuario}" + Style.RESET_ALL)
+                    self.mana_usuario = getattr(self, "mana_usuario", 0) + valor
+
+        # --- Efectos temporales ---
+        if "efecto_temporal" in datos_item:
+            for clave, valor in datos_item["efecto_temporal"].items():
+                if clave == "defensa":
+                    self.defensa_temporal = valor
+                    self.turnos_defensa_temporal = datos_item.get("efecto_turnos", 0)
                 elif clave == "velocidad":
-                    inicial = getattr(self, "velocidad_temporal", 0)
-                    setattr(self, "velocidad_temporal", inicial + valor)
-                    print(Fore.CYAN + f"⚡ Velocidad: {inicial} → {self.velocidad_temporal}" + Style.RESET_ALL)
-                elif clave == "defensa_temporal":
-                    inicial = getattr(self, "defensa_temporal", 0)
-                    setattr(self, "defensa_temporal", inicial + valor)
-                    print(Fore.CYAN + f"🛡️ Defensa temporal: {inicial} → {self.defensa_temporal}" + Style.RESET_ALL)
+                    self.velocidad_temporal = valor
+                    self.turnos_velocidad_temporal = datos_item.get("efecto_turnos", 0)
 
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
 
+        return {"success": f"Usaste {datos_item['nombre']} → {datos_item['descripcion']}"}
 
     # -------------------------------
     # XP, Coins y Vida
@@ -461,7 +462,22 @@ class Usuario:
     #--------------------------------
     
     def atributos_totales(self):
-        atributos = {}
+        atributos = {
+            "fuerza": getattr(self, "fuerza", 0),
+            "defensa": getattr(self, "defensa", 0),
+            "velocidad": getattr(self, "velocidad", 0),
+            "mana": getattr(self, "mana_usuario", 0),
+            "vida": getattr(self, "vida_usuario", 0)
+        }
+
+        # Buffs VIP
+        if self.rol == "vip" and hasattr(self, "ventajas_vip"):
+            atributos["fuerza"] += self.ventajas_vip.get("buff_fuerza", 0)
+            atributos["defensa"] += self.ventajas_vip.get("buff_defensa", 0)
+            atributos["velocidad"] += self.ventajas_vip.get("buff_velocidad", 0)
+            atributos["mana"] += int(atributos["mana"] * self.ventajas_vip.get("bonus_mana", 0))
+
+        # Ítems equipados
         inventario = self.gestor_inventario.inventario_usuario()
         for slot, id_item in self.slots.items():
             if id_item is not None:
@@ -469,8 +485,31 @@ class Usuario:
                 if datos_item and "efecto" in datos_item:
                     for clave, valor in datos_item["efecto"].items():
                         atributos[clave] = atributos.get(clave, 0) + valor
-        return atributos
 
+        # Consumibles temporales (solo si siguen activos)
+        if getattr(self, "turnos_defensa_temporal", 0) > 0:
+            atributos["defensa"] += getattr(self, "defensa_temporal", 0)
+
+        if getattr(self, "turnos_velocidad_temporal", 0) > 0:
+            atributos["velocidad"] += getattr(self, "velocidad_temporal", 0)
+
+        return atributos
+    
+    def aplicar_turno(self):
+        """Reduce la duración de los buffs temporales en cada turno."""
+        if getattr(self, "turnos_defensa_temporal", 0) > 0:
+            self.turnos_defensa_temporal -= 1
+            if self.turnos_defensa_temporal == 0:
+                self.defensa_temporal = 0
+
+        if getattr(self, "turnos_velocidad_temporal", 0) > 0:
+            self.turnos_velocidad_temporal -= 1
+            if self.turnos_velocidad_temporal == 0:
+                self.velocidad_temporal = 0
+
+        # Persistir cambios en JSON
+        if self.gestor_usuarios:
+            self.gestor_usuarios.actualizar_usuario(self)
 
     # Bonus diario para VIPS
     def aplicar_bonus_diario(self):

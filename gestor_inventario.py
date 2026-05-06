@@ -1,10 +1,8 @@
 import json
 import os
 from inventario import Inventario
-from colorama import Fore, Style
 from utils_rutas import ruta_json
 
-#ARCHIVO_INVENTARIO = os.path.join("json", "inventarios.json")
 ARCHIVO_INVENTARIO = ruta_json("inventarios.json")
 
 class GestorInventario:
@@ -28,7 +26,7 @@ class GestorInventario:
                         return []
                     return json.loads(contenido)
             except json.JSONDecodeError:
-                print("⚠️ El archivo de inventarios está corrupto o vacío. Se iniciará una lista nueva.")
+                # En web no imprimimos, simplemente devolvemos lista vacía
                 return []
         return []
 
@@ -39,7 +37,7 @@ class GestorInventario:
 
     # --- Operaciones sobre inventario de usuario ---
     def inventario_usuario(self):
-        """Devuelve el Inventario del usuario actual, siempre la misma instancia."""
+        """Devuelve el Inventario del usuario actual como objeto."""
         if not hasattr(self, "_cache_inventario"):
             for inv in self.inventarios:
                 if inv["id_usuario"] == self.usuario.id_usuario:
@@ -64,27 +62,24 @@ class GestorInventario:
     def eliminar_inventario_de_usuario(self, id_usuario):
         """Elimina el inventario de un usuario por id_usuario."""
         if not os.path.exists(ARCHIVO_INVENTARIO):
-            print(Fore.YELLOW + "⚠️ No se encontró el archivo de inventario." + Style.RESET_ALL)
-            return
+            return False
 
         with open(ARCHIVO_INVENTARIO, "r", encoding="utf-8") as f:
             datos = json.load(f)
 
-        # datos es una lista de dicts
         nuevo_datos = [inv for inv in datos if inv["id_usuario"] != id_usuario]
 
         if len(nuevo_datos) != len(datos):
             with open(ARCHIVO_INVENTARIO, "w", encoding="utf-8") as f:
                 json.dump(nuevo_datos, f, indent=4, ensure_ascii=False)
-            #print(Fore.YELLOW + f"🧹 Inventario del usuario {id_usuario} eliminado correctamente." + Style.RESET_ALL)
-        #else:
-            #print(Fore.YELLOW + f"⚠️ El usuario {id_usuario} no tenía inventario registrado." + Style.RESET_ALL)
+            return True
+        return False
 
-    #Catalogo de items que en principio lo llamo desde usuario.reiniciar_nivel_100
+    # --- Catálogo de ítems ---
     def catalogo_items(self):
-            """Carga y devuelve todos los items disponibles desde items.json"""
-            ruta_items = os.path.join("json", "items.json")
-            if os.path.exists(ruta_items):
-                with open(ruta_items, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            return []
+        """Carga y devuelve todos los items disponibles desde items.json"""
+        ruta_items = os.path.join("json", "items.json")
+        if os.path.exists(ruta_items):
+            with open(ruta_items, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return []

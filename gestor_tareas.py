@@ -375,6 +375,8 @@ class GestorTareas:
 
         # Guardar cambios y subir nivel
         eventos = self.usuario.subir_nivel()
+        # Reducir buffs temporales al pasar un turno (Que sería completar una tarea)
+        self.usuario.aplicar_turno()
         self.guardar_tareas()
         self.gestor_usuarios.actualizar_usuario(self.usuario)
 

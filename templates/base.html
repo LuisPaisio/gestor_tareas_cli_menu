@@ -30,7 +30,9 @@
                     <ul>
                         <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
                         <li><a href="{{ url_for('menu_poderes') }}">Poderes de Clase</a></li>
-                        <li><a href="{{ url_for('menu_inventario') }}">Inventario</a></li>
+                        {% if session.get('usuario') %}
+                            <li><a href="{{ url_for('ver_inventario') }}">Inventario</a></li>
+                        {% endif %}
                         <li><a href="{{ url_for('menu_mascotas') }}">Mascotas</a></li>
                         <li><a href="{{ url_for('menu_tienda') }}">Tienda</a></li>
                     </ul>
@@ -127,9 +129,9 @@
 
             <div class="header-perfil">
                 {% if usuario.foto_perfil %}
-                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img" onclick="mostrarModalPerfil()">
+                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img" title="Perfil" onclick="mostrarModalPerfil()">
                 {% else %}
-                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" class="perfil-img" onclick="mostrarModalPerfil()">
+                    <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" title="Perfil" class="perfil-img" onclick="mostrarModalPerfil()">
                 {% endif %}
 
                 <!-- Modal de Perfil -->
@@ -282,31 +284,31 @@
                         <button type="button" class="btn-prestigio" onclick="mostrarModalPrestigio()">
                             🔄 Subir de Prestigio
                         </button>
-                    {% endif %}
 
-                    <!-- Modal de Prestigio -->
-                    <div id="modalPrestigio" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="cerrarModalPrestigio()">&times;</span>
-                        <h2>Subir de Prestigio</h2>
-                        <p>
-                        Al prestigiar reinicias tu nivel a 1, restaurando tu vida y maná.  
-                        Cada prestigio te otorga recompensas especiales:
-                        </p>
-                        <ul style="text-align:left; margin: 15px 0;">
-                        <li>✨ Primer y segundo prestigio: recibes un ítem aleatorio de la tienda (no VIP).</li>
-                        <li>🏆 Tercer prestigio: obtienes membresía VIP permanente.</li>
-                        </ul>
-                        <p>
-                        Puedes prestigiar hasta 3 veces. Tu contador actual es 
-                        <strong>{{ usuario.contador_100 }}/3</strong>.
-                        </p>
-                        <form action="{{ url_for('prestigiar') }}" method="post" style="margin-top:20px;">
-                        <button type="submit" class="btn-prestigio">🔄 Confirmar Prestigio</button>
-                        <button type="button" class="btn-cancelar" onclick="cerrarModalPrestigio()">Cancelar</button>
-                        </form>
-                    </div>
-                    </div>
+                        <!-- Modal de Prestigio -->
+                        <div id="modalPrestigio" class="modal">
+                            <div class="modal-content">
+                                <span class="close" onclick="cerrarModalPrestigio()">&times;</span>
+                                <h2>Subir de Prestigio</h2>
+                                <p>
+                                    Al prestigiar reinicias tu nivel a 1, restaurando tu vida y maná.  
+                                    Cada prestigio te otorga recompensas especiales:
+                                </p>
+                                <ul style="text-align:left; margin: 15px 0;">
+                                    <li>✨ Primer y segundo prestigio: recibes un ítem aleatorio de la tienda (no VIP).</li>
+                                    <li>🏆 Tercer prestigio: obtienes membresía VIP permanente.</li>
+                                </ul>
+                                <p>
+                                    Puedes prestigiar hasta 3 veces. Tu contador actual es 
+                                    <strong>{{ usuario.contador_100 }}/3</strong>.
+                                </p>
+                                <form action="{{ url_for('prestigiar') }}" method="post" style="margin-top:20px;">
+                                    <button type="submit" class="btn-prestigio">🔄 Confirmar Prestigio</button>
+                                    <button type="button" class="btn-cancelar" onclick="cerrarModalPrestigio()">Cancelar</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% else %}

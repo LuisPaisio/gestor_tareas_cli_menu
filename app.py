@@ -6,6 +6,8 @@ from constantes_tareas import vida_maxima, mana_maximo
 from gestor_notificaciones import GestorNotificaciones
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from inventario import Inventario
+from gestor_inventario import GestorInventario
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
@@ -190,11 +192,76 @@ def menu_poderes():
     return render_template("poderes.html", usuario=usuario)
 
 @app.route("/inventario")
-def menu_inventario():
-    usuario = session.get("usuario")
-    if not usuario:
-        return redirect(url_for("home"))
-    return render_template("inventario.html", usuario=usuario)
+def ver_inventario():
+    if "usuario" not in session:
+        flash("Debes iniciar sesión para ver tu inventario.", "error")
+        return redirect(url_for("login"))
+
+    id_usuario = session["usuario"]["id_usuario"]
+    usuario_obj = gestor.get_usuario_por_id(id_usuario)
+
+    gestor_inv = GestorInventario(usuario_obj)
+    inventario = gestor_inv.inventario_usuario()
+
+    items = inventario.mostrar_web()
+
+    print("usuario.slots:", usuario_obj.slots)
+    
+    return render_template(
+        "inventario.html",
+        items=items,
+        **contexto_comun(usuario_obj)
+    )
+
+@app.route("/inventario/equipar/<int:id_item>", methods=["POST"])
+def equipar_item(id_item):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+    resultado = usuario_obj.equipar(id_item)
+
+    if "error" in resultado:
+        flash(resultado["error"], "error")
+    else:
+        flash(resultado["success"], resultado.get("categoria", "success"))
+
+    return redirect(url_for("ver_inventario"))
+
+
+@app.route("/inventario/desequipar/<slot>", methods=["POST"])
+def desequipar_item(slot):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+    resultado = usuario_obj.desequipar(slot)
+
+    if "error" in resultado:
+        flash(resultado["error"], "error")
+    else:
+        flash(resultado["success"], resultado.get("categoria", "success"))
+
+    return redirect(url_for("ver_inventario"))
+
+
+@app.route("/inventario/usar/<int:id_item>", methods=["POST"])
+def usar_item(id_item):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+    resultado = usuario_obj.usar_item(id_item)
+
+    if "error" in resultado:
+        flash(resultado["error"], "error")
+    else:
+        flash(resultado["success"], "success")
+
+    return redirect(url_for("ver_inventario"))
 
 @app.route("/mascotas")
 def menu_mascotas():
@@ -629,6 +696,16 @@ def inject_perfil():
 
     # Esto hace que 'perfil' y 'usuario' estén disponibles en todas las plantillas
     return dict(usuario=usuario_obj, perfil=perfil_data)
+
+def contexto_comun(usuario_obj, pagina_actual=1, total_paginas=1):
+    return {
+        "usuario": usuario_obj,
+        "vida_maxima": vida_maxima(),
+        "mana_maximo": mana_maximo(),
+        "xp_requerida": usuario_obj.xp_requerida(),
+        "pagina_actual": pagina_actual,
+        "total_paginas": total_paginas
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)
