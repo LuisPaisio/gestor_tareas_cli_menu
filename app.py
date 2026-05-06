@@ -202,15 +202,12 @@ def ver_inventario():
 
     gestor_inv = GestorInventario(usuario_obj)
     inventario = gestor_inv.inventario_usuario()
-
     items = inventario.mostrar_web()
 
-    print("usuario.slots:", usuario_obj.slots)
-    
     return render_template(
         "inventario.html",
         items=items,
-        **contexto_comun(usuario_obj)
+        **contexto_comun(usuario_obj)   # ahora ya incluye notificaciones
     )
 
 @app.route("/inventario/equipar/<int:id_item>", methods=["POST"])
@@ -326,7 +323,8 @@ def editar_credenciales_route():
     usuario_obj.editar_credenciales(request.form)
 
     flash("Credenciales actualizadas exitosamente", "success")
-    return redirect(url_for("dashboard"))
+    # 🔹 Redirige a la página desde la que vino la petición
+    return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/eliminar_usuario", methods=["POST"])
 def eliminar_usuario():
@@ -344,7 +342,8 @@ def eliminar_usuario():
         return redirect(url_for("home"))
     else:
         flash("Credenciales inválidas. No se pudo eliminar la cuenta.", "error")
-        return redirect(url_for("dashboard"))
+        # 🔹 Redirige a la página desde la que vino la petición
+        return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/nueva_tarea", methods=["POST"])
 def nueva_tarea():
@@ -519,7 +518,8 @@ def marcar_leida(id_notificacion):
     gestor_notificaciones.marcar_leida(usuario_obj.id_usuario, str(id_notificacion))
 
     flash("Notificación marcada como leída", "success")
-    return redirect(url_for("dashboard"))
+    # Redirige a la página desde la que vino la petición
+    return redirect(request.referrer or url_for("dashboard"))
 
 
 @app.route("/notificacion/<int:id_notificacion>/eliminar", methods=["POST", "GET"])
@@ -533,7 +533,8 @@ def eliminar_notificacion(id_notificacion):
     gestor_notificaciones.eliminar_notificacion(usuario_obj.id_usuario, str(id_notificacion))
 
     flash("Notificación eliminada", "success")
-    return redirect(url_for("dashboard"))
+    # Redirige a la página desde la que vino la petición
+    return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/procesar_vencidas", methods=["POST"])
 def procesar_vencidas():
@@ -698,13 +699,17 @@ def inject_perfil():
     return dict(usuario=usuario_obj, perfil=perfil_data)
 
 def contexto_comun(usuario_obj, pagina_actual=1, total_paginas=1):
+    gestor_notificaciones = GestorNotificaciones()
+    notificaciones_lista = gestor_notificaciones.obtener_notificaciones(usuario_obj.id_usuario)[:5]
+
     return {
         "usuario": usuario_obj,
         "vida_maxima": vida_maxima(),
         "mana_maximo": mana_maximo(),
         "xp_requerida": usuario_obj.xp_requerida(),
         "pagina_actual": pagina_actual,
-        "total_paginas": total_paginas
+        "total_paginas": total_paginas,
+        "notificaciones": notificaciones_lista
     }
 
 if __name__ == "__main__":
