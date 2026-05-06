@@ -299,6 +299,9 @@ class Usuario:
 
         nueva_pass = form_data.get("contraseña", "").strip()
         if nueva_pass:
+            if len(nueva_pass) < 8:
+                # Podés devolver un error o levantar una excepción
+                raise ValueError("La contraseña debe tener al menos 8 caracteres.")
             self.contraseña = generate_password_hash(nueva_pass)
 
         if self.gestor_usuarios:

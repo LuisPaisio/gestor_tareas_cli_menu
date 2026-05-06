@@ -320,10 +320,12 @@ def editar_credenciales_route():
         return redirect(url_for("home"))
 
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
-    usuario_obj.editar_credenciales(request.form)
+    try:
+        usuario_obj.editar_credenciales(request.form)
+        flash("Credenciales actualizadas exitosamente", "success")
+    except ValueError as e:
+        flash(str(e), "error")
 
-    flash("Credenciales actualizadas exitosamente", "success")
-    # 🔹 Redirige a la página desde la que vino la petición
     return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/eliminar_usuario", methods=["POST"])
