@@ -21,8 +21,11 @@
         <hr class="login-divider">
 
         <form action="{{ url_for('register') }}" method="post">
-            <input type="email" name="email" placeholder="Correo Electrónico" required>
+            <input type="text" name="username" placeholder="Nuevo Usuario" required>
             <input type="password" name="password" placeholder="Contraseña" required>
+            <small class="password-requisitos">
+               La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, un número y un símbolo especial.
+            </small>
             <div class="bajo-register">
                 <input type="checkbox" name="acepto-terminos"> Acepto los términos y condiciones.
             </div>

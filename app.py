@@ -53,17 +53,33 @@ def register():
     password = request.form["password"].strip()
     mantener_sesion = request.form.get("mantener-sesion")
 
-    # 🔹 Validaciones de seguridad para la contraseña
-    if len(password) < 8:
-        return render_template("home.html", error="La contraseña debe tener al menos 8 caracteres.")
-    if not re.search(r"[A-Z]", password):
-        return render_template("home.html", error="La contraseña debe incluir al menos una letra mayúscula.")
-    if not re.search(r"[0-9]", password):
-        return render_template("home.html", error="La contraseña debe incluir al menos un número.")
-    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        return render_template("home.html", error="La contraseña debe incluir al menos un símbolo especial.")
+    # Detectar template según origen
+    template = "soloregister.html" if "register_page" in (request.referrer or "") else "home.html"
 
-    # 🔹 Generar el hash de la contraseña después de validar
+    # Validaciones de usuario primero
+    if len(nombre_usuario) < 8:
+        flash("El nombre de usuario debe tener al menos 8 caracteres.", "error")
+        return redirect(request.referrer or url_for("home"))
+    for usuario in gestor.usuarios:
+        if usuario.usuario == nombre_usuario:
+            flash("El nombre de usuario ya existe. Por favor elige otro.", "error")
+            return redirect(request.referrer or url_for("home"))
+
+    # 🔹 Validaciones de contraseña después
+    if len(password) < 8:
+        flash("La contraseña debe tener al menos 8 caracteres.", "error")
+        return redirect(request.referrer or url_for("home"))
+    if not re.search(r"[A-Z]", password):
+        flash("La contraseña debe incluir al menos una letra mayúscula.", "error")
+        return redirect(request.referrer or url_for("home"))
+    if not re.search(r"[0-9]", password):
+        flash("La contraseña debe incluir al menos un número.", "error")
+        return redirect(request.referrer or url_for("home"))
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        flash("La contraseña debe incluir al menos un símbolo especial.", "error")
+        return redirect(request.referrer or url_for("home"))
+
+    # Generar el hash de la contraseña después de validar
     password_hash = generate_password_hash(password)
 
     usuario_actual = gestor.register_web(nombre_usuario, password_hash)
@@ -80,12 +96,13 @@ def register():
         session.permanent = bool(mantener_sesion)
         return redirect(url_for("dashboard"))
     else:
-        return render_template("home.html", error="No se pudo registrar")
+        flash("No se pudo registrar", "error")
+        return redirect(request.referrer or url_for("home"))
 
 @app.route("/logout")
 def logout():
     session.clear()  # limpia toda la sesión, no solo el usuario
-    flash("Sesión cerrada correctamente", "info")  # mensaje para el usuario
+    flash("Sesión cerrada correctamente", "warning")  # mensaje para el usuario
     return redirect(url_for("home"))
 
 @app.route("/register_page")
