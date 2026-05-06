@@ -7,6 +7,7 @@ from gestor_notificaciones import GestorNotificaciones
 import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from inventario import Inventario
+import re
 from gestor_inventario import GestorInventario
 
 app = Flask(__name__)
@@ -48,14 +49,23 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-    nombre_usuario = request.form["username"]
-    password = request.form["password"]
+    nombre_usuario = request.form["username"].strip()
+    password = request.form["password"].strip()
     mantener_sesion = request.form.get("mantener-sesion")
 
-    # 🔹 Generar el hash de la contraseña antes de guardar
+    # 🔹 Validaciones de seguridad para la contraseña
+    if len(password) < 8:
+        return render_template("home.html", error="La contraseña debe tener al menos 8 caracteres.")
+    if not re.search(r"[A-Z]", password):
+        return render_template("home.html", error="La contraseña debe incluir al menos una letra mayúscula.")
+    if not re.search(r"[0-9]", password):
+        return render_template("home.html", error="La contraseña debe incluir al menos un número.")
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return render_template("home.html", error="La contraseña debe incluir al menos un símbolo especial.")
+
+    # 🔹 Generar el hash de la contraseña después de validar
     password_hash = generate_password_hash(password)
 
-    # Pasar el hash al gestor, no la contraseña en texto plano
     usuario_actual = gestor.register_web(nombre_usuario, password_hash)
     if usuario_actual:
         session["usuario"] = {
@@ -68,14 +78,14 @@ def register():
         }
 
         session.permanent = bool(mantener_sesion)
-        return redirect(url_for("dashboard"))  # directo al dashboard
+        return redirect(url_for("dashboard"))
     else:
         return render_template("home.html", error="No se pudo registrar")
 
 @app.route("/logout")
 def logout():
-    session.clear()  # 🔹 limpia toda la sesión, no solo el usuario
-    flash("Sesión cerrada correctamente", "info")  # 🔹 mensaje para el usuario
+    session.clear()  # limpia toda la sesión, no solo el usuario
+    flash("Sesión cerrada correctamente", "info")  # mensaje para el usuario
     return redirect(url_for("home"))
 
 @app.route("/register_page")

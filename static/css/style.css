@@ -824,3 +824,11 @@ input[type="email"]:focus {
 .btn-eliminar:hover {
   background-color: #c0392b;
 }
+
+.password-requisitos {
+    display: block;       /* fuerza que aparezca debajo */
+    font-size: 0.85em;    /* un poco más chico que el texto normal */
+    color: #888;          /* gris para que no compita con labels */
+    margin-top: 4px;      /* espacio respecto al input */
+    margin-bottom: 10px;  /* espacio antes del siguiente label */
+}

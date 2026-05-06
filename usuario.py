@@ -8,6 +8,7 @@ from constantes_tareas import vida_maxima, mana_maximo
 from clases import Clase
 from notificaciones import Notificacion
 from gestor_notificaciones import GestorNotificaciones
+import re
 from werkzeug.security import generate_password_hash
 
 # Diccionario global de nombres bonitos
@@ -299,9 +300,17 @@ class Usuario:
 
         nueva_pass = form_data.get("contraseña", "").strip()
         if nueva_pass:
+            # Validaciones de seguridad
             if len(nueva_pass) < 8:
-                # Podés devolver un error o levantar una excepción
                 raise ValueError("La contraseña debe tener al menos 8 caracteres.")
+            if not re.search(r"[A-Z]", nueva_pass):
+                raise ValueError("La contraseña debe incluir al menos una letra mayúscula.")
+            if not re.search(r"[0-9]", nueva_pass):
+                raise ValueError("La contraseña debe incluir al menos un número.")
+            if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", nueva_pass):
+                raise ValueError("La contraseña debe incluir al menos un símbolo especial.")
+
+            # Si pasa todas las validaciones, se guarda encriptada
             self.contraseña = generate_password_hash(nueva_pass)
 
         if self.gestor_usuarios:
