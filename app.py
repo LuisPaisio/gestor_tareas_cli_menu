@@ -100,10 +100,34 @@ def register():
         }
 
         session.permanent = bool(mantener_sesion)
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("setup_profile"))
     else:
         flash("No se pudo registrar", "error")
         return redirect(request.referrer or url_for("home"))
+
+@app.route("/setup_profile", methods=["GET", "POST"])
+def setup_profile():
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+
+    if request.method == "POST":
+        nombre_publico = request.form["nombre_publico"].strip()
+        personaje = request.form["personaje"]
+
+        # Validaciones...
+        usuario_obj.nombre_publico = nombre_publico
+        usuario_obj.foto_personaje = f"/static/images/{personaje}.png"
+        gestor.guardar_usuarios()
+
+        session["usuario"]["usuario"] = nombre_publico
+        session["usuario"]["foto_personaje"] = usuario_obj.foto_personaje
+
+        return redirect(url_for("dashboard"))
+
+    return render_template("setup_profile.html", **contexto_comun(usuario_obj))
 
 @app.route("/logout")
 def logout():
@@ -749,6 +773,19 @@ def contexto_comun(usuario_obj, pagina_actual=1, total_paginas=1):
         "total_paginas": total_paginas,
         "notificaciones": notificaciones_lista
     }
+
+@app.before_request
+def verificar_perfil_completo():
+    # Rutas que no deben ser bloqueadas
+    rutas_libres = {"setup_profile", "register", "login", "home", "logout", "static"}
+
+    if "usuario" in session:
+        usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+        if usuario_obj and (not usuario_obj.foto_personaje or not usuario_obj.nombre_publico):
+            # Si intenta entrar a otra ruta que no sea setup_profile, lo redirigimos
+            if request.endpoint not in rutas_libres:
+                flash("Debes completar tu perfil para comenzar a usar Progresia.", "error")
+                return redirect(url_for("setup_profile"))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -131,8 +131,8 @@
             </div>
 
             <div class="header-perfil">
-                {% if usuario.foto_perfil %}
-                    <img src="{{ usuario.foto_perfil }}" alt="Foto de Perfil" class="perfil-img" title="Perfil" onclick="mostrarModalPerfil()">
+                {% if usuario.foto_personaje %}
+                    <img src="{{ usuario.foto_personaje }}" alt="Foto de personaje" class="perfil-img" title="Perfil" onclick="mostrarModalPerfil()">
                 {% else %}
                     <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Foto por defecto" title="Perfil" class="perfil-img" onclick="mostrarModalPerfil()">
                 {% endif %}

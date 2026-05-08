@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Configura tu perfil{% endblock %}
+
+{% block content %}
+<div class="setup-profile">
+    <h2>Configura tu perfil</h2>
+    <form method="post" onsubmit="return validarPerfil()">
+        <div class="form-group">
+            <label for="nombre_publico">Nombre público:</label>
+            <input type="text" id="nombre_publico" name="nombre_publico" class="input-nombre-publico" required>
+        </div>
+
+        <p>Selecciona tu personaje:</p>
+        <div class="personajes">
+            <label class="opcion-personaje">
+                <!-- Masculino seleccionado por defecto -->
+                <input type="radio" name="personaje" value="masculino" required checked>
+                <div class="card-personaje">
+                    <span>Masculino</span>
+                    <img src="{{ url_for('static', filename='images/masculino.png') }}" alt="Masculino">
+                </div>
+            </label>
+            <label class="opcion-personaje">
+                <input type="radio" name="personaje" value="femenino" required>
+                <div class="card-personaje">
+                    <span>Femenino</span>
+                    <img src="{{ url_for('static', filename='images/femenino.png') }}" alt="Femenino">
+                </div>
+            </label>
+        </div>
+
+        <button type="submit" class="boton1">Guardar perfil</button>
+    </form>
+</div>
+{% endblock %}
