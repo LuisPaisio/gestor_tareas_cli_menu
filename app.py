@@ -52,9 +52,15 @@ def register():
     nombre_usuario = request.form["username"].strip()
     password = request.form["password"].strip()
     mantener_sesion = request.form.get("mantener-sesion")
+    acepto_terminos = request.form.get("acepto-terminos")  # 🔹 Nuevo
 
     # Detectar template según origen
     template = "soloregister.html" if "register_page" in (request.referrer or "") else "home.html"
+
+    # Validación de términos y condiciones
+    if not acepto_terminos:
+        flash("Debes aceptar los términos y condiciones para completar el registro.", "error")
+        return redirect(request.referrer or url_for("home"))
 
     # Validaciones de usuario primero
     if len(nombre_usuario) < 8:
@@ -65,7 +71,7 @@ def register():
             flash("El nombre de usuario ya existe. Por favor elige otro.", "error")
             return redirect(request.referrer or url_for("home"))
 
-    # 🔹 Validaciones de contraseña después
+    # Validaciones de contraseña después
     if len(password) < 8:
         flash("La contraseña debe tener al menos 8 caracteres.", "error")
         return redirect(request.referrer or url_for("home"))
@@ -362,6 +368,10 @@ def eliminar_usuario():
 
     usuario_obj = gestor.eliminar_usuario_web(nombre_usuario)
     if usuario_obj and check_password_hash(usuario_obj.contraseña, password):
+        # Crear gestor de tareas e inventario en este contexto
+        gestor_tareas = GestorTareas(usuario_obj)
+        gestor_inventario = GestorInventario(usuario_obj)
+
         gestor_tareas.eliminar_tareas_de_usuario(usuario_obj.id_usuario)
         gestor_inventario.eliminar_inventario_de_usuario(usuario_obj.id_usuario)
         gestor.usuarios.remove(usuario_obj)
@@ -371,7 +381,6 @@ def eliminar_usuario():
         return redirect(url_for("home"))
     else:
         flash("Credenciales inválidas. No se pudo eliminar la cuenta.", "error")
-        # 🔹 Redirige a la página desde la que vino la petición
         return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/nueva_tarea", methods=["POST"])

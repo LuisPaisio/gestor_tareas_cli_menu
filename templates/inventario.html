@@ -58,34 +58,8 @@
 </div>
 
 <script>
-function mostrarModalInventario(id) {
-  document.getElementById("modal-inventario-" + id).style.display = "block";
-}
-function cerrarModalInventario(id) {
-  document.getElementById("modal-inventario-" + id).style.display = "none";
-}
-
-    function accionRapidaInventario(id_item, tipo, slot) {
     const equipado = {{ usuario.slots|tojson }};
-    let url = "";
-
-    if (tipo === "equipable") {
-        if (equipado[slot] == id_item) {
-        url = `/inventario/desequipar/${slot}`;
-        } else {
-        url = `/inventario/equipar/${id_item}`;
-        }
-    } else if (tipo === "consumible" || tipo === "consumible_vip") {
-        url = `/inventario/usar/${id_item}`;
-    }
-
-    // 🔹 en vez de fetch, redirigimos con form invisible
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = url;
-    document.body.appendChild(form);
-    form.submit();
-    }
-    
 </script>
+<script src="{{ url_for('static', filename='js/inventario.js') }}"></script>
+
 {% endblock %}
