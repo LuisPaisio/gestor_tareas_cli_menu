@@ -6,6 +6,7 @@
     <title>{% block title %}Progresia{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo.ico') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="container">
@@ -24,8 +25,8 @@
             <!-- Header para usuarios logueados -->
             <nav>
                 <div class="nav-left">
-                    <a href="{{ url_for('home') }}">
-                        <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Progresia">
+                    <a href="{{ url_for('home') }}" class="logo-link">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Progresia">
                     </a>
                     <ul>
                         <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
@@ -318,8 +319,8 @@
             <!-- Header para visitantes -->
             <nav>
                 <div class="nav-left">
-                    <a href="{{ url_for('home') }}">
-                        <img src="{{ url_for('static', filename='images/logo.ico') }}" alt="Progresia">
+                    <a href="{{ url_for('home') }}" class="logo-link">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Progresia">
                     </a>
                     <ul>
                         <li><a href="{{ url_for('register_page') }}">Comencemos</a></li>

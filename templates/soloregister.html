@@ -10,7 +10,7 @@
 {% block content %}
 <div class="register-container">
     <div class="login-container">
-        <img src="{{ url_for('static', filename='images/logo.ico') }}" class="logo-img">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-img">
         
         <h3>Regístrate para comenzar tu aventura.</h3>
 
@@ -21,7 +21,7 @@
         <hr class="login-divider">
 
         <form action="{{ url_for('register') }}" method="post">
-            <input type="text" name="username" placeholder="Nuevo Usuario" required>
+            <input type="text" name="username" placeholder="Usuario" required>
             <input type="password" name="password" placeholder="Contraseña" required>
             <small class="password-requisitos">
                La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, un número y un símbolo especial.

@@ -54,8 +54,13 @@ nav {
     color: white;
 }
 
-nav img {
-    height: 40px;
+.nav-left img {
+    height: 58px;
+    width: auto;
+}
+
+.logo-link:hover {
+    background: none;
 }
 
 nav ul {
