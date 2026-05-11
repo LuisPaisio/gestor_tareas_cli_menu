@@ -103,6 +103,7 @@ nav a:hover {
     border-radius: 25%;
     border: 3px solid #b341e0;
     cursor: pointer;
+    background: linear-gradient(to bottom, #b341e0, #9c5bd9 90%);
 }
 
 .perfil-info h3 {

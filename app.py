@@ -39,7 +39,8 @@ def login():
             "usuario": usuario_actual.nombre_publico if usuario_actual.nombre_publico else usuario_actual.usuario,
             "nivel": usuario_actual.nivel_usuario,
             "clase_nombre": usuario_actual.clase_nombre,
-            "foto_perfil": usuario_actual.foto_perfil
+            "foto_perfil": usuario_actual.foto_perfil,
+            "foto_personaje": usuario_actual.foto_personaje
         }
 
         session.permanent = bool(mantener_sesion)
@@ -96,7 +97,8 @@ def register():
             "usuario": usuario_actual.nombre_publico if usuario_actual.nombre_publico else usuario_actual.usuario,
             "nivel": usuario_actual.nivel_usuario,
             "clase_nombre": usuario_actual.clase_nombre,
-            "foto_perfil": usuario_actual.foto_perfil
+            "foto_perfil": usuario_actual.foto_perfil,
+            "foto_personaje": usuario_actual.foto_personaje
         }
 
         session.permanent = bool(mantener_sesion)
