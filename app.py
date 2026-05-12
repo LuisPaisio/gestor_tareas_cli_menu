@@ -9,11 +9,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from inventario import Inventario
 import re
 from gestor_inventario import GestorInventario
+from tienda import Tienda
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
 app.permanent_session_lifetime = datetime.timedelta(days=30) # Duración de vida de sesión permanente
 gestor = GestorUsuarios()
+tienda = Tienda()
 
 @app.route("/")
 def home():
@@ -327,11 +329,89 @@ def menu_mascotas():
     return render_template("mascotas.html", usuario=usuario)
 
 @app.route("/tienda")
-def menu_tienda():
-    usuario = session.get("usuario")
-    if not usuario:
-        return redirect(url_for("home"))
-    return render_template("tienda.html", usuario=usuario)
+def mostrar_tienda():
+    if "usuario" not in session:
+        flash("Debes iniciar sesión para ver la tienda.", "error")
+        return redirect(url_for("login"))
+
+    id_usuario = session["usuario"]["id_usuario"]
+    usuario_obj = gestor.get_usuario_por_id(id_usuario)
+
+    # Parámetros de paginación
+    pagina_catalogo = int(request.args.get("pagina_catalogo", 1))
+    pagina_inventario = int(request.args.get("pagina_inventario", 1))
+    items_por_pagina = 56
+
+    # Catálogo
+    todos_items = tienda.mostrar_items()
+    total_paginas_catalogo = (len(todos_items) + items_por_pagina - 1) // items_por_pagina
+    inicio_cat = (pagina_catalogo - 1) * items_por_pagina
+    fin_cat = inicio_cat + items_por_pagina
+    items_paginados = todos_items[inicio_cat:fin_cat]
+
+    # Inventario del usuario
+    inventario_completo = usuario_obj.gestor_inventario.inventario_usuario()
+    inventario_items = list(inventario_completo.items.items())
+    total_paginas_inventario = (len(inventario_items) + items_por_pagina - 1) // items_por_pagina
+    inicio_inv = (pagina_inventario - 1) * items_por_pagina
+    fin_inv = inicio_inv + items_por_pagina
+    inventario_paginados = dict(inventario_items[inicio_inv:fin_inv])
+
+    return render_template(
+        "tienda.html",
+        items=items_paginados,
+        inventario=inventario_paginados,
+        tienda=tienda,
+        pagina_catalogo=pagina_catalogo,
+        total_paginas_catalogo=total_paginas_catalogo,
+        pagina_inventario=pagina_inventario,
+        total_paginas_inventario=total_paginas_inventario,
+        **contexto_comun(usuario_obj)   # igual que en inventario
+    )
+
+@app.route("/tienda/comprar/<int:id_item>", methods=["POST"])
+def comprar_item(id_item):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+    cantidad = int(request.form.get("cantidad", 1))
+
+    # ✅ pasar id_item, no objeto
+    resultado = tienda.comprar_item(usuario_obj, gestor, id_item, cantidad)
+
+    if isinstance(resultado, dict):
+        if "error" in resultado:
+            flash(resultado["error"], "error")
+        else:
+            flash(resultado["success"], "success")
+    else:
+        flash(resultado, "info")
+
+    return redirect(url_for("mostrar_tienda"))
+
+@app.route("/tienda/vender/<int:id_item>", methods=["POST"])
+def vender_item(id_item):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    usuario_obj = gestor.get_usuario_por_id(session["usuario"]["id_usuario"])
+    cantidad = int(request.form.get("cantidad", 1))
+
+    # ✅ pasar id_item, no objeto
+    resultado = tienda.vender_item(usuario_obj, gestor, id_item, cantidad)
+
+    if isinstance(resultado, dict):
+        if "error" in resultado:
+            flash(resultado["error"], "error")
+        else:
+            flash(resultado["success"], "success")
+    else:
+        flash(resultado, "info")
+
+    return redirect(url_for("mostrar_tienda"))
 
 @app.route("/perfil")
 def perfil():

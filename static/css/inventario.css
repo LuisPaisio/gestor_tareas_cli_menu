@@ -159,3 +159,12 @@
   padding: 2px 6px;
   border-radius: 4px;
 }
+
+/* Lista de efectos dentro del modal */
+.modal-content-inventario ul {
+  list-style-type: disc;       /* bullets normales */
+  padding-left: 20px;          /* espacio a la izquierda */
+  text-align: left;            /* texto alineado a la izquierda */
+  margin: 10px 0;              /* separación arriba/abajo */
+}
+

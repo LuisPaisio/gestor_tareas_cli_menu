@@ -401,15 +401,17 @@ class Usuario:
         inventario.quitar_item(id_item, 1)
         self.gestor_inventario.actualizar_inventario(inventario)
 
+        eventos = []  # ✅ inicializar siempre
+
         # --- Efectos instantáneos ---
         if "efecto" in datos_item:
             for clave, valor in datos_item["efecto"].items():
                 if clave == "vida":
                     self.sumar_vida(valor)
                 elif clave == "xp":
-                    self.sumar_xp(valor)
+                    eventos = self.sumar_xp(valor)  # ✅ guardar lo que devuelve
                 elif clave == "mana":
-                    self.mana_usuario = getattr(self, "mana_usuario", 0) + valor
+                    self.mana_usuario = min(mana_maximo(), getattr(self, "mana_usuario", 0) + valor)
 
         # --- Efectos temporales ---
         if "efecto_temporal" in datos_item:
@@ -424,19 +426,25 @@ class Usuario:
         if self.gestor_usuarios:
             self.gestor_usuarios.actualizar_usuario(self)
 
-        return {"success": f"Usaste {datos_item['nombre']} → {datos_item['descripcion']}"}
+        return {
+            "success": f"Usaste {datos_item['nombre']} → {datos_item['descripcion']}",
+            "eventos": eventos
+        }
 
     # -------------------------------
     # XP, Coins y Vida
     # -------------------------------
     def sumar_xp(self, xp):
         self.xp_usuario = max(0, self.xp_usuario + xp)
+        eventos = self.subir_nivel()
+        
+        return eventos
 
     def sumar_coins(self, coins):
         self.coin_usuario = max(0, self.coin_usuario + coins)
 
     def sumar_vida(self, vida):
-        self.vida_usuario = min(50, self.vida_usuario + vida)
+        self.vida_usuario = min(vida_maxima(), self.vida_usuario + vida)
 
     def restar_vida(self, vida):
         self.vida_usuario -= vida

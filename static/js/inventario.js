@@ -16,3 +16,28 @@ function accionRapidaInventario(id_item, tipo, slot) {
     document.body.appendChild(form);
     form.submit();
 }
+
+// Abrir modal de inventario
+function mostrarModalInventario(id) {
+  const modal = document.getElementById("modal-inventario-" + id);
+  if (modal) {
+    modal.style.display = "block";
+  }
+}
+
+// Cerrar modal de inventario
+function cerrarModalInventario(id) {
+  const modal = document.getElementById("modal-inventario-" + id);
+  if (modal) {
+    modal.style.display = "none";
+  }
+}
+
+// Cerrar si clickea fuera del modal
+window.onclick = function(event) {
+  document.querySelectorAll(".modal-inventario").forEach(modal => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+};
