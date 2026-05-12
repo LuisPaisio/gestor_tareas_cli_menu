@@ -227,3 +227,15 @@
   font-size: 18px;
 }
 
+.mensaje-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #ffd27f;
+  background: #3b2a1a;
+  border: 2px dashed #d4a373;
+  border-radius: 6px;
+  height: 240px; /* misma altura que las cards */
+}

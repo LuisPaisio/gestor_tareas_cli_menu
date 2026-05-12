@@ -1,10 +1,22 @@
 // Filtro de búsqueda
 document.getElementById("buscarItem").addEventListener("keyup", function() {
   let filtro = this.value.toLowerCase();
-  document.querySelectorAll("#catalogoGrid .item-card-tienda").forEach(card => {
+  const cards = document.querySelectorAll("#catalogoGrid .item-card-tienda:not(.mensaje-vacio)");
+  let coincidencias = 0;
+
+  cards.forEach(card => {
     let texto = card.innerText.toLowerCase();
-    card.style.display = texto.includes(filtro) ? "flex" : "none";
+    if (texto.includes(filtro)) {
+      card.style.display = "flex"; // mostrar coincidencia
+      coincidencias++;
+    } else {
+      card.style.display = "none"; // ocultar no coincidencia
+    }
   });
+
+  // Mostrar/ocultar el mensaje vacío
+  const mensaje = document.getElementById("mensajeNoResultados");
+  mensaje.style.display = coincidencias === 0 ? "flex" : "none";
 });
 
 // Abrir modal (catálogo o inventario)
