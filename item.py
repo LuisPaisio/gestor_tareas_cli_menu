@@ -37,7 +37,8 @@ class Item:
             "tipo": self.tipo,
             "efecto": self.efecto,
             "efecto_temporal": self.efecto_temporal,
-            "efecto_turnos": self.efecto_turnos
+            "efecto_turnos": self.efecto_turnos,
+            "imagen": self.imagen
         }
         if self.slot:
             data["slot"] = self.slot

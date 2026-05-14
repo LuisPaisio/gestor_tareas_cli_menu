@@ -14,11 +14,6 @@ body.container {
     min-height: 100vh;
 }
 
-main {
-    padding: 20px;
-    padding-bottom: 100px;
-}
-
 a {
     color: #ccc;
 }

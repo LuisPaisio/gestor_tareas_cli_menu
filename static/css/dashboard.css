@@ -1,3 +1,8 @@
+main {
+    padding: 20px;
+    padding-bottom: 100px;
+}
+
 .dashboard {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

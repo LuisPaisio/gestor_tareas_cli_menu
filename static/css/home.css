@@ -203,3 +203,152 @@ a {
 a:hover {
     color: #fff;
 }
+
+/* Secciones home gamificado */
+
+.nivel-superior {
+  background-color: #b341e0; /* violeta claro */
+  position: relative;
+}
+
+.nivel-medio {
+  background-color: #4B0082; /* morado medio */
+  padding: 60px 20px;
+  position: relative;
+}
+
+.nivel-inferior {
+  background-color: #3a0066; /* morado oscuro */
+  padding: 60px 20px;
+  position: relative;
+}
+
+.nivel-superior::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 40px;
+  background: #4B0082; /* color de la siguiente sección */
+  clip-path: polygon(0 100%, 25% 0, 50% 100%, 75% 0, 100% 100%);
+}
+
+
+.nivel-medio::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 40px;
+  background: #3a0066; /* color de la siguiente sección */
+  clip-path: polygon(0 100%, 25% 0, 50% 100%, 75% 0, 100% 100%);
+}
+
+/* FOOTER solo en home */
+
+footer {
+  position: relative;
+  margin-top: auto;
+  background: #2e0059; 
+  color: #ccc;
+  min-height: 600px;   /* altura igual al fondo */
+  display: flex;       /* usamos flexbox */
+  flex-direction: column;
+  justify-content: flex-start; /* centra verticalmente el contenido */
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Fondo pixel-art */
+footer::before {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%;
+  height: 600px;
+  background-image: url("../images/footer-progresia.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+}
+
+footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 0, 89, 0.7);
+  z-index: 0;
+}
+
+.footer-section h4,
+.footer-section a,
+.footer-bottom p {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Contenido encima */
+.footer-container,
+.footer-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap; /* Para adaptarlo a pantallas chicas */
+  margin-bottom: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section {
+  min-width: 200px;
+  margin: 10px;
+  flex: 0;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    color: #b341e0;
+    margin-bottom: 10px;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section li {
+  margin-bottom: 5px;
+}
+
+.footer-section a {
+  text-decoration: none;
+  font-size: 16px;
+  color: #eee;
+}
+
+.footer-bottom p {
+  font-size: 16px;
+  color: #ddd;
+}
+
+.footer-section a:hover {
+  text-decoration: underline;
+  color: #b341e0;
+}
+
+.footer-logo {
+  height: 50px;
+}
+
+.footer-bottom {
+  border-top: 3px solid #b341e0;
+  text-align: center;
+  padding-top: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
