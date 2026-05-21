@@ -7,17 +7,43 @@
 {% endblock %}
 
 {% block content %}
-<h2>Inventario</h2>
-<div class="inventario-grid">
+<div class="inventario-header">
+  <h2>Inventario</h2>
+  <!-- Barra de búsqueda -->
+  <div class="inventario-search">
+    <input type="text" id="buscarItem" placeholder="Buscar ítem...">
+  </div>
+</div>
+
+<div class="inventario-grid" id="inventarioGrid">
   {% for item in items %}
     <div class="item-card-inventario {% if usuario.slots[item.slot] == item.id_item %}equipado{% endif %}" 
         title="{{ item.descripcion }}" 
         ondblclick="accionRapidaInventario('{{ item.id_item }}', '{{ item.tipo }}', '{{ item.slot }}')">
     <img src="{{ url_for('static', filename='images/items/' ~ item.imagen) }}" alt="{{ item.nombre }}">
+    <div class="item-titulo">{{ item.nombre }}</div>
     <span class="cantidad-inventario">x{{ item.cantidad }}</span>
 
     <!-- Botón info -->
     <button class="btn-info" onclick="mostrarModalInventario('{{ item.id_item }}')">i</button>
+    <!-- Botones de acción dentro del modal -->
+        {% if item.tipo == "equipable" %}
+          {% if usuario.slots[item.slot] == item.id_item %}
+            <form action="{{ url_for('desequipar_item', slot=item.slot) }}" method="post">
+              <button type="submit" class="btn-desequipar">Desequipar</button>
+            </form>
+          {% else %}
+            <form action="{{ url_for('equipar_item', id_item=item.id_item) }}" method="post">
+              <button type="submit" class="btn-equipar">Equipar</button>
+            </form>
+          {% endif %}
+        {% endif %}
+
+        {% if item.tipo in ["consumible", "consumible_vip"] %}
+          <form action="{{ url_for('usar_item', id_item=item.id_item) }}" method="post">
+            <button type="submit" class="btn-usar">Usar</button>
+          </form>
+        {% endif %}
     </div>
 
     <!-- Modal exclusivo inventario -->
@@ -55,6 +81,9 @@
       </div>
     </div>
   {% endfor %}
+  <div class="item-card-tienda mensaje-vacio" id="mensajeNoResultados" style="display:none;">
+    ⚠️ No se encontraron ítems
+  </div>
 </div>
 
 <script>

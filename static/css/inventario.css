@@ -1,23 +1,29 @@
 .inventario-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 80px);
-  gap: 10px;
-  background: url("../images/ui/alforja-textura.jpg");
-  padding: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* igual que tienda */
+  gap: 25px;
+  padding: 20px;
   border: 4px solid #5a3e1b;
-  border-radius: 8px;
+  border-radius: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }
 
 /* Tarjeta de ítem */
 .item-card-inventario {
   position: relative;
-  width: 80px;
-  height: 80px;
-  background: #3b2a1a;
-  border: 2px solid #d4a373;
+  width: 140px;
+  height: 160px; /* altura fija */
+  background: #fff;
+  border: 2px solid #b341e0;
   border-radius: 6px;
-  cursor: pointer;
   text-align: center;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 8px;
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
 
@@ -26,21 +32,29 @@
   border-color: #ffd27f;
 }
 
-.item-card-inventario:active {
-  transform: scale(0.95);
-  border-color: #ffeb3b;
+.item-card-inventario img {
+  max-width: 80px;
+  max-height: 80px;
+  margin: 0 auto 8px auto;
 }
 
-.item-card-inventario img {
-  max-width: 60px;
-  max-height: 60px;
-  margin-top: 5px;
+.item-card-inventario .item-titulo {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.2;
+  height: calc(1.2em * 3);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-bottom: 8px;
+  color: #b341e0;
 }
 
 .cantidad-inventario {
   position: absolute;
-  bottom: 2px;
-  right: 4px;
+  bottom: 6px;
+  right: 6px;
   background: rgba(0,0,0,0.7);
   color: #fff;
   font-size: 12px;
@@ -59,13 +73,13 @@
 }
 
 .modal-content-inventario {
-  background: #2c1b0f;
+  background: #fff;
   margin: 10% auto;
   padding: 20px;
-  border: 3px solid #d4a373;
+  border: 3px solid #b341e0;
   border-radius: 8px;
   width: 400px;
-  color: #f5f5dc;
+  color: #333;
   text-align: center;
   box-shadow: 0 0 15px rgba(0,0,0,0.8);
 }
@@ -75,11 +89,16 @@
   margin-bottom: 10px;
 }
 
+.modal-content-inventario h3 {
+  color: #b341e0;
+  margin-bottom: 10px;
+}
+
 .close-inventario {
   float: right;
   font-size: 24px;
   cursor: pointer;
-  color: #ffd27f;
+  color: #333;
 }
 
 /* Botones dentro del modal */
@@ -123,22 +142,26 @@
 
 .btn-info {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 18px;
-  height: 18px;
+  top: 6px;
+  right: 6px;
+  background: #922bbd;
+  border: 1px solid #8e44ad;
   border-radius: 50%;
-  border: none;
-  background: #d4a373;
-  color: #2c1b0f;
-  font-size: 12px;
-  font-weight: bold;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
   cursor: pointer;
-  transition: background 0.2s ease;
+  color: #fff;
+  transition: transform 0.15s ease, background 0.2s ease;
 }
 
 .btn-info:hover {
   background: #ffd27f;
+  border: 1px solid #ffd27f;
+  color: #000;
+  transform: scale(1.1);
 }
 
 .item-card-inventario.equipado {
@@ -168,3 +191,39 @@
   margin: 10px 0;              /* separación arriba/abajo */
 }
 
+.inventario-header {
+  max-width: 1200px;
+  margin: 0 auto 20px auto; /* centrado y con espacio abajo */
+  text-align: left;
+}
+
+/* Barra de búsqueda */
+.inventario-search {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.inventario-search input {
+  padding: 6px 10px;
+  border: 2px solid #b341e0;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+}
+.inventario-search input:focus {
+  outline: none;
+  border-color: #b341e0;
+}
+
+.mensaje-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  border: 2px dashed #b341e0;
+  border-radius: 6px;
+  height: 160px; /* misma altura que las cards */
+}

@@ -7,52 +7,48 @@
 {% endblock %}
 
 {% block content %}
-<h2>¡Bienvenido a la Tienda, {{ usuario.nombre_publico or usuario.usuario }}!</h2>
-<p class="coins-info">
-  <i class="fa-solid fa-coins"></i>
-  Tienes <span class="coins-count">{{ usuario.coin_usuario }}</span> coins disponibles.
-</p>
-
-<!-- Barra de búsqueda -->
-<div class="tienda-search">
-  <input type="text" id="buscarItem" placeholder="Buscar ítem...">
+<div class="tienda-header">
+  <h2>¡Bienvenido a la Tienda, {{ usuario.nombre_publico or usuario.usuario }}!</h2>
+  <!-- Barra de búsqueda -->
+  <div class="tienda-search">
+    <input type="text" id="buscarItem" placeholder="Buscar ítem...">
+  </div>
 </div>
 
 <!-- Catálogo -->
 <h3>Catálogo</h3>
 <div class="tienda-grid" id="catalogoGrid">
   {% for item in items %}
-    <div class="item-card-tienda" title="{{ item.descripcion }}">
-      <button type="button" class="btn-info" onclick="abrirModalTienda('{{ item.id_item }}')">i</button>
+  <div class="item-card-tienda" title="{{ item.descripcion }}">
+    <button type="button" class="btn-info" onclick="abrirModalTienda('{{ item.id_item }}')">i</button>
+    <img src="{{ url_for('static', filename='images/items/' ~ item.imagen) }}" alt="{{ item.nombre }}">
+    <div class="item-titulo">{{ item.nombre }}</div>
+    <div class="item-precio">{{ item.precio }} coins</div>
+    <form action="{{ url_for('comprar_item', id_item=item.id_item) }}" method="post">
+      <input type="number" name="cantidad" value="1" min="1">
+      <button type="submit" class="btn-comprar">Comprar</button>
+    </form>
+  </div>
+  
+  <!-- Modal exclusivo catálogo -->
+  <div id="modal-tienda-{{ item.id_item }}" class="modal-tienda">
+    <div class="modal-content-tienda">
+      <span class="close-tienda" onclick="cerrarModalTienda('{{ item.id_item }}')">&times;</span>
+      <h3>{{ item.nombre }}</h3>
       <img src="{{ url_for('static', filename='images/items/' ~ item.imagen) }}" alt="{{ item.nombre }}">
-      <div class="item-titulo">{{ item.nombre }}</div>
-      <div class="item-precio">{{ item.precio }} coins</div>
+      <p>{{ item.descripcion }}</p>
+      <p><strong>Precio:</strong> {{ item.precio }} coins</p>
       <form action="{{ url_for('comprar_item', id_item=item.id_item) }}" method="post">
         <input type="number" name="cantidad" value="1" min="1">
         <button type="submit" class="btn-comprar">Comprar</button>
       </form>
     </div>
-
-    <!-- Modal exclusivo catálogo -->
-    <div id="modal-tienda-{{ item.id_item }}" class="modal-tienda">
-      <div class="modal-content-tienda">
-        <span class="close-tienda" onclick="cerrarModalTienda('{{ item.id_item }}')">&times;</span>
-        <h3>{{ item.nombre }}</h3>
-        <img src="{{ url_for('static', filename='images/items/' ~ item.imagen) }}" alt="{{ item.nombre }}">
-        <p>{{ item.descripcion }}</p>
-        <p><strong>Precio:</strong> {{ item.precio }} coins</p>
-        <form action="{{ url_for('comprar_item', id_item=item.id_item) }}" method="post">
-          <input type="number" name="cantidad" value="1" min="1">
-          <button type="submit" class="btn-comprar">Comprar</button>
-        </form>
-      </div>
-    </div>
+  </div>
   {% endfor %}
   <div class="item-card-tienda mensaje-vacio" id="mensajeNoResultados" style="display:none;">
     ⚠️ No se encontraron ítems
   </div>
 </div>
-
 <!-- Inventario para vender -->
 <h3>Tu Inventario</h3>
 <div class="tienda-grid">

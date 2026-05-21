@@ -1,3 +1,9 @@
+h3 {
+  display: block;
+  text-align: center;
+}
+
+
 /* Contenedor general de la tienda */
 .tienda-grid {
   display: grid;
@@ -6,6 +12,10 @@
   padding: 20px;
   border: 4px solid #5a3e1b;
   border-radius: 10px;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }
 
 /* Tarjeta de ítem */
@@ -13,11 +23,11 @@
   position: relative;
   width: 140px;
   height: 240px; /* altura fija para uniformidad */
-  background: #3b2a1a;
-  border: 2px solid #d4a373;
+  background: #fff;
+  border: 2px solid #b341e0;
   border-radius: 6px;
   text-align: center;
-  color: #f5f5dc;
+  color: #333;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -48,13 +58,15 @@
   -webkit-line-clamp: 3; /* máximo 3 líneas */
   -webkit-box-orient: vertical;
   margin-bottom: 8px;
+  color: #b341e0;
 }
 
 /* Precio */
 .item-precio {
   font-size: 13px;
-  color: #ffd27f;
+  color: #333;
   margin-bottom: 8px;
+  font-weight: bold;
 }
 
 /* Input de cantidad */
@@ -62,12 +74,27 @@
   width: 50px;          /* ancho compacto */
   padding: 4px;
   font-size: 13px;
-  border: 1px solid #d4a373;
+  border: 1px solid #b341e0;
   border-radius: 4px;
-  background: #2c1b0f;
-  color: #fff;
+  background: #fff;
+  color: #333;
   text-align: center;
   margin: 0 auto 6px auto; /* centrado y con espacio antes del botón */
+}
+.modal-content-tienda input[type="number"] {
+  width: 60px;              /* mismo tamaño compacto */
+  padding: 4px;
+  font-size: 13px;
+  border: 1px solid #b341e0; /* coherente con tu nueva paleta */
+  border-radius: 4px;
+  background: #fff;          /* fondo blanco como las cards */
+  color: #333;               /* texto oscuro */
+  text-align: center;
+  margin: 0 auto 8px auto;   /* centrado */
+}
+.modal-content-tienda input[type="number"]:focus {
+  outline: none;
+  border-color: #ffd27f;     /* dorado al foco */
 }
 .item-card-tienda input[type="number"]:focus {
   outline: none;
@@ -117,15 +144,15 @@
 }
 
 .modal-content-tienda {
-  background: #2c1b0f;
+  background: #fff;
   margin: 10% auto;
   padding: 20px;
-  border: 3px solid #d4a373;
+  border: 3px solid #b341e0;
   border-radius: 8px;
   width: 420px;
-  color: #f5f5dc;
+  color: #333;
   text-align: center;
-  box-shadow: 0 0 15px rgba(0,0,0,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 .modal-content-tienda img {
@@ -133,11 +160,20 @@
   margin-bottom: 10px;
 }
 
+.modal-content-tienda h3 {
+  color: #b341e0;
+  margin-bottom: 10px;
+}
+
+.modal-content-tienda p {
+  margin: 8px 0;
+}
+
 .close-tienda {
   float: right;
   font-size: 24px;
   cursor: pointer;
-  color: #ffd27f;
+  color: #333;
 }
 
 /* Barra de búsqueda */
@@ -147,14 +183,14 @@
 }
 .tienda-search input {
   padding: 6px 10px;
-  border: 2px solid #d4a373;
+  border: 2px solid #b341e0;
   border-radius: 6px;
-  background: #3b2a1a;
-  color: #fff;
+  background: #fff;
+  color: #333;
 }
 .tienda-search input:focus {
   outline: none;
-  border-color: #ffd27f;
+  border-color: #b341e0;
 }
 
 /* Paginación */
@@ -185,8 +221,8 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(255, 210, 127, 0.9); /* dorado suave */
-  border: 1px solid #d4a373;
+  background: #922bbd;
+  border: 1px solid #8e44ad;
   border-radius: 50%;
   width: 22px;
   height: 22px;
@@ -194,37 +230,15 @@
   line-height: 20px;
   text-align: center;
   cursor: pointer;
-  color: #3b2a1a;
+  color: #fff;
   transition: transform 0.15s ease, background 0.2s ease;
 }
 
 .btn-info:hover {
   background: #ffd27f;
+  border: 1px solid #ffd27f;
+  color: #000;
   transform: scale(1.1);
-}
-
-/* Info de coins */
-.coins-info {
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background: rgba(91, 63, 28, 0.8); /* fondo pergamino oscuro */
-  border: 2px solid #d4a373;
-  border-radius: 8px;
-  padding: 8px 12px;
-  display: inline-block;
-  margin-bottom: 15px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.6);
-}
-
-.coins-info i {
-  color: #ffd700; /* ícono dorado */
-  margin-right: 6px;
-}
-
-.coins-count {
-  color: #ffd700; /* número resaltado en dorado */
-  font-size: 18px;
 }
 
 .mensaje-vacio {
@@ -233,9 +247,16 @@
   justify-content: center;
   font-weight: bold;
   font-size: 14px;
-  color: #ffd27f;
-  background: #3b2a1a;
-  border: 2px dashed #d4a373;
+  color: #333;
+  background: #fff;
+  border: 2px dashed #b341e0;
   border-radius: 6px;
   height: 240px; /* misma altura que las cards */
+}
+
+/* Encabezado y bienvenida */
+.tienda-header {
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+  text-align: left;
 }

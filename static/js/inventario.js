@@ -41,3 +41,24 @@ window.onclick = function(event) {
     }
   });
 };
+
+// Filtro de búsqueda
+document.getElementById("buscarItem").addEventListener("keyup", function() {
+  let filtro = this.value.toLowerCase();
+  const cards = document.querySelectorAll("#inventarioGrid .item-card-inventario:not(.mensaje-vacio)");
+  let coincidencias = 0;
+
+  cards.forEach(card => {
+    let texto = card.innerText.toLowerCase();
+    if (texto.includes(filtro)) {
+      card.style.display = "flex"; // mostrar coincidencia
+      coincidencias++;
+    } else {
+      card.style.display = "none"; // ocultar no coincidencia
+    }
+  });
+
+  // Mostrar/ocultar el mensaje vacío
+  const mensaje = document.getElementById("mensajeNoResultados");
+  mensaje.style.display = coincidencias === 0 ? "flex" : "none";
+});
