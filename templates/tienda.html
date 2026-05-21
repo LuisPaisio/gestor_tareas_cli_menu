@@ -50,7 +50,7 @@
   </div>
 </div>
 <!-- Inventario para vender -->
-<h3>Tu Inventario</h3>
+<h3>Inventario</h3>
 <div class="tienda-grid">
   {% for id_item, datos in inventario.items() %}
     {% set item = tienda.obtener_item(id_item|int) %}

@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="inventario-header">
-  <h2>Inventario</h2>
+  <h2>¡Bienvenido a tu Inventario, {{ usuario.nombre_publico or usuario.usuario }}!</h2>
   <!-- Barra de búsqueda -->
   <div class="inventario-search">
     <input type="text" id="buscarItem" placeholder="Buscar ítem...">

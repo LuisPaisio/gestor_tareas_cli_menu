@@ -194,7 +194,7 @@
 .inventario-header {
   max-width: 1200px;
   margin: 0 auto 20px auto; /* centrado y con espacio abajo */
-  text-align: left;
+  text-align: center;
 }
 
 /* Barra de búsqueda */
