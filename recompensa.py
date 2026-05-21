@@ -77,6 +77,22 @@ class Recompensa:
             inventario.agregar_item(self.valor, 1)
             usuario.gestor_inventario.actualizar_inventario(inventario)
             return {"base": 1, "bonus": 0, "total": self.valor}
+        
+        elif self.tipo == "aleatorio":
+            item_obj = usuario.gestor_inventario.buscar_item_por_nombre(self.valor)
+            inventario = usuario.gestor_inventario.inventario_usuario()
+            inventario.agregar_item(item_obj, 1)
+            usuario.gestor_inventario.actualizar_inventario(inventario)
 
+            print (self.nombre)
+
+            return {
+                "tipo": "aleatorio",
+                "base": 1,
+                "bonus": 0,
+                "total": 1,
+                "nombre_item": self.nombre  # 👈 usar el nombre de la recompensa
+            }
+            
         else:
             raise ValueError(f"Tipo de recompensa no válido: {self.tipo}")

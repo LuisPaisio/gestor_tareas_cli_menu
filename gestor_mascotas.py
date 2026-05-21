@@ -1,11 +1,7 @@
 import os
 import json
 from mascotas import Mascota
-from colorama import Fore, Style
 from utils_rutas import ruta_json
-
-# ARCHIVO_CATALOGO = os.path.join("json", "mascotas.json")              # catálogo global
-# ARCHIVO_INVENTARIOS = os.path.join("json", "inventarios_mascotas.json")  # inventarios por usuario
 
 ARCHIVO_CATALOGO = ruta_json("mascotas.json")              # catálogo global
 ARCHIVO_INVENTARIOS = ruta_json("inventarios_mascotas.json")  # inventarios por usuario
@@ -26,7 +22,6 @@ class GestorMascotas:
                     if usuario_data:
                         return [Mascota.from_dict(m) for m in usuario_data["mascotas"].values()]
             except json.JSONDecodeError:
-                print(Fore.RED + "⚠️ El archivo de inventarios de mascotas está corrupto. Se iniciará vacío." + Style.RESET_ALL)
                 return []
         return []
 
@@ -55,16 +50,14 @@ class GestorMascotas:
     def agregar_mascota(self, id_mascota, nombre=None):
         """Agrega una nueva mascota al usuario desde el catálogo."""
         if not os.path.exists(ARCHIVO_CATALOGO):
-            print(Fore.RED + "⚠️ No existe el catálogo de mascotas." + Style.RESET_ALL)
-            return
+            return False, "No existe el catálogo de mascotas."
 
         with open(ARCHIVO_CATALOGO, "r", encoding="utf-8") as archivo:
             catalogo = json.load(archivo)
 
         mascota_base = next((m for m in catalogo if m["id_mascota"] == id_mascota), None)
         if not mascota_base:
-            print(Fore.RED + "⚠️ Mascota no encontrada en catálogo." + Style.RESET_ALL)
-            return
+            return False, "Mascota no encontrada en catálogo."
 
         nueva = Mascota(
             id_mascota=mascota_base["id_mascota"],
@@ -77,55 +70,46 @@ class GestorMascotas:
         )
         self.mascotas.append(nueva)
         self.guardar_inventario()
-        print(Fore.CYAN + f"🐾 Nueva mascota añadida: {nueva.nombre}" + Style.RESET_ALL)
+        return True, f"🐾 Nueva mascota añadida: {nueva.nombre}"
 
-    def mostrar_mascotas(self, enumerado=False):
-        """Muestra todas las mascotas del usuario, con opción de enumeración.
-        Devuelve True si hay mascotas, False si no."""
-        if not self.mascotas:
-            print(Fore.YELLOW + "No tienes mascotas aún." + Style.RESET_ALL)
-            self.enumeracion_mascotas = []
-            return False   # 🔹 importante: devuelve False si no hay mascotas
-
-        print(Fore.YELLOW + "\n=== Tus Mascotas ===" + Style.RESET_ALL)
-        self.enumeracion_mascotas = []
-
-        for idx, m in enumerate(self.mascotas, start=1):
-            if enumerado:
-                print(f"{idx}. {m.nombre} | Nivel {m.nivel} | Estado: {m.estado} | Especial: {m.especial}")
-                self.enumeracion_mascotas.append(m.id_mascota)
-            else:
-                print(f"{m.id_mascota} - {m.nombre} | Nivel {m.nivel} | Estado: {m.estado} | Especial: {m.especial}")
-
-        return True   # 🔹 devuelve True si sí hay mascotas
-
+    def listar_mascotas_web(self):
+        """Devuelve las mascotas del usuario en formato lista de dicts para el template web."""
+        return [
+            {
+                "id_mascota": m.id_mascota,
+                "nombre": m.nombre,
+                "descripcion": m.descripcion,
+                "imagen": getattr(m, "imagen", "default.png"),
+                "nivel": m.nivel,
+                "estado": m.estado,
+                "tipo": "huevo" if m.estado == "huevo" else "mascota",
+                "especial": m.especial
+            }
+            for m in self.mascotas
+        ]
 
     def alimentar_mascota(self, id_mascota):
         mascota = next((m for m in self.mascotas if m.id_mascota == id_mascota), None)
         if not mascota:
-            print(Fore.RED + "⚠️ Mascota no encontrada." + Style.RESET_ALL)
-            return
+            return False, "Mascota no encontrada."
 
         if not self.gestor_inventario.tiene_item("alimento_basico"):
-            print(Fore.RED + "⚠️ No tienes alimento para tus mascotas." + Style.RESET_ALL)
-            return
+            return False, "No tienes alimento para tus mascotas."
 
         self.gestor_inventario.consumir_item("alimento_basico", 1)
-
         mascota.alimentar()
         self.guardar_inventario()
+        return True, f"{mascota.nombre} ha sido alimentada."
 
     def eclosionar_mascota(self, id_mascota, nombre):
         mascota = next((m for m in self.mascotas if m.id_mascota == id_mascota and m.estado == "huevo"), None)
         if not mascota:
-            print(Fore.RED + "⚠️ Huevo no encontrado o ya eclosionado." + Style.RESET_ALL)
-            return
+            return False, "Huevo no encontrado o ya eclosionado."
 
         if not self.gestor_inventario.tiene_item("pocion_eclosion"):
-            print(Fore.RED + "⚠️ Necesitas una poción de eclosión para abrir este huevo." + Style.RESET_ALL)
-            return
+            return False, "Necesitas una poción de eclosión para abrir este huevo."
 
         self.gestor_inventario.consumir_item("pocion_eclosion", 1)
-
         mascota.eclosionar(nuevo_nombre=nombre)
         self.guardar_inventario()
+        return True, f"🐣 El huevo ha eclosionado y nació {mascota.nombre}."

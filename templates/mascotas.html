@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Mascotas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mascotas.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="mascotas-header">
+  <h2>Establo de Mascotas</h2>
+</div>
+
+<div class="mascotas-grid">
+  {% if mascotas %}
+    {% for mascota in mascotas %}
+      <div class="mascota-card" title="{{ mascota.descripcion }}">
+        <button class="btn-info" onclick="abrirModalMascota('{{ mascota.id_mascota }}')">i</button>
+        <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
+        <div class="mascota-titulo">{{ mascota.nombre }}</div>
+        <span class="mascota-nivel">Nivel {{ mascota.nivel }}</span>
+        <span class="mascota-estado">Estado: {{ mascota.estado }}</span>
+
+        <!-- Botón alimentar -->
+        <div class="card-actions">
+          {% if tiene_alimento %}
+            <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+              <button type="submit" class="btn-alimentar">Alimentar</button>
+            </form>
+          {% else %}
+            <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Modal exclusivo mascota -->
+      <div id="modal-mascota-{{ mascota.id_mascota }}" class="modal-mascota">
+        <div class="modal-content-mascota">
+          <span class="close-mascota" onclick="cerrarModalMascota('{{ mascota.id_mascota }}')">&times;</span>
+          <h3>{{ mascota.nombre }}</h3>
+          <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
+          <p>{{ mascota.descripcion }}</p>
+          <p><strong>Nivel:</strong> {{ mascota.nivel }}</p>
+          <p><strong>Estado:</strong> {{ mascota.estado }}</p>
+          <p><strong>Especial:</strong> {{ "Sí" if mascota.especial else "No" }}</p>
+
+          <!-- Botón alimentar dentro del modal -->
+          {% if tiene_alimento %}
+            <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+              <button type="submit" class="btn-alimentar">Alimentar</button>
+            </form>
+          {% else %}
+            <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="mensaje-vacio">
+      ⚠️ No tienes mascotas aún
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

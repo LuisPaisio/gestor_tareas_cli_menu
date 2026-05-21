@@ -1,5 +1,3 @@
-from colorama import Fore, Style
-
 class Mascota:
     def __init__(self, id_mascota, nombre, id_usuario,
                 nivel=1, xp=0, estado="huevo",
@@ -53,12 +51,13 @@ class Mascota:
 
     def alimentar(self):
         if self.estado == "huevo":
-            print(Fore.YELLOW + f"⚠️ {self.nombre} aún es un huevo, primero debe eclosionar." + Style.RESET_ALL)
-            return
+            return False, f"{self.nombre} aún es un huevo, primero debe eclosionar."
 
         # XP otorgada según catálogo
         self.xp += self.xp_por_comida
         umbral = 30 * self.nivel
+
+        mensaje = f"{self.nombre} ha sido alimentado. XP actual: {self.xp}/{umbral}"
 
         if self.xp >= umbral:
             self.nivel += 1
@@ -67,21 +66,23 @@ class Mascota:
             # evolución automática según progresión
             if self.nivel >= 3 and self.estado == "bebé":
                 self.estado = self.progresion.get("bebé", "adulto")
-                print(Fore.GREEN + f"✨ {self.nombre} evolucionó a {self.estado}!" + Style.RESET_ALL)
+                mensaje = f"✨ {self.nombre} evolucionó a {self.estado}!"
             elif self.nivel >= 5 and self.estado == "adulto":
                 self.estado = self.progresion.get("adulto", "montura")
-                print(Fore.GREEN + f"✨ {self.nombre} evolucionó a {self.estado}!" + Style.RESET_ALL)
+                mensaje = f"✨ {self.nombre} evolucionó a {self.estado}!"
             else:
-                print(Fore.GREEN + f"🎉 {self.nombre} subió a nivel {self.nivel} → Estado: {self.estado}" + Style.RESET_ALL)
+                mensaje = f"🎉 {self.nombre} subió a nivel {self.nivel} → Estado: {self.estado}"
+
+        return True, mensaje
 
     def eclosionar(self, nuevo_nombre=None):
         """Convierte un huevo en mascota bebé."""
         if self.estado != "huevo":
-            print(Fore.YELLOW + f"⚠️ {self.nombre} ya ha eclosionado." + Style.RESET_ALL)
-            return
+            return False, f"{self.nombre} ya ha eclosionado."
+
         if nuevo_nombre:
             self.nombre = nuevo_nombre
         self.estado = self.progresion.get("huevo", "bebé")
         self.nivel = 1
         self.xp = 0
-        print(Fore.GREEN + f"🥚 El huevo ha eclosionado en {self.nombre}!" + Style.RESET_ALL)
+        return True, f"🥚 El huevo ha eclosionado en {self.nombre}!"

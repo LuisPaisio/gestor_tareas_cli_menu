@@ -10,6 +10,7 @@ from inventario import Inventario
 import re
 from gestor_inventario import GestorInventario
 from tienda import Tienda
+from gestor_mascotas import GestorMascotas
 
 app = Flask(__name__)
 app.secret_key = "clave-secreta"  # necesaria para usar session
@@ -321,12 +322,80 @@ def usar_item(id_item):
 
     return redirect(url_for("ver_inventario"))
 
+@app.route("/inventario/eclosionar/<int:id_item>", methods=["POST"])
+def eclosionar_huevo(id_item):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    nombre = request.form.get("nombre")
+    id_usuario = session["usuario"]["id_usuario"]
+    usuario_obj = gestor.get_usuario_por_id(id_usuario)
+
+    gestor_inv = GestorInventario(usuario_obj)
+    gestor_mascotas = GestorMascotas(usuario_obj.id_usuario, gestor_inv)
+
+    # Verificar que hay huevo y poción
+    if not gestor_inv.tiene_item("Huevo Básico"):
+        flash("No tienes huevos disponibles.", "error")
+        return redirect(url_for("ver_inventario"))
+
+    if not gestor_inv.tiene_item("Poción de Eclosión"):
+        flash("Necesitas una poción de eclosión.", "error")
+        return redirect(url_for("ver_inventario"))
+
+    # Consumir huevo y poción
+    gestor_inv.consumir_item("Huevo Básico", 1)
+    gestor_inv.consumir_item("Poción de Eclosión", 1)
+
+    # Crear mascota en inventarios_mascotas.json
+    success, mensaje = gestor_mascotas.agregar_mascota(id_item, nombre)
+    flash(mensaje, "success" if success else "error")
+
+    return redirect(url_for("ver_inventario"))
+
+
 @app.route("/mascotas")
 def menu_mascotas():
-    usuario = session.get("usuario")
-    if not usuario:
-        return redirect(url_for("home"))
-    return render_template("mascotas.html", usuario=usuario)
+    if "usuario" not in session:
+        flash("Debes iniciar sesión para ver tus mascotas.", "error")
+        return redirect(url_for("login"))
+
+    id_usuario = session["usuario"]["id_usuario"]
+    usuario_obj = gestor.get_usuario_por_id(id_usuario)
+
+    gestor_inv = GestorInventario(usuario_obj)
+    gestor_mascotas = GestorMascotas(usuario_obj.id_usuario, gestor_inv)
+    mascotas = gestor_mascotas.listar_mascotas_web()
+
+    # 🔹 Flags de inventario (usar nombres exactos del catálogo)
+    tiene_alimento = gestor_inv.tiene_item("Alimento Básico")
+    tiene_pocion_eclosion = gestor_inv.tiene_item("Poción de Eclosión")
+
+    return render_template(
+        "mascotas.html",
+        mascotas=mascotas,
+        tiene_alimento=tiene_alimento,
+        tiene_pocion_eclosion=tiene_pocion_eclosion,
+        **contexto_comun(usuario_obj)
+    )
+
+@app.route("/mascotas/alimentar/<int:id_mascota>", methods=["POST"])
+def alimentar_mascota(id_mascota):
+    if "usuario" not in session:
+        flash("Debes iniciar sesión.", "error")
+        return redirect(url_for("login"))
+
+    id_usuario = session["usuario"]["id_usuario"]
+    usuario_obj = gestor.get_usuario_por_id(id_usuario)
+
+    gestor_inv = GestorInventario(usuario_obj)
+    gestor_mascotas = GestorMascotas(usuario_obj.id_usuario, gestor_inv)
+
+    success, mensaje = gestor_mascotas.alimentar_mascota(id_mascota)
+    flash(mensaje, "success" if success else "error")
+
+    return redirect(url_for("menu_mascotas"))
 
 @app.route("/tienda")
 def mostrar_tienda():
@@ -585,7 +654,15 @@ def marcar_tarea(tarea_id, accion):
 
         # recompensas
         for r in resultado.get("recompensas", []):
-            flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r['tipo'])
+            if r["tipo"] == "aleatorio":
+                # usar el campo 'nombre' que ya devuelve aplicar_recompensas
+                flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
+            elif r["tipo"] == "item":
+                # idem: usar 'nombre' en lugar de acceder a valor.nombre
+                flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
+            else:
+                # xp, coins, mana, vida → usan 'resultado'
+                flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r["tipo"])
 
         # penalizaciones
         for p in resultado.get("penalizaciones", []):
@@ -698,9 +775,8 @@ def procesar_vencidas():
     total_recompensas = {"xp": 0, "coins": 0, "mana": 0, "vida": 0}
     total_penalizaciones = {"vida": 0, "xp": 0, "coins": 0}
 
-    # 🔹 Dos formatos distintos según tipo de tarea
-    hoy_diaria = datetime.date.today().strftime("%d-%m-%Y")  # para diarias
-    hoy_pendiente = datetime.date.today() # para pendientes
+    hoy_diaria = datetime.date.today().strftime("%d-%m-%Y")
+    hoy_pendiente = datetime.date.today()
 
     # Procesar diarias vencidas
     for d in diarias_vencidas:
@@ -711,9 +787,13 @@ def procesar_vencidas():
                 retroactivo=True,
                 por_medianoche=False
             )
-            for r in resultado["recompensas"]:
-                tipo = r["tipo"]
-                total_recompensas[tipo] += r["resultado"]["total"]
+            for r in resultado.get("recompensas", []):
+                if r["tipo"] in total_recompensas:
+                    total_recompensas[r["tipo"]] += r["resultado"]["total"]
+                elif r["tipo"] in ["aleatorio", "item"]:
+                    flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
+                else:
+                    flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r["tipo"])
         else:
             resultado = gestor_tareas.marcar_tarea_web(
                 tarea_id=d.id,
@@ -738,17 +818,18 @@ def procesar_vencidas():
                 retroactivo=True,
                 por_medianoche=False
             )
-            for r in resultado["recompensas"]:
-                tipo = r["tipo"]
-                total_recompensas[tipo] += r["resultado"]["total"]
+            for r in resultado.get("recompensas", []):
+                if r["tipo"] in total_recompensas:
+                    total_recompensas[r["tipo"]] += r["resultado"]["total"]
+                elif r["tipo"] in ["aleatorio", "item"]:
+                    flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
+                else:
+                    flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r["tipo"])
 
             p.completada = True
-
-            # 👇 Comparar fechas en formato ISO
             fecha_venc = datetime.date.fromisoformat(p.fecha_vencimiento)
             if fecha_venc <= hoy_pendiente:
                 p.fecha_vencimiento = hoy_pendiente.strftime("%Y-%m-%d")
-
         else:
             resultado = gestor_tareas.marcar_tarea_web(
                 tarea_id=p.id,
@@ -785,7 +866,7 @@ def procesar_vencidas():
         )
 
     session["mostrar_modal"] = False
-    session["ultimo_procesado"] = hoy_diaria  # mantener coherencia con diarias
+    session["ultimo_procesado"] = hoy_diaria
 
     gestor.actualizar_usuario(usuario_obj)
     return ("", 204)

@@ -472,6 +472,14 @@
         "precio": 50,
         "tipo": "consumible_mascota",
         "efecto": { "accion": "alimentar", "xp": "default" }
+    },
+    {
+        "id_item": 54,
+        "nombre": "Huevo Básico",
+        "descripcion": "Un huevo misterioso que puede eclosionar en una mascota.",
+        "precio": 150,
+        "tipo": "huevo",
+        "efecto": { "accion": "eclosionar" }
     }
 ]
 

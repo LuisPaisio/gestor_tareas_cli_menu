@@ -276,6 +276,11 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
+                
+                # Pedir drops extra al gestor de recompensa (Estos son drops aleatorios de huevos, posiones de eclosión y/o comida)
+                drops_extra = self.gestor_recompensas.generar_recompensas_extra()
+                recompensas.extend(drops_extra)
+                
                 recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
                     self.usuario, recompensas, es_penalizacion=False
                 )
@@ -307,6 +312,11 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
+                
+                # Pedir drops extra al gestor de recompensa (Estos son drops aleatorios de huevos, posiones de eclosión y/o comida)
+                drops_extra = self.gestor_recompensas.generar_recompensas_extra()
+                recompensas.extend(drops_extra)
+                
                 recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
                     self.usuario, recompensas, es_penalizacion=False
                 )
@@ -337,6 +347,11 @@ class GestorTareas:
                 recompensas, error_msg = tarea.completar(self.usuario, retroactivo=retroactivo)
                 if error_msg:
                     return {"error": error_msg}
+                
+                # Pedir drops extra al gestor de recompensa (Estos son drops aleatorios de huevos, posiones de eclosión y/o comida)
+                drops_extra = self.gestor_recompensas.generar_recompensas_extra()
+                recompensas.extend(drops_extra)
+                
                 recompensas, murio = self.gestor_recompensas.aplicar_recompensas(
                     self.usuario, recompensas, es_penalizacion=False
                 )

@@ -1,5 +1,6 @@
 import os
 import json
+import random
 from recompensa import Recompensa
 from utils_rutas import ruta_json
 
@@ -60,3 +61,13 @@ class GestorRecompensas:
         self.guardar_historial()
         return resultados, murio
 
+    def generar_recompensas_extra(self):
+            """Genera recompensas aleatorias (drops de ítems)."""
+            drops = []
+            if random.randint(1, 100) <= 10:  # 10% chance huevo
+                drops.append(Recompensa(999, "Huevo Básico", "aleatorio", "Huevo Básico"))
+            if random.randint(1, 100) <= 5:   # 5% chance poción
+                drops.append(Recompensa(1000, "Poción de Eclosión", "aleatorio", "Poción de Eclosión"))
+            if random.randint(1, 100) <= 15:  # 15% chance alimento
+                drops.append(Recompensa(1001, "Alimento Básico", "aleatorio", "Alimento Básico"))
+            return drops

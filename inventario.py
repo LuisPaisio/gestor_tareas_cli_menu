@@ -12,20 +12,41 @@ class Inventario:
 
     # --- CRUD ---
     def agregar_item(self, item, cantidad=1):
-        id_item = str(item.id_item)
+        # Detectar si es dict o un objeto con atributos
+        if isinstance(item, dict):
+            id_item = str(item["id_item"])
+            nombre = item["nombre"]
+            descripcion = item.get("descripcion", "")
+            tipo = item.get("tipo", None)
+            slot = item.get("slot", None)
+            efecto = item.get("efecto", {})
+            efecto_temporal = item.get("efecto_temporal", {})
+            efecto_turnos = item.get("efecto_turnos", 0)
+            imagen = item.get("imagen", "default.png")
+        else:
+            id_item = str(item.id_item)
+            nombre = item.nombre
+            descripcion = item.descripcion
+            tipo = getattr(item, "tipo", None)
+            slot = getattr(item, "slot", None)
+            efecto = getattr(item, "efecto", {})
+            efecto_temporal = getattr(item, "efecto_temporal", {})
+            efecto_turnos = getattr(item, "efecto_turnos", 0)
+            imagen = getattr(item, "imagen", "default.png")
+
         if id_item in self.items:
             self.items[id_item]["cantidad"] += cantidad
         else:
             self.items[id_item] = {
-                "nombre": item.nombre,
-                "descripcion": item.descripcion,
+                "nombre": nombre,
+                "descripcion": descripcion,
                 "cantidad": cantidad,
-                "tipo": getattr(item, "tipo", None),
-                "slot": getattr(item, "slot", None),
-                "efecto": getattr(item, "efecto", {}),
-                "efecto_temporal": getattr(item, "efecto_temporal", {}),   # nuevo
-                "efecto_turnos": getattr(item, "efecto_turnos", 0),        # nuevo
-                "imagen": getattr(item, "imagen", "default.png")
+                "tipo": tipo,
+                "slot": slot,
+                "efecto": efecto,
+                "efecto_temporal": efecto_temporal,
+                "efecto_turnos": efecto_turnos,
+                "imagen": imagen
             }
 
     def quitar_item(self, id_item, cantidad=1):

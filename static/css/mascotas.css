@@ -1,0 +1,167 @@
+.mascotas-header {
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+}
+
+.mascotas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mascota-card {
+  background: #fff;
+  border: 2px solid #b341e0;
+  border-radius: 8px;
+  text-align: center;
+  padding: 12px;
+  color: #333;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mascota-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.mascota-card img {
+  max-width: 100px;
+  margin: 0 auto 8px auto;
+}
+
+.mascota-titulo {
+  font-weight: bold;
+  color: #b341e0;
+  margin-bottom: 4px;
+}
+
+.mascota-nivel,
+.mascota-estado {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn-alimentar,
+.btn-eclosionar {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-alimentar {
+  background: #4caf50;
+  color: #fff;
+}
+.btn-alimentar:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.btn-eclosionar {
+  background: #ff9800;
+  color: #fff;
+}
+.btn-eclosionar:hover {
+  background: #e68900;
+  transform: scale(1.05);
+}
+
+.input-nombre {
+  width: 100%;
+  padding: 4px;
+  font-size: 13px;
+  border: 1px solid #b341e0;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.input-nombre:focus {
+  outline: none;
+  border-color: #ffd27f;
+}
+
+/* Modal */
+.modal-mascota {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+}
+
+.modal-content-mascota {
+  background: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 3px solid #b341e0;
+  border-radius: 8px;
+  width: 420px;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.modal-content-mascota img {
+  max-width: 120px;
+  margin-bottom: 10px;
+}
+
+.close-mascota {
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffd27f;
+}
+
+.mensaje-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  border: 2px dashed #b341e0;
+  border-radius: 6px;
+  height: 240px;
+  text-align: center;
+}
+
+/* Botón deshabilitado */
+.btn-disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* Mensaje informativo dentro de la card */
+.mensaje-info {
+  font-size: 12px;
+  color: #b341e0;
+  font-style: italic;
+  margin-top: 4px;
+}
+

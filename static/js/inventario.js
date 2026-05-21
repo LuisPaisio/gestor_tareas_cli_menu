@@ -1,20 +1,31 @@
 function accionRapidaInventario(id_item, tipo, slot) {
     let url = "";
+
     if (tipo === "equipable") {
+        // Equipar o desequipar
         if (equipado[slot] == id_item) {
             url = `/inventario/desequipar/${slot}`;
         } else {
             url = `/inventario/equipar/${id_item}`;
         }
-    } else if (tipo === "consumible" || tipo === "consumible_vip") {
+    } 
+    else if (tipo === "consumible" || tipo === "consumible_vip") {
+        // Consumibles generales (vida, maná, XP) sí se usan directo
         url = `/inventario/usar/${id_item}`;
+    } 
+    else if (tipo === "consumible_mascota" || tipo === "huevo") {
+        // Alimento, poción de eclosión y huevos NO se usan con doble click
+        // Se gestionan desde el establo o con botón especial en inventario
+        return; // no hace nada en acción rápida
     }
 
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = url;
-    document.body.appendChild(form);
-    form.submit();
+    if (url) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = url;
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 
 // Abrir modal de inventario
