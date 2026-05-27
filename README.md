@@ -154,6 +154,18 @@ gestor_tareas_cli_menu/
 
 ---
 
+## Configuración inicial
+
+1. Copiar `.env.example` a `.env` y ajustar valores:
+   ```bash
+   cp .env.example .env
+   ```
+2. El archivo `.env` **no se sube a GitHub** (está en `.gitignore`). Contiene:
+   - `SECRET_KEY`: clave para firmar sesiones (cambiar por una segura en producción)
+   - `FLASK_ENV`: `development` o `production`
+
+---
+
 ## Instalación y uso
 
 ### CLI (legacy)
@@ -164,10 +176,13 @@ python menu_login.py
 
 ### Web (Flask)
 ```bash
-pip install flask werkzeug
+pip install flask werkzeug python-dotenv
 python app.py
 # Abrir http://127.0.0.1:5000
 ```
+
+> **Datos sensibles**: los archivos JSON con datos reales de usuarios (`usuarios.json`, `tareas.json`, etc.) están en `.gitignore` y no se suben a GitHub.  
+> En `json/` hay archivos `*_ejemplo.json` con datos ficticios para que quienes clonen el repo vean la estructura esperada de cada módulo: `usuarios_ejemplo.json`, `tareas_ejemplo.json`, `inventarios_ejemplo.json`, `clases_ejemplo.json`, `items_ejemplo.json` y `mascotas_ejemplo.json`.
 
 ---
 

@@ -1,0 +1,42 @@
+[
+    {
+        "id_usuario": 999,
+        "usuario": "demo",
+        "contraseña": "<hash_de_ejemplo>",
+        "xp_usuario": 150,
+        "coin_usuario": 500,
+        "vida_usuario": 50,
+        "nivel_usuario": 5,
+        "contador_100": 0,
+        "descripcion": "Usuario de demostración",
+        "nombre_publico": "JugadorDemo",
+        "foto_perfil": "",
+        "slots": {
+            "manoizquierda": null,
+            "manoderecha": null,
+            "cabeza": null,
+            "pecho": null,
+            "pies": null,
+            "escudo": null
+        },
+        "rol": "user",
+        "ventajas_vip": null,
+        "fuerza": 0,
+        "defensa": 0,
+        "velocidad": 0,
+        "ultima_fecha_bonus": null,
+        "fecha_compra_vip": null,
+        "contador_vip": 0,
+        "tags": [],
+        "mana_usuario": 0,
+        "fecha_expiracion_vip": null,
+        "clase_nombre": null,
+        "cooldown_equipamiento": null,
+        "correo_electronico": "demo@example.com",
+        "defensa_temporal": 0,
+        "velocidad_temporal": 0,
+        "turnos_defensa_temporal": 0,
+        "turnos_velocidad_temporal": 0,
+        "foto_personaje": "/static/images/masculino.png"
+    }
+]

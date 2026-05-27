@@ -1,0 +1,38 @@
+[
+    {
+        "id_mascota": 1,
+        "nombre": "Michi",
+        "descripcion": "Un gato curioso que acompaña tus aventuras",
+        "especial": false,
+        "progresion": {
+            "huevo": "bebé",
+            "bebé": "adulto",
+            "adulto": "montura"
+        },
+        "xp_por_comida": 12
+    },
+    {
+        "id_mascota": 6,
+        "nombre": "Caballito",
+        "descripcion": "Un pequeño caballo que sueña con ser montura",
+        "especial": false,
+        "progresion": {
+            "huevo": "bebé",
+            "bebé": "adulto",
+            "adulto": "montura"
+        },
+        "xp_por_comida": 9
+    },
+    {
+        "id_mascota": 52,
+        "nombre": "Fénix",
+        "descripcion": "Ave mítica que renace de sus cenizas",
+        "especial": true,
+        "progresion": {
+            "huevo": "bebé",
+            "bebé": "adulto",
+            "adulto": "montura"
+        },
+        "xp_por_comida": 7
+    }
+]

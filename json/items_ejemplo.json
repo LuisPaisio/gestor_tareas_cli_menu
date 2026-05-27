@@ -1,0 +1,46 @@
+[
+    {
+        "id_item": 1,
+        "nombre": "Poción de vida pequeña",
+        "descripcion": "Recupera 20 de vida (+20 Vida → restaura salud).",
+        "precio": 50,
+        "tipo": "consumible",
+        "efecto": {"vida": 20}
+    },
+    {
+        "id_item": 6,
+        "nombre": "Espada básica",
+        "descripcion": "Aumenta el daño en combate (+5 Fuerza → más XP al completar tareas).",
+        "precio": 100,
+        "tipo": "equipable",
+        "slot": "manoderecha",
+        "efecto": {"fuerza": 5}
+    },
+    {
+        "id_item": 4,
+        "nombre": "Capa del viajero",
+        "descripcion": "Una capa ligera que protege del clima y otorga agilidad (+4 Velocidad → más Coins, +2 Defensa → reduces daño al fallar tareas).",
+        "precio": 350,
+        "tipo": "equipable",
+        "slot": "pecho",
+        "efecto": {"velocidad": 4, "defensa": 2}
+    },
+    {
+        "id_item": 5,
+        "nombre": "Poción de resistencia",
+        "descripcion": "Reduce el daño recibido por 10 turnos (+10 Defensa temporal → reduces daño al fallar tareas).",
+        "precio": 150,
+        "tipo": "consumible",
+        "efecto": {"defensa_temporal": 10},
+        "efecto_temporal": {"defensa": 10},
+        "efecto_turnos": 10
+    },
+    {
+        "id_item": 27,
+        "nombre": "Poción de Eclosión",
+        "descripcion": "Permite eclosionar un huevo de mascota. ¡Necesaria para que nazca tu compañero!",
+        "precio": 500,
+        "tipo": "consumible",
+        "efecto": {"especial": "eclosion"}
+    }
+]

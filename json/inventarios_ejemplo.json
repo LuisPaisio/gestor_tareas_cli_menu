@@ -1,0 +1,23 @@
+[
+    {
+        "id_usuario": 999,
+        "items": {
+            "1": {
+                "nombre": "Espada de entrenamiento",
+                "descripcion": "Una espada básica para prácticas (+2 Fuerza)",
+                "cantidad": 1,
+                "tipo": "equipable",
+                "slot": "manoderecha",
+                "efecto": {"fuerza": 2}
+            },
+            "2": {
+                "nombre": "Poción de vida",
+                "descripcion": "Recupera 10 puntos de vida",
+                "cantidad": 3,
+                "tipo": "usable",
+                "slot": null,
+                "efecto": {"vida": 10}
+            }
+        }
+    }
+]

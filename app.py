@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from gestor_usuarios import GestorUsuarios
 from gestor_tareas import GestorTareas
@@ -11,10 +12,15 @@ import re
 from gestor_inventario import GestorInventario
 from tienda import Tienda
 from gestor_mascotas import GestorMascotas
+from dotenv import load_dotenv
+import uuid
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "clave-secreta"  # necesaria para usar session
-app.permanent_session_lifetime = datetime.timedelta(days=30) # Duración de vida de sesión permanente
+app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24).hex())
+app.permanent_session_lifetime = datetime.timedelta(days=30)
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB límite para subidas
 gestor = GestorUsuarios()
 tienda = Tienda()
 
@@ -493,6 +499,19 @@ def perfil():
 
     return render_template("perfil.html", perfil=perfil_data)
 
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def foto_perfil_valida(url):
+    """Valida que una URL de foto sea http/https o ruta relativa."""
+    patrones_seguros = [
+        re.compile(r"^https?://"),
+        re.compile(r"^/static/"),
+    ]
+    return any(p.match(url) for p in patrones_seguros)
+
 @app.route("/editar_perfil", methods=["POST"])
 def editar_perfil():
     usuario_dict = session.get("usuario")
@@ -505,11 +524,43 @@ def editar_perfil():
     usuario_obj.nombre_publico = request.form.get("nombre_publico", usuario_obj.nombre_publico).strip() or usuario_obj.nombre_publico
     usuario_obj.descripcion = request.form.get("descripcion", usuario_obj.descripcion).strip() or usuario_obj.descripcion
 
-    # Foto de perfil → mantener la anterior si el campo está vacío
-    foto_input = request.form.get("foto_perfil", "").strip()
-    if foto_input:
-        usuario_obj.foto_perfil = foto_input
-    # si no hay input, no se toca el valor actual
+    # Foto de perfil → subida de archivo seguro
+    archivo = request.files.get("foto_perfil")
+    if archivo and archivo.filename:
+        ext = os.path.splitext(archivo.filename)[1].lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            flash("Formato de imagen no permitido. Usá JPG, PNG o WebP.", "error")
+            return redirect(url_for("dashboard"))
+
+        # Validar el contenido real del archivo (magic bytes)
+        archivo.seek(0)
+        cabecera = archivo.read(8)
+        archivo.seek(0)
+        es_imagen = (
+            cabecera.startswith(b"\xff\xd8\xff")          # JPEG
+            or cabecera.startswith(b"\x89PNG\r\n\x1a\n") # PNG
+            or cabecera.startswith(b"RIFF")               # WEBP (RIFF....WEBP)
+        )
+        if ext == ".webp" and not cabecera.startswith(b"RIFF"):
+            flash("El archivo no es un WebP válido.", "error")
+            return redirect(url_for("dashboard"))
+        if not es_imagen:
+            flash("El archivo no parece ser una imagen válida.", "error")
+            return redirect(url_for("dashboard"))
+
+        nombre_unico = f"{uuid.uuid4().hex}{ext}"
+        ruta_guardado = os.path.join(UPLOAD_FOLDER, nombre_unico)
+        archivo.save(ruta_guardado)
+        usuario_obj.foto_perfil = url_for("static", filename=f"uploads/{nombre_unico}")
+    else:
+        # Si no hay archivo, mantener la anterior o validar URL textual
+        foto_input = request.form.get("foto_perfil_url", "").strip()
+        if foto_input:
+            if foto_perfil_valida(foto_input):
+                usuario_obj.foto_perfil = foto_input
+            else:
+                flash("La URL de la foto no es válida o segura.", "error")
+                return redirect(url_for("dashboard"))
 
     # Clase si nivel >= 10
     if usuario_obj.nivel_usuario >= 10:
@@ -951,5 +1002,6 @@ def verificar_perfil_completo():
                 return redirect(url_for("setup_profile"))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    es_desarrollo = os.environ.get("FLASK_ENV") == "development"
+    app.run(debug=es_desarrollo, host="127.0.0.1")
 

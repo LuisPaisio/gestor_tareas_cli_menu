@@ -212,15 +212,18 @@
                     <!-- Vista de edición de perfil -->
                     <div id="vistaEditarPerfil" style="display:none;">
                     <h2>Editar Perfil</h2>
-                    <form action="{{ url_for('editar_perfil') }}" method="post">
+                    <form action="{{ url_for('editar_perfil') }}" method="post" enctype="multipart/form-data">
                         <label for="nombre_publico">Nombre Público:</label>
                         <input type="text" id="nombre_publico" name="nombre_publico" value="{{ usuario.nombre_publico }}">
 
                         <label for="descripcion">Sobre mí:</label>
                         <input type="text" id="descripcion" name="descripcion" value="{{ usuario.descripcion }}">
 
-                        <label for="foto_perfil">URL de la imagen:</label>
-                        <input type="text" id="foto_perfil" name="foto_perfil" value="{{ usuario.foto_perfil }}">
+                        <label for="foto_perfil">Foto de perfil (JPG, PNG o WebP, máx 2 MB):</label>
+                        <input type="file" id="foto_perfil" name="foto_perfil" accept=".jpg,.jpeg,.png,.webp">
+
+                        <label for="foto_perfil_url">O ingresá una URL:</label>
+                        <input type="text" id="foto_perfil_url" name="foto_perfil_url" value="{{ usuario.foto_perfil }}" placeholder="https://...">
 
                         {% if usuario.nivel_usuario >= 10 %}
                         <label for="clase">Clase:</label>

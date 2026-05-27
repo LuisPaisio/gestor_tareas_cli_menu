@@ -1,6 +1,18 @@
 # Entornos virtuales
 venv/
 .env/
+.env
+
+# Datos sensibles de usuarios (contienen contraseñas, emails, etc.)
+json/usuarios.json
+json/tareas.json
+json/inventarios.json
+json/inventario_mascotas.json
+json/notificaciones.json
+json/recompensas.json
+
+# Archivos subidos por usuarios
+static/uploads/
 
 # Archivos de cache de Python
 __pycache__/

@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "titulo": "Leer 20 minutos",
+        "tipo": 1,
+        "id_usuario": 999,
+        "dias_semana": ["todos"],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 10,
+        "coin_reward": 5,
+        "vida_restar": 2,
+        "habito": "+-",
+        "completada": false,
+        "fecha_creacion": "01-01-2026",
+        "dificultad": "facil"
+    },
+    {
+        "id": 2,
+        "titulo": "Hacer ejercicio",
+        "tipo": 2,
+        "id_usuario": 999,
+        "dias_semana": ["lunes", "miercoles", "viernes"],
+        "fecha_vencimiento": "Sin fecha",
+        "xp_reward": 20,
+        "coin_reward": 10,
+        "vida_restar": 3,
+        "habito": null,
+        "completada": false,
+        "fecha_creacion": "01-01-2026",
+        "dificultad": "intermedia"
+    },
+    {
+        "id": 3,
+        "titulo": "Terminar informe mensual",
+        "tipo": 3,
+        "id_usuario": 999,
+        "dias_semana": [],
+        "fecha_vencimiento": "15-01-2026",
+        "xp_reward": 30,
+        "coin_reward": 15,
+        "vida_restar": 5,
+        "habito": null,
+        "completada": false,
+        "fecha_creacion": "01-01-2026",
+        "dificultad": "dificil"
+    }
+]
