@@ -16,7 +16,7 @@
 </div>
 
 <!-- Catálogo -->
-<h3>Catálogo</h3>
+<h2>Catálogo</h2>
 <div class="tienda-grid" id="catalogoGrid">
   {% for item in items %}
   <div class="item-card-tienda" title="{{ item.descripcion }}">
@@ -50,7 +50,7 @@
   </div>
 </div>
 <!-- Inventario para vender -->
-<h3>Inventario</h3>
+<h2>Inventario</h2>
 <div class="tienda-grid">
   {% for id_item, datos in inventario.items() %}
     {% set item = tienda.obtener_item(id_item|int) %}
