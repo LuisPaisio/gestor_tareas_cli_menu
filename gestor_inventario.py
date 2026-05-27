@@ -92,14 +92,25 @@ class GestorInventario:
         raise ValueError(f"Ítem con nombre '{nombre}' no encontrado en catálogo.")
     
     def tiene_item(self, nombre_item: str, cantidad: int = 1) -> bool:
-        inventario_obj = self.inventario_usuario()   # objeto Inventario
-        inventario_dict = inventario_obj.items       # dict con ítems del usuario
+        inventario_obj = self.inventario_usuario()
+        inventario_dict = inventario_obj.items
 
         for item_id, datos in inventario_dict.items():
             nombre_norm = datos["nombre"].strip().lower()
             if nombre_norm == nombre_item.strip().lower():
                 return datos.get("cantidad", 0) >= cantidad
 
+        return False
+
+    def consumir_item(self, nombre_item: str, cantidad: int = 1) -> bool:
+        inventario_obj = self.inventario_usuario()
+        for item_id, datos in list(inventario_obj.items.items()):
+            if datos["nombre"].strip().lower() == nombre_item.strip().lower():
+                inventario_obj.quitar_item(item_id, cantidad)
+                self.actualizar_inventario(inventario_obj)
+                if hasattr(self, "_cache_inventario"):
+                    del self._cache_inventario
+                return True
         return False
 
 

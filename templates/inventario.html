@@ -44,6 +44,12 @@
             <button type="submit" class="btn-usar">Usar</button>
           </form>
         {% endif %}
+
+        {% if item.tipo == "huevo" %}
+          <form action="{{ url_for('eclosionar_huevo') }}" method="post">
+            <button type="submit" class="btn-eclosionar">Eclosionar</button>
+          </form>
+        {% endif %}
     </div>
 
     <!-- Modal exclusivo inventario -->
@@ -76,6 +82,12 @@
         {% if item.tipo in ["consumible", "consumible_vip"] %}
           <form action="{{ url_for('usar_item', id_item=item.id_item) }}" method="post">
             <button type="submit" class="btn-usar">Usar</button>
+          </form>
+        {% endif %}
+
+        {% if item.tipo == "huevo" %}
+          <form action="{{ url_for('eclosionar_huevo') }}" method="post">
+            <button type="submit" class="btn-eclosionar">Eclosionar</button>
           </form>
         {% endif %}
       </div>

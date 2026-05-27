@@ -13,10 +13,12 @@ function accionRapidaInventario(id_item, tipo, slot) {
         // Consumibles generales (vida, maná, XP) sí se usan directo
         url = `/inventario/usar/${id_item}`;
     } 
-    else if (tipo === "consumible_mascota" || tipo === "huevo") {
-        // Alimento, poción de eclosión y huevos NO se usan con doble click
-        // Se gestionan desde el establo o con botón especial en inventario
-        return; // no hace nada en acción rápida
+    else if (tipo === "consumible_mascota") {
+        // Alimento y poción de eclosión no se usan con doble click
+        return;
+    }
+    else if (tipo === "huevo") {
+        url = "/inventario/eclosionar";
     }
 
     if (url) {

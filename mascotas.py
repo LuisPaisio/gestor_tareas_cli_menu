@@ -71,7 +71,7 @@ class Mascota:
                 self.estado = self.progresion.get("adulto", "montura")
                 mensaje = f"✨ {self.nombre} evolucionó a {self.estado}!"
             else:
-                mensaje = f"🎉 {self.nombre} subió a nivel {self.nivel} → Estado: {self.estado}"
+                mensaje = f"🎉 {self.nombre} subió a nivel {self.nivel}"
 
         return True, mensaje
 

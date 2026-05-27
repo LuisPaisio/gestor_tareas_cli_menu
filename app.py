@@ -328,20 +328,18 @@ def usar_item(id_item):
 
     return redirect(url_for("ver_inventario"))
 
-@app.route("/inventario/eclosionar/<int:id_item>", methods=["POST"])
-def eclosionar_huevo(id_item):
+@app.route("/inventario/eclosionar", methods=["POST"])
+def eclosionar_huevo():
     if "usuario" not in session:
         flash("Debes iniciar sesión.", "error")
         return redirect(url_for("login"))
 
-    nombre = request.form.get("nombre")
     id_usuario = session["usuario"]["id_usuario"]
     usuario_obj = gestor.get_usuario_por_id(id_usuario)
 
     gestor_inv = GestorInventario(usuario_obj)
     gestor_mascotas = GestorMascotas(usuario_obj.id_usuario, gestor_inv)
 
-    # Verificar que hay huevo y poción
     if not gestor_inv.tiene_item("Huevo Básico"):
         flash("No tienes huevos disponibles.", "error")
         return redirect(url_for("ver_inventario"))
@@ -350,12 +348,11 @@ def eclosionar_huevo(id_item):
         flash("Necesitas una poción de eclosión.", "error")
         return redirect(url_for("ver_inventario"))
 
-    # Consumir huevo y poción
     gestor_inv.consumir_item("Huevo Básico", 1)
     gestor_inv.consumir_item("Poción de Eclosión", 1)
 
-    # Crear mascota en inventarios_mascotas.json
-    success, mensaje = gestor_mascotas.agregar_mascota(id_item, nombre)
+    es_vip = usuario_obj.rol == "vip"
+    success, mensaje = gestor_mascotas.agregar_mascota_aleatoria(es_vip=es_vip)
     flash(mensaje, "success" if success else "error")
 
     return redirect(url_for("ver_inventario"))

@@ -8,18 +8,31 @@
 
 {% block content %}
 <div class="mascotas-header">
-  <h2>Establo de Mascotas</h2>
+  <h2>¡Bienvenido a tu Establo, {{ usuario.nombre_publico or usuario.usuario }}!</h2>
+  <!-- Barra de búsqueda -->
+  <div class="mascotas-search">
+    <input type="text" id="buscarItem" placeholder="Buscar mascota...">
+  </div>
 </div>
 
-<div class="mascotas-grid">
+<div class="mascotas-grid" id="mascotasGrid">
   {% if mascotas %}
     {% for mascota in mascotas %}
-      <div class="mascota-card" title="{{ mascota.descripcion }}">
+      <div class="mascota-card" title="{{ mascota.descripcion }}" ondblclick="accionRapidaMascota('{{ mascota.id_mascota }}')">
         <button class="btn-info" onclick="abrirModalMascota('{{ mascota.id_mascota }}')">i</button>
         <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
         <div class="mascota-titulo">{{ mascota.nombre }}</div>
         <span class="mascota-nivel">Nivel {{ mascota.nivel }}</span>
         <span class="mascota-estado">Estado: {{ mascota.estado }}</span>
+
+        {% if mascota.estado != "huevo" %}
+        <div class="mascota-xp-bar">
+          <div class="barra">
+            <span style="width: {{ ((mascota.xp / mascota.xp_max) * 100) if mascota.xp_max > 0 else 0 }}%"></span>
+          </div>
+          <span class="mascota-xp-valor">{{ mascota.xp }}/{{ mascota.xp_max }} EXP</span>
+        </div>
+        {% endif %}
 
         <!-- Botón alimentar -->
         <div class="card-actions">
@@ -60,5 +73,11 @@
       ⚠️ No tienes mascotas aún
     </div>
   {% endif %}
+  <div class="mensaje-vacio" id="mensajeNoResultados" style="display:none;">
+    ⚠️ No se encontraron mascotas
+  </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/mascotas.js') }}"></script>
+
 {% endblock %}
