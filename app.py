@@ -504,14 +504,6 @@ UPLOAD_FOLDER = os.path.join(app.static_folder, "uploads")
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-def foto_perfil_valida(url):
-    """Valida que una URL de foto sea http/https o ruta relativa."""
-    patrones_seguros = [
-        re.compile(r"^https?://"),
-        re.compile(r"^/static/"),
-    ]
-    return any(p.match(url) for p in patrones_seguros)
-
 @app.route("/editar_perfil", methods=["POST"])
 def editar_perfil():
     usuario_dict = session.get("usuario")
@@ -552,15 +544,6 @@ def editar_perfil():
         ruta_guardado = os.path.join(UPLOAD_FOLDER, nombre_unico)
         archivo.save(ruta_guardado)
         usuario_obj.foto_perfil = url_for("static", filename=f"uploads/{nombre_unico}")
-    else:
-        # Si no hay archivo, mantener la anterior o validar URL textual
-        foto_input = request.form.get("foto_perfil_url", "").strip()
-        if foto_input:
-            if foto_perfil_valida(foto_input):
-                usuario_obj.foto_perfil = foto_input
-            else:
-                flash("La URL de la foto no es válida o segura.", "error")
-                return redirect(url_for("dashboard"))
 
     # Clase si nivel >= 10
     if usuario_obj.nivel_usuario >= 10:

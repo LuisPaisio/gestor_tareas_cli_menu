@@ -222,9 +222,6 @@
                         <label for="foto_perfil">Foto de perfil (JPG, PNG o WebP, máx 2 MB):</label>
                         <input type="file" id="foto_perfil" name="foto_perfil" accept=".jpg,.jpeg,.png,.webp">
 
-                        <label for="foto_perfil_url">O ingresá una URL:</label>
-                        <input type="text" id="foto_perfil_url" name="foto_perfil_url" value="{{ usuario.foto_perfil }}" placeholder="https://...">
-
                         {% if usuario.nivel_usuario >= 10 %}
                         <label for="clase">Clase:</label>
                         <select id="clase" name="clase">
