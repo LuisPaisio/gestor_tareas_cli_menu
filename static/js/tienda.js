@@ -1,20 +1,23 @@
 // Filtro de búsqueda
+function sinAcentos(str) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 document.getElementById("buscarItem").addEventListener("keyup", function() {
-  let filtro = this.value.toLowerCase();
+  let filtro = sinAcentos(this.value.toLowerCase());
   const cards = document.querySelectorAll("#catalogoGrid .item-card-tienda:not(.mensaje-vacio)");
   let coincidencias = 0;
 
   cards.forEach(card => {
-    let texto = card.innerText.toLowerCase();
+    let texto = sinAcentos(card.innerText.toLowerCase());
     if (texto.includes(filtro)) {
-      card.style.display = "flex"; // mostrar coincidencia
+      card.style.display = "flex";
       coincidencias++;
     } else {
-      card.style.display = "none"; // ocultar no coincidencia
+      card.style.display = "none";
     }
   });
 
-  // Mostrar/ocultar el mensaje vacío
   const mensaje = document.getElementById("mensajeNoResultados");
   mensaje.style.display = coincidencias === 0 ? "flex" : "none";
 });
