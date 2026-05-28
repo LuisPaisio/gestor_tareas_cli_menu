@@ -337,7 +337,9 @@
                 </div>
 
                 <div class="nav-right">
-                    <a href="{{ url_for('login_page') }}" class="btn-logout"> <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
+                    {% if request.endpoint != 'login_page' %}
+                        <a href="{{ url_for('login_page') }}" class="btn-logout"> <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión</a>
+                    {% endif %}
                 </div>
             </nav>
         {% endif %}
