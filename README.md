@@ -14,7 +14,7 @@ La hoja de ruta a futuro incluye migrar a PostgreSQL, separar frontend con React
 | Frontend    | HTML5, CSS3, JavaScript vanilla|
 | Templates   | Jinja2                         |
 | Persistencia| JSON (9 archivos)              |
-| CLI (legacy)| Python, colorama               |
+
 
 ---
 
@@ -74,12 +74,6 @@ La hoja de ruta a futuro incluye migrar a PostgreSQL, separar frontend con React
 gestor_tareas_cli_menu/
 │
 ├── app.py                    # Aplicación Flask (rutas web)
-├── menu_login.py             # Menú CLI: login/registro
-├── menu_tareas.py            # Menú CLI: CRUD de tareas
-├── menu_inventario.py        # Menú CLI: inventario
-├── menu_tienda.py            # Menú CLI: tienda
-├── menu_mascotas.py          # Menú CLI: mascotas
-├── menu_poderes.py           # Menú CLI: poderes de clase
 │
 ├── usuario.py                # Clase Usuario
 ├── gestor_usuarios.py        # Gestor de usuarios
@@ -198,12 +192,6 @@ Acción web → ruta Flask → gestor → modelo (lógica interna) → gestor (p
 ---
 
 ## Instalación y uso
-
-### CLI (legacy)
-```bash
-pip install -r requirements.txt
-python menu_login.py
-```
 
 ### Web (Flask)
 ```bash

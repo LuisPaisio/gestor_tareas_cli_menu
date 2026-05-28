@@ -1,5 +1,4 @@
 from gestor_inventario import GestorInventario
-from colorama import Fore, Style
 import datetime
 from datetime import date, timedelta
 import random

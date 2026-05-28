@@ -24,6 +24,14 @@ __pycache__/
 .tareas_a_realizar.txt
 tareas_a_realizar.txt
 
+# CLI legacy (migrado a web)
+menu_login.py
+menu_tareas.py
+menu_inventario.py
+menu_mascotas.py
+menu_tienda.py
+menu_poderes.py
+
 # Archivos de logs
 *.log
 

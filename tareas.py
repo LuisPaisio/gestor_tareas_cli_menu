@@ -1,6 +1,5 @@
 import datetime
 import constantes_tareas
-from colorama import Fore, Style
 from recompensa import Recompensa
 
 class Tarea:
