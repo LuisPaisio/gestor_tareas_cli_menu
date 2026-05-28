@@ -245,19 +245,19 @@ def dashboard():
     )
 
 
-@app.route("/estadisticas")
-def estadisticas():
+@app.route("/equipos")
+def equipos():
     usuario = session.get("usuario")
     if not usuario:
         return redirect(url_for("home"))
-    return render_template("estadisticas.html", usuario=usuario)
+    return render_template("equipos.html", usuario=usuario)
 
-@app.route("/poderes")
-def menu_poderes():
+@app.route("/ayuda")
+def ayuda():
     usuario = session.get("usuario")
     if not usuario:
         return redirect(url_for("home"))
-    return render_template("poderes.html", usuario=usuario)
+    return render_template("ayuda.html", usuario=usuario)
 
 @app.route("/inventario")
 def ver_inventario():

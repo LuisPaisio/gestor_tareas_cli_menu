@@ -207,6 +207,7 @@ a:hover {
 /* Secciones home gamificado */
 
 .nivel-superior {
+  background-image: url("../images/confetti.svg");
   background-color: #b341e0; /* violeta claro */
   position: relative;
 }

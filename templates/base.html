@@ -29,22 +29,28 @@
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Progresia">
                     </a>
                     <ul>
-                        <li><a href="{{ url_for('estadisticas') }}">Estadísticas</a></li>
-                        <li><a href="{{ url_for('menu_poderes') }}">Poderes de Clase</a></li>
+                        <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">Tareas</a></li>
                         {% if session.get('usuario') %}
-                            <li><a href="{{ url_for('ver_inventario') }}">Inventario</a></li>
+                            <li><a href="{{ url_for('ver_inventario') }}" class="{% if request.endpoint == 'ver_inventario' %}active{% endif %}">Inventario</a></li>
                         {% endif %}
-                        <li><a href="{{ url_for('menu_mascotas') }}">Mascotas</a></li>
-                        <li><a href="{{ url_for('mostrar_tienda') }}">Tienda</a></li>
+                        <li><a href="{{ url_for('menu_mascotas') }}" class="{% if request.endpoint == 'menu_mascotas' %}active{% endif %}">Mascotas</a></li>
+                        <li><a href="{{ url_for('mostrar_tienda') }}" class="{% if request.endpoint == 'mostrar_tienda' %}active{% endif %}">Tienda</a></li>
+                        <li><a href="{{ url_for('equipos') }}" class="{% if request.endpoint == 'equipos' %}active{% endif %}">Equipos</a></li>
+                        <li><a href="{{ url_for('ayuda') }}" class="{% if request.endpoint == 'ayuda' %}active{% endif %}">Ayuda</a></li>
                     </ul>
                 </div>
 
                 <div class="nav-right">
+
+                    <div class="nav-gems" title="Gems (Próximamente)">
+                        <i class="fa-solid fa-gem"></i> 0
+                    </div>
+
                     <div class="nav-coins" title="Coins">
                         <i class="fa-solid fa-coins"></i> {{ usuario.coin_usuario }}
                     </div>
 
-                    <!-- 🔔 Notificaciones -->
+                    <!-- Notificaciones -->
                     <div class="nav-notifications" title="Notificaciones">
                         <i class="fa-solid fa-bell"></i>
                         {% set no_leidas = notificaciones | selectattr("leido", "equalto", false) | list %}
@@ -275,7 +281,7 @@
                     <!-- Barra de Maná -->
                      {% if usuario.nivel_usuario >= 10 %}
                     <div class="barra-contenedor mana">
-                        <i class="fa-solid fa-gem barra-icono"></i>
+                        <i class="fa-brands fa-ethereum barra-icono"></i>
                         <div class="barra">
                             <span style="width: {{ (usuario.mana_usuario / mana_maximo) * 100 }}%"></span>
                         </div>
@@ -323,8 +329,10 @@
                         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Progresia">
                     </a>
                     <ul>
-                        <li><a href="{{ url_for('register_page') }}">Comencemos</a></li>
-                        <li><a href="#hero-section">Saber más</a></li>
+                        {% if request.endpoint == 'home' %}
+                            <li><a href="{{ url_for('register_page') }}">Comencemos</a></li>
+                            <li><a href="#hero-section">Saber más</a></li>
+                        {% endif %}
                     </ul>
                 </div>
 
@@ -347,9 +355,14 @@
                 <div class="footer-section">
                     <h4>Mapa del sitio</h4>
                     <ul>
-                        <li><a href="#inicio">Tareas</a></li>
-                        <li><a href="#inventario">Inventario</a></li>
-                        <li><a href="#tienda">Tienda</a></li>
+                        <li><a href="{{ url_for('dashboard') }}">Tareas</a></li>
+                        {% if session.get('usuario') %}
+                            <li><a href="{{ url_for('ver_inventario') }}">Inventario</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('menu_mascotas') }}">Mascotas</a></li>
+                        <li><a href="{{ url_for('mostrar_tienda') }}">Tienda</a></li>
+                        <li><a href="{{ url_for('equipos') }}">Equipos</a></li>
+                        <li><a href="{{ url_for('ayuda') }}">Ayuda</a></li>
                     </ul>
                 </div>
 
@@ -372,7 +385,9 @@
                     <ul>
                         <li><a href="{{ url_for('login_page') }}">Iniciar sesión</a></li>
                         <li><a href="{{ url_for('register_page') }}">Registrarse</a></li>
-                        <li><a href="{{ url_for('home') }}">Saber más</a></li>
+                        {% if request.endpoint == 'home' %}
+                            <li><a href="#hero-section">Saber más</a></li>
+                        {% endif %}
                     </ul>
                 </div>
 
