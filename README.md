@@ -154,6 +154,37 @@ gestor_tareas_cli_menu/
 
 ---
 
+## Arquitectura
+
+El código sigue una separación clara entre **modelos** (definen estructura y lógica interna) y **gestores** (manejan persistencia y administración). Ningún modelo escribe directamente en JSON.
+
+#### Modelos
+
+| Archivo | Clase | Rol |
+|---------|-------|-----|
+| `usuario.py` | `Usuario` | Atributos: vida, XP, coins, nivel, clase, VIP. Métodos: `sumar_xp`, `sumar_coins`, `sumar_vida`, `restar_vida`, `equipar`, `desequipar`, `usar_item`, `subir_nivel`, etc. |
+| `tareas.py` | `Tarea` | Clase única con `tipo` (1=Hábito, 2=Diaria, 3=Pendiente). Métodos: `completar()`, `fallar()`, `marcar_completada()`, `es_vencida()`. |
+| `item.py` | `Item` | Atributos: `tipo` (consumible, equipable…), `efecto`, `slot`. Sin métodos de aplicación. |
+| `mascotas.py` | `Mascota` | Progresión: huevo → bebé → adulto → montura. Métodos: `alimentar()`, `eclosionar()`. |
+| `inventario.py` | `Inventario` | Slots de equipamiento y lógica asociada. |
+
+#### Gestores (cada uno persiste en su propio JSON)
+
+| Archivo | Clase | JSON | Métodos principales |
+|---------|-------|------|---------------------|
+| `gestor_usuarios.py` | `GestorUsuarios` | `usuarios.json` | `cargar_usuarios`, `guardar_usuarios`, `actualizar_usuario` |
+| `gestor_tareas.py` | `GestorTareas` | `tareas.json` | `cargar_tareas`, `guardar_tareas`, `actualizar_tarea`, `marcar_tarea_web`. Aplica recompensas/penalizaciones delegando en los modelos. |
+| `gestor_inventario.py` | `GestorInventario` | `inventarios.json` | `cargar_inventarios`, `guardar_inventarios`, `tiene_item`, `consumir_item`. Nota: `usar_item()` vive en `Usuario`, no aquí. |
+| `gestor_mascotas.py` | `GestorMascotas` | `inventario_mascotas.json` | `agregar_mascota`, `listar_mascotas_web`, `alimentar_mascota`, `agregar_mascota_aleatoria` |
+
+#### Flujo típico
+
+```
+Acción web → ruta Flask → gestor → modelo (lógica interna) → gestor (persistencia en JSON)
+```
+
+---
+
 ## Configuración inicial
 
 1. Copiar `.env.example` a `.env` y ajustar valores:
