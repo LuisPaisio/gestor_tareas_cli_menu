@@ -1,6 +1,6 @@
 # Progresia — Gestor de Tareas con Gamificación
 
-**Progresia** es un gestor de tareas con mecánicas RPG que comenzó como CLI en Python y está en plena transición a aplicación web. Actualmente conviven una interfaz de consola y una versión web con Flask (HTML + CSS + JavaScript vanilla). Todo el backend está en Python con persistencia en JSON.
+**Progresia** es un gestor de tareas con mecánicas RPG migrado de CLI Python a aplicación web con Flask (HTML + CSS + JavaScript vanilla). Todo el backend está en Python con persistencia en JSON.
 
 La hoja de ruta a futuro incluye migrar a PostgreSQL, separar frontend con React, y reemplazar Flask por Django.
 
@@ -141,7 +141,7 @@ gestor_tareas_cli_menu/
 │   ├── inventario_mascotas.json
 │   └── notificaciones.json
 │
-├── requirements.txt          # colorama (solo para CLI)
+├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
