@@ -600,13 +600,22 @@ select, .fecha {
 .poderes-bar {
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 650px;
+  min-width: 300px;
+  width: auto;
+  border-radius: 12px 12px 0 0;
   background-color: #333;
   color: #fff;
   z-index: 999;
   font-size: 14px;
   box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+}
+
+.barra-icono {
+  font-size: 14px;
+  vertical-align: middle;
 }
 
 .poderes-bar-header {

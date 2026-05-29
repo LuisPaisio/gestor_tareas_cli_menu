@@ -377,7 +377,7 @@
       <span class="poderes-clase-nombre">{{ usuario.clase.nombre }}</span>
     </div>
     <div class="poderes-bar-header-right">
-      <span class="poderes-mana">🔮 {{ usuario.mana_usuario }}/{{ mana_maximo }}</span>
+      <span class="poderes-mana"><i class="fa-brands fa-ethereum barra-icono"></i> {{ usuario.mana_usuario }}/{{ mana_maximo }}</span>
       <span class="poderes-toggle" id="poderesToggle">&#9650;</span>
     </div>
   </div>
@@ -388,7 +388,7 @@
         🪄 {{ nombre_poder }}
       </button>
       <span class="poder-coste">🔮{{ datos.coste }}</span>
-      <button class="poder-info-btn" onclick="abrirModalPoder('{{ nombre_poder | e }}')" title="Info">ℹ️</button>
+      <button class="poder-info-btn" onclick="abrirModalPoder('{{ nombre_poder | e }}')" title="Info">i</button>
     </div>
     {% endfor %}
   </div>
