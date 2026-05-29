@@ -118,6 +118,12 @@ class GestorMascotas:
         if not catalogo:
             return False, "No hay mascotas disponibles en el catálogo."
 
+        ids_existentes = {m.id_mascota for m in self.mascotas}
+        catalogo = [m for m in catalogo if m["id_mascota"] not in ids_existentes]
+
+        if not catalogo:
+            return False, "Ya tienes todas las mascotas disponibles."
+
         elegida = random.choice(catalogo)
 
         nueva = Mascota(
