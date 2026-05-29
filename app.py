@@ -667,14 +667,11 @@ def marcar_tarea(tarea_id, accion):
     usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
     gestor_tareas = GestorTareas(usuario=usuario_obj, gestor_usuarios=gestor)
 
-    # 🔹 Leer flags del formulario (hidden inputs en el modal)
     retroactivo = request.form.get("retroactivo") == "true"
     por_medianoche = request.form.get("por_medianoche") == "true"
 
-    # 🔹 Pasar los flags a marcar_tarea_web
     resultado = gestor_tareas.marcar_tarea_web(
-        tarea_id,
-        accion,
+        tarea_id, accion,
         retroactivo=retroactivo,
         por_medianoche=por_medianoche
     )
@@ -682,26 +679,17 @@ def marcar_tarea(tarea_id, accion):
     if "error" in resultado:
         flash(resultado["error"], "error")
     else:
-        # mensaje general enriquecido
         flash(resultado["mensaje"], "info")
 
-        # recompensas
         for r in resultado.get("recompensas", []):
-            if r["tipo"] == "aleatorio":
-                # usar el campo 'nombre' que ya devuelve aplicar_recompensas
-                flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
-            elif r["tipo"] == "item":
-                # idem: usar 'nombre' en lugar de acceder a valor.nombre
+            if r["tipo"] in ("aleatorio", "item"):
                 flash(f"{r['nombre']} +{r['resultado']['total']}", "item")
             else:
-                # xp, coins, mana, vida → usan 'resultado'
                 flash(f"{r['tipo'].upper()} +{r['resultado']['total']}", r["tipo"])
 
-        # penalizaciones
         for p in resultado.get("penalizaciones", []):
             flash(p.get("mensaje", f"{p['tipo'].upper()} {p['resultado']['total']}"), f"{p['tipo']}-neg")
 
-        # eventos de progresión (nivel, maná, prestigio)
         for e in resultado.get("eventos", []):
             flash(e["mensaje"], e["accion"])
 

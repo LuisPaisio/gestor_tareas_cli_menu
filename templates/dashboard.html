@@ -15,6 +15,8 @@
             <option value="hábitos">Hábitos</option>
             <option value="diaria">Diarias</option>
             <option value="pendiente">Pendientes</option>
+            <option value="completadas">Completas</option>
+            <option value="incompletas">Incompletas</option>
         </select>
     </form>
     <a href="#" class="boton1" id="openModal"> + Añadir tarea</a>
@@ -238,7 +240,7 @@
       <input type="text" placeholder="Añadir un hábito">
 
       {% for h in habitos %}
-      <div class="tarea-item">
+      <div class="tarea-item" data-completada="none">
         <!-- Botón positivo -->
         {% if h.habito == '+' or h.habito == '+-' %}
         <div class="accion-izq">
@@ -283,7 +285,7 @@
       <input type="text" placeholder="Añadir una tarea diaria">
 
       {% for d in diarias %}
-      <div class="tarea-item {% if hoy not in d.dias and 'todos' not in d.dias %}tarea-inactiva{% endif %}">
+      <div class="tarea-item {% if hoy not in d.dias and 'todos' not in d.dias %}tarea-inactiva{% endif %}" data-completada="{{ d.completada|lower }}">
         <div class="accion-izq">
           <form action="{{ url_for('marcar_tarea', tarea_id=d.id, accion='completar') }}" method="post" style="display:inline;">
             <input type="checkbox"
@@ -320,7 +322,7 @@
       <input type="text" placeholder="Añadir una tarea pendiente">
 
       {% for p in pendientes %}
-      <div class="tarea-item">
+      <div class="tarea-item" data-completada="{{ p.completada|lower }}">
         <div class="accion-izq">
           <form action="{{ url_for('marcar_tarea', tarea_id=p.id, accion='completar') }}" method="post" style="display:inline;">
             <input type="checkbox" {% if p.completada %}checked{% endif %}

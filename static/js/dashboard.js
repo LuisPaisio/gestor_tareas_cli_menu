@@ -16,6 +16,8 @@ function filtrarTareas() {
     const texto = searchInput.value.toLowerCase();
     const tipo = searchSelect.value;
 
+    const esFiltroEstado = tipo === "completadas" || tipo === "incompletas";
+
     document.querySelectorAll(".card").forEach(card => {
       const cardTitulo = card.querySelector("h3")?.textContent.toLowerCase() || "";
 
@@ -31,7 +33,19 @@ function filtrarTareas() {
         const titulo = item.querySelector(".titulo")?.textContent.toLowerCase() || "";
 
         let coincideTexto = !texto || titulo.includes(texto);
-        let coincideTipo = !tipo || cardTitulo.includes(tipo);
+        let coincideTipo;
+
+        if (esFiltroEstado) {
+          const comp = item.dataset.completada;
+          if (comp === "none") {
+            coincideTipo = false;
+          } else {
+            coincideTipo = (tipo === "completadas" && comp === "true") ||
+                           (tipo === "incompletas" && comp === "false");
+          }
+        } else {
+          coincideTipo = !tipo || cardTitulo.includes(tipo);
+        }
 
         if (coincideTexto && coincideTipo) {
           item.style.display = "flex";

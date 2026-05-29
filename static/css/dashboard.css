@@ -166,7 +166,8 @@ main {
 
 /* Estado marcado */
 .accion-izq input[type="checkbox"]:checked {
-    background-color: #3498db;  /* azul más fuerte */
+    background-color: #7f8c8d;
+    border-color: #616a6b;
     color: #fff;
 }
 
