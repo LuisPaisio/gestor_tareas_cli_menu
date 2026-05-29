@@ -596,3 +596,139 @@ select, .fecha {
   font-weight: bold;
   color: #fff;
 }
+
+.poderes-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333;
+  color: #fff;
+  z-index: 999;
+  font-size: 14px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
+}
+
+.poderes-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.poderes-bar-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poderes-bar-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.poderes-clase-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.poderes-clase-nombre {
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.poderes-mana {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.poderes-toggle {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.poderes-toggle.collapsed {
+  transform: rotate(180deg);
+}
+
+.poderes-content {
+  display: none;
+  padding: 8px 16px 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid #555;
+}
+
+.poderes-content.show {
+  display: flex;
+}
+
+.poder-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #444;
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.poder-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.poder-btn:hover {
+  background: #555;
+}
+
+.poder-coste {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.poder-info-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.poder-info-btn:hover {
+  color: #fff;
+}
+
+#modalPoder .modal-content {
+  max-width: 360px;
+}
+
+#modalPoder h3 {
+  margin-bottom: 12px;
+}
+
+#modalPoder #poderModalDescripcion {
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#modalPoder #poderModalCoste {
+  font-weight: bold;
+  font-size: 14px;
+}

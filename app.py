@@ -724,6 +724,21 @@ def elegir_clase():
 
     return redirect(url_for("dashboard"))
 
+@app.route("/usar_poder/<nombre_poder>", methods=["POST"])
+def usar_poder(nombre_poder):
+    usuario_dict = session.get("usuario")
+    if not usuario_dict:
+        return redirect(url_for("home"))
+
+    usuario_obj = gestor.get_usuario_por_id(usuario_dict["id_usuario"])
+
+    success, mensajes = usuario_obj.usar_poder(nombre_poder)
+    for m in mensajes:
+        flash(m, "success" if success else "error")
+
+    gestor.actualizar_usuario(usuario_obj)
+    return redirect(url_for("dashboard"))
+
 @app.route("/prestigiar", methods=["POST"])
 def prestigiar():
     usuario_dict = session.get("usuario")

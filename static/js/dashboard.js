@@ -298,3 +298,37 @@ async function eliminarTarea() {
       alert("Error al eliminar la tarea");
     }
 }
+
+// --- Barra flotante de poderes ---
+let poderesExpandido = false;
+
+function togglePoderesBar() {
+  poderesExpandido = !poderesExpandido;
+  const content = document.getElementById("poderesContent");
+  const toggle = document.getElementById("poderesToggle");
+  content.classList.toggle("show", poderesExpandido);
+  toggle.classList.toggle("collapsed", !poderesExpandido);
+}
+
+async function usarPoder(nombre) {
+  const response = await fetch(`/usar_poder/${encodeURIComponent(nombre)}`, { method: "POST" });
+  if (response.ok) {
+    location.reload();
+  } else {
+    alert("Error al usar el poder");
+  }
+}
+
+function abrirModalPoder(nombre) {
+  const poderes = JSON.parse(document.getElementById("poderes-data").textContent);
+  const poder = poderes[nombre];
+  if (!poder) return;
+  document.getElementById("poderModalNombre").textContent = nombre;
+  document.getElementById("poderModalDescripcion").textContent = poder.descripcion || "Sin descripción";
+  document.getElementById("poderModalCoste").textContent = `Coste: ${poder.coste} 🔮`;
+  document.getElementById("modalPoder").style.display = "block";
+}
+
+function cerrarModalPoder() {
+  document.getElementById("modalPoder").style.display = "none";
+}

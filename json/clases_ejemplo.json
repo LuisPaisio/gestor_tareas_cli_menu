@@ -2,6 +2,7 @@
     "Guerrero": {
         "vip": false,
         "descripcion": "Especialista en fuerza física, gana más XP.",
+        "img_clase": "guerrero.png",
         "poderes": {
             "Golpe crítico": {
                 "coste": 15,
@@ -18,6 +19,7 @@
     "Mago": {
         "vip": false,
         "descripcion": "Usa maná para potenciar XP y Coins.",
+        "img_clase": "mago.png",
         "poderes": {
             "Inspiración": {
                 "coste": 12,

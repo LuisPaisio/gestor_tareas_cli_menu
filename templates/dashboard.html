@@ -363,4 +363,45 @@
 
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
+{% if usuario.nivel_usuario >= 10 and usuario.clase %}
+<script id="poderes-data" type="application/json">{{ usuario.clase.poderes | tojson | safe }}</script>
+
+<div id="poderesBar" class="poderes-bar">
+  <div class="poderes-bar-header" onclick="togglePoderesBar()">
+    <div class="poderes-bar-header-left">
+      {% if usuario.clase.img_clase %}
+      <img src="{{ url_for('static', filename='images/' + usuario.clase.img_clase) }}"
+           class="poderes-clase-icon"
+           alt="{{ usuario.clase.nombre }}">
+      {% endif %}
+      <span class="poderes-clase-nombre">{{ usuario.clase.nombre }}</span>
+    </div>
+    <div class="poderes-bar-header-right">
+      <span class="poderes-mana">🔮 {{ usuario.mana_usuario }}/{{ mana_maximo }}</span>
+      <span class="poderes-toggle" id="poderesToggle">&#9650;</span>
+    </div>
+  </div>
+  <div class="poderes-content" id="poderesContent">
+    {% for nombre_poder, datos in usuario.clase.poderes.items() %}
+    <div class="poder-item" title="{{ nombre_poder }}">
+      <button class="poder-btn" onclick="usarPoder('{{ nombre_poder | e }}')">
+        🪄 {{ nombre_poder }}
+      </button>
+      <span class="poder-coste">🔮{{ datos.coste }}</span>
+      <button class="poder-info-btn" onclick="abrirModalPoder('{{ nombre_poder | e }}')" title="Info">ℹ️</button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div id="modalPoder" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalPoder()">&times;</span>
+    <h3 id="poderModalNombre"></h3>
+    <p id="poderModalDescripcion"></p>
+    <p id="poderModalCoste"></p>
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}
