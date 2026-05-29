@@ -364,8 +364,6 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% if usuario.nivel_usuario >= 10 and usuario.clase %}
-<script id="poderes-data" type="application/json">{{ usuario.clase.poderes | tojson | safe }}</script>
-
 <div id="poderesBar" class="poderes-bar">
   <div class="poderes-bar-header" onclick="togglePoderesBar()">
     <div class="poderes-bar-header-left">
@@ -383,23 +381,20 @@
   </div>
   <div class="poderes-content" id="poderesContent">
     {% for nombre_poder, datos in usuario.clase.poderes.items() %}
-    <div class="poder-item" title="{{ nombre_poder }}">
-      <button class="poder-btn" onclick="usarPoder('{{ nombre_poder | e }}')">
-        🪄 {{ nombre_poder }}
-      </button>
-      <span class="poder-coste">🔮{{ datos.coste }}</span>
-      <button class="poder-info-btn" onclick="abrirModalPoder('{{ nombre_poder | e }}')" title="Info">i</button>
+    <div class="poder-card" onclick="usarPoder('{{ nombre_poder | e }}')">
+      <div class="poder-card-tooltip">
+        <strong>{{ nombre_poder }}</strong>
+        <p>{{ datos.descripcion }}</p>
+        <p class="poder-card-tooltip-coste"><i class="fa-brands fa-ethereum barra-icono"></i> {{ datos.coste }} maná</p>
+      </div>
+      {% if datos.img_poder %}
+      <img src="{{ url_for('static', filename='images/poderes/' + datos.img_poder) }}"
+           alt="{{ nombre_poder }}" class="poder-card-img">
+      {% endif %}
+      <span class="poder-card-nombre">{{ nombre_poder }}</span>
+      <span class="poder-card-mana"><i class="fa-brands fa-ethereum barra-icono"></i> {{ datos.coste }}</span>
     </div>
     {% endfor %}
-  </div>
-</div>
-
-<div id="modalPoder" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="cerrarModalPoder()">&times;</span>
-    <h3 id="poderModalNombre"></h3>
-    <p id="poderModalDescripcion"></p>
-    <p id="poderModalCoste"></p>
   </div>
 </div>
 {% endif %}

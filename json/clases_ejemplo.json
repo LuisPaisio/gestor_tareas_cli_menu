@@ -7,12 +7,14 @@
             "Golpe crítico": {
                 "coste": 15,
                 "efectos": { "xp": "double" },
-                "descripcion": "Duplica la XP obtenida en la tarea actual."
+                "descripcion": "Duplica la XP obtenida en la tarea actual.",
+                "img_poder": "golpe_critico.png"
             },
             "Furia indomable": {
                 "coste": 35,
                 "efectos": { "xp": "double_next", "coins": "double_next" },
-                "descripcion": "La próxima tarea completada otorgará XP y Coins duplicadas."
+                "descripcion": "La próxima tarea completada otorgará XP y Coins duplicadas.",
+                "img_poder": "furia_indomable.png"
             }
         }
     },
@@ -24,12 +26,14 @@
             "Inspiración": {
                 "coste": 12,
                 "efectos": { "coins": "25%" },
-                "descripcion": "Otorga un 25% extra de Coins en la tarea actual."
+                "descripcion": "Otorga un 25% extra de Coins en la tarea actual.",
+                "img_poder": "inspiracion.png"
             },
             "Tormenta Arcana": {
                 "coste": 30,
                 "efectos": { "xp": 20, "vida": 10 },
-                "descripcion": "Inflige daño mágico y otorga +20 XP y +10 Vida."
+                "descripcion": "Inflige daño mágico y otorga +20 XP y +10 Vida.",
+                "img_poder": "tormenta_arcana.png"
             }
         }
     }

@@ -7,12 +7,14 @@
             "Golpe crítico": {
                 "coste": 15,
                 "efectos": { "xp": "double" },
-                "descripcion": "Duplica la XP obtenida en la tarea actual."
+                "descripcion": "Duplica la XP obtenida en la tarea actual.",
+                "img_poder": "golpe_critico.png"
             },
             "Furia indomable": {
                 "coste": 35,
                 "efectos": { "xp": "double_next", "coins": "double_next" },
-                "descripcion": "La próxima tarea completada otorgará XP y Coins duplicadas."
+                "descripcion": "La próxima tarea completada otorgará XP y Coins duplicadas.",
+                "img_poder": "furia_indomable.png"
             }
         }
     },
@@ -24,12 +26,14 @@
             "Curación menor": {
                 "coste": 10,
                 "efectos": { "vida": 10 },
-                "descripcion": "Recupera 10 puntos de vida."
+                "descripcion": "Recupera 10 puntos de vida.",
+                "img_poder": "curacion_menor.png"
             },
             "Gran curación": {
                 "coste": 25,
                 "efectos": { "vida": "full" },
-                "descripcion": "Restaura la vida al máximo."
+                "descripcion": "Restaura la vida al máximo.",
+                "img_poder": "gran_curacion.png"
             }
         }
     },
@@ -41,12 +45,14 @@
             "Inspiración": {
                 "coste": 12,
                 "efectos": { "coins": "25%" },
-                "descripcion": "Otorga un 25% extra de Coins en la tarea actual."
+                "descripcion": "Otorga un 25% extra de Coins en la tarea actual.",
+                "img_poder": "inspiracion.png"
             },
             "Tormenta Arcana": {
                 "coste": 30,
                 "efectos": { "xp": 20, "vida": 10 },
-                "descripcion": "Inflige daño mágico y otorga +20 XP y +10 Vida."
+                "descripcion": "Inflige daño mágico y otorga +20 XP y +10 Vida.",
+                "img_poder": "tormenta_arcana.png"
             }
         }
     },
@@ -58,7 +64,8 @@
             "Rugido legendario": {
                 "coste": 45,
                 "efectos": { "xp": "double", "coins": "double" },
-                "descripcion": "Duplica XP y Coins de la tarea actual."
+                "descripcion": "Duplica XP y Coins de la tarea actual.",
+                "img_poder": "rugido_legendario.png"
             }
         }
     },
@@ -70,7 +77,8 @@
             "Curación divina": {
                 "coste": 40,
                 "efectos": { "vida": "full", "mana": 20 },
-                "descripcion": "Restaura la vida al máximo y recupera 20 de maná."
+                "descripcion": "Restaura la vida al máximo y recupera 20 de maná.",
+                "img_poder": "curacion_divina.png"
             }
         }
     },
@@ -82,7 +90,8 @@
             "Tormenta Arcana+": {
                 "coste": 40,
                 "efectos": { "xp": 30, "vida": 15, "coins": 10 },
-                "descripcion": "Inflige gran daño mágico y otorga +30 XP, +15 Vida y +10 Coins."
+                "descripcion": "Inflige gran daño mágico y otorga +30 XP, +15 Vida y +10 Coins.",
+                "img_poder": "tormenta_arcana_plus.png"
             }
         }
     },
@@ -94,12 +103,14 @@
             "Robo rápido": {
                 "coste": 15,
                 "efectos": { "coins": "steal_20" },
-                "descripcion": "Robas el 20% de las Coins de la tarea actual."
+                "descripcion": "Robas el 20% de las Coins de la tarea actual.",
+                "img_poder": "robo_rapido.png"
             },
             "Golpe furtivo": {
                 "coste": 20,
                 "efectos": { "xp": "double_next" },
-                "descripcion": "La próxima tarea completada otorgará XP duplicada."
+                "descripcion": "La próxima tarea completada otorgará XP duplicada.",
+                "img_poder": "golpe_furtivo.png"
             }
         }
     },
@@ -111,12 +122,14 @@
             "Maestro del robo": {
                 "coste": 40,
                 "efectos": { "coins": "steal_50" },
-                "descripcion": "Robas el 50% de las Coins de la tarea actual."
+                "descripcion": "Robas el 50% de las Coins de la tarea actual.",
+                "img_poder": "maestro_del_robo.png"
             },
             "Sombra letal": {
                 "coste": 45,
                 "efectos": { "xp": "double", "coins": "double", "vida": 15 },
-                "descripcion": "Duplica XP y Coins de la tarea actual y recupera 15 de vida."
+                "descripcion": "Duplica XP y Coins de la tarea actual y recupera 15 de vida.",
+                "img_poder": "sombra_letal.png"
             }
         }
     }

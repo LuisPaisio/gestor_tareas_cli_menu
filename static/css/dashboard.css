@@ -54,7 +54,7 @@ main {
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    height: 50vh;
+    height: 60vh;
 }
 
 .card h3 {
@@ -669,75 +669,91 @@ select, .fecha {
 .poderes-content {
   display: none;
   padding: 8px 16px 12px;
-  gap: 8px;
-  flex-wrap: wrap;
   border-top: 1px solid #555;
 }
 
 .poderes-content.show {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
 }
 
-.poder-item {
+.poder-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: #3a3a3a;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+  aspect-ratio: 1 / 1;
+}
+
+.poder-card:hover {
+  transform: scale(1.05);
+  background: #444;
+}
+
+.poder-card-img {
+  max-width: 48px;
+  max-height: 48px;
+  object-fit: contain;
+}
+
+.poder-card-nombre {
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.poder-card-mana {
+  font-size: 11px;
+  color: #aaa;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
+}
+
+.poder-card-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 105%;
+  left: 50%;
+  transform: translateX(-50%);
   background: #444;
-  border-radius: 6px;
-  padding: 4px 10px;
-}
-
-.poder-btn {
-  background: none;
-  border: none;
   color: #fff;
-  cursor: pointer;
-  font-size: 13px;
-  padding: 4px 6px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.poder-btn:hover {
-  background: #555;
-}
-
-.poder-coste {
+  padding: 10px 12px;
+  border-radius: 8px;
   font-size: 12px;
-  opacity: 0.8;
-  white-space: nowrap;
+  line-height: 1.4;
+  width: 200px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  pointer-events: none;
 }
 
-.poder-info-btn {
-  background: none;
-  border: none;
+.poder-card-tooltip strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.poder-card-tooltip p {
+  margin: 0 0 6px;
+}
+
+.poder-card-tooltip-coste {
+  font-size: 11px;
   color: #aaa;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  transition: color 0.2s;
 }
 
-.poder-info-btn:hover {
-  color: #fff;
-}
-
-#modalPoder .modal-content {
-  max-width: 360px;
-}
-
-#modalPoder h3 {
-  margin-bottom: 12px;
-}
-
-#modalPoder #poderModalDescripcion {
-  margin-bottom: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-#modalPoder #poderModalCoste {
-  font-weight: bold;
-  font-size: 14px;
+.poder-card:hover .poder-card-tooltip {
+  display: block;
 }

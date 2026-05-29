@@ -319,16 +319,4 @@ async function usarPoder(nombre) {
   }
 }
 
-function abrirModalPoder(nombre) {
-  const poderes = JSON.parse(document.getElementById("poderes-data").textContent);
-  const poder = poderes[nombre];
-  if (!poder) return;
-  document.getElementById("poderModalNombre").textContent = nombre;
-  document.getElementById("poderModalDescripcion").textContent = poder.descripcion || "Sin descripción";
-  document.getElementById("poderModalCoste").textContent = `Coste: ${poder.coste} 🔮`;
-  document.getElementById("modalPoder").style.display = "block";
-}
 
-function cerrarModalPoder() {
-  document.getElementById("modalPoder").style.display = "none";
-}
