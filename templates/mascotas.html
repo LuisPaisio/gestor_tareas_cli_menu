@@ -16,64 +16,139 @@
 </div>
 
 <div class="mascotas-grid" id="mascotasGrid">
+  {% set comunes = mascotas|selectattr("especial", "equalto", false)|list %}
+  {% set vip_mascotas = mascotas|selectattr("especial", "equalto", true)|list %}
+
   {% if mascotas %}
-    {% for mascota in mascotas %}
-      <div class="mascota-card" title="{{ mascota.descripcion }}" ondblclick="accionRapidaMascota('{{ mascota.id_mascota }}')">
-        <button class="btn-info" onclick="abrirModalMascota('{{ mascota.id_mascota }}')">i</button>
-        <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
-        <div class="mascota-titulo">{{ mascota.nombre }}</div>
-        <span class="mascota-nivel">Nivel {{ mascota.nivel }}</span>
-        <span class="mascota-estado">Estado: {{ mascota.estado }}</span>
-
-        {% if mascota.estado != "huevo" %}
-        <div class="mascota-xp-bar">
-          <div class="barra">
-            <span style="width: {{ ((mascota.xp / mascota.xp_max) * 100) if mascota.xp_max > 0 else 0 }}%"></span>
-          </div>
-          <span class="mascota-xp-valor">{{ mascota.xp }}/{{ mascota.xp_max }} EXP</span>
-        </div>
-        {% endif %}
-
-        <!-- Botón alimentar -->
-        <div class="card-actions">
-          {% if tiene_alimento %}
-            <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
-              <button type="submit" class="btn-alimentar">Alimentar</button>
-            </form>
-          {% else %}
-            <button type="button" class="btn-disabled" disabled>Sin alimento</button>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Modal exclusivo mascota -->
-      <div id="modal-mascota-{{ mascota.id_mascota }}" class="modal-mascota">
-        <div class="modal-content-mascota">
-          <span class="close-mascota" onclick="cerrarModalMascota('{{ mascota.id_mascota }}')">&times;</span>
-          <h3>{{ mascota.nombre }}</h3>
+    <!-- Sección Comunes -->
+    <h3 class="seccion-titulo">Comunes</h3>
+    {% if comunes %}
+      {% for mascota in comunes %}
+        <div class="mascota-card" title="{{ mascota.descripcion }}" ondblclick="accionRapidaMascota('{{ mascota.id_mascota }}')">
+          <button class="btn-info" onclick="abrirModalMascota('{{ mascota.id_mascota }}')">i</button>
           <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
-          <p>{{ mascota.descripcion }}</p>
-          <p><strong>Nivel:</strong> {{ mascota.nivel }}</p>
-          <p><strong>Estado:</strong> {{ mascota.estado }}</p>
-          <p><strong>Especial:</strong> {{ "Sí" if mascota.especial else "No" }}</p>
+          <div class="mascota-titulo">{{ mascota.nombre }}</div>
+          <span class="mascota-nivel">Nivel {{ mascota.nivel }}</span>
+          <span class="mascota-estado">Estado: {{ mascota.estado }}</span>
 
-          <!-- Botón alimentar dentro del modal -->
-          {% if tiene_alimento %}
-            <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
-              <button type="submit" class="btn-alimentar">Alimentar</button>
-            </form>
-          {% else %}
-            <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+          {% if mascota.estado != "huevo" %}
+          <div class="mascota-xp-bar">
+            <div class="barra">
+              <span style="width: {{ ((mascota.xp / mascota.xp_max) * 100) if mascota.xp_max > 0 else 0 }}%"></span>
+            </div>
+            <span class="mascota-xp-valor">{{ mascota.xp }}/{{ mascota.xp_max }} EXP</span>
+          </div>
           {% endif %}
+
+          <!-- Botón alimentar -->
+          <div class="card-actions">
+            {% if tiene_alimento %}
+              <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+                <button type="submit" class="btn-alimentar">Alimentar</button>
+              </form>
+            {% else %}
+              <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+            {% endif %}
+          </div>
         </div>
+
+        <!-- Modal exclusivo mascota -->
+        <div id="modal-mascota-{{ mascota.id_mascota }}" class="modal-mascota">
+          <div class="modal-content-mascota">
+            <span class="close-mascota" onclick="cerrarModalMascota('{{ mascota.id_mascota }}')">&times;</span>
+            <h3>{{ mascota.nombre }}</h3>
+            <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
+            <div class="section-box">
+              <p class="mascotas-descripcion">{{ mascota.descripcion }}</p>
+              <p><strong>Nivel:</strong> {{ mascota.nivel }}</p>
+              <p><strong>Estado:</strong> {{ mascota.estado }}</p>
+              <p><strong>Especial:</strong> {{ "Sí" if mascota.especial else "No" }}</p>
+            </div>
+
+            <!-- Botón alimentar dentro del modal -->
+            {% if tiene_alimento %}
+              <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+                <button type="submit" class="btn-alimentar">Alimentar</button>
+              </form>
+            {% else %}
+              <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="mensaje-vacio-seccion">
+        No tienes mascotas comunes
       </div>
-    {% endfor %}
+    {% endif %}
+
+    <!-- Sección VIP -->
+    <h3 class="seccion-titulo-vip">VIP <i class="fa-solid fa-star estrella"></i></h3>
+    {% if vip_mascotas %}
+      {% for mascota in vip_mascotas %}
+        <div class="mascota-card" title="{{ mascota.descripcion }}" ondblclick="accionRapidaMascota('{{ mascota.id_mascota }}')">
+          <button class="btn-info" onclick="abrirModalMascota('{{ mascota.id_mascota }}')">i</button>
+          <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
+          <div class="mascota-titulo">{{ mascota.nombre }}</div>
+          <span class="mascota-nivel">Nivel {{ mascota.nivel }}</span>
+          <span class="mascota-estado">Estado: {{ mascota.estado }}</span>
+
+          {% if mascota.estado != "huevo" %}
+          <div class="mascota-xp-bar">
+            <div class="barra">
+              <span style="width: {{ ((mascota.xp / mascota.xp_max) * 100) if mascota.xp_max > 0 else 0 }}%"></span>
+            </div>
+            <span class="mascota-xp-valor">{{ mascota.xp }}/{{ mascota.xp_max }} EXP</span>
+          </div>
+          {% endif %}
+
+          <!-- Botón alimentar -->
+          <div class="card-actions">
+            {% if tiene_alimento %}
+              <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+                <button type="submit" class="btn-alimentar">Alimentar</button>
+              </form>
+            {% else %}
+              <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Modal exclusivo mascota -->
+        <div id="modal-mascota-{{ mascota.id_mascota }}" class="modal-mascota">
+          <div class="modal-content-mascota">
+            <span class="close-mascota" onclick="cerrarModalMascota('{{ mascota.id_mascota }}')">&times;</span>
+            <h3>{{ mascota.nombre }}</h3>
+            <img src="{{ url_for('static', filename='images/mascotas/' ~ mascota.imagen) }}" alt="{{ mascota.nombre }}">
+            <div class="section-box">
+              <p class="mascotas-descripcion">{{ mascota.descripcion }}</p>
+              <p><strong>Nivel:</strong> {{ mascota.nivel }}</p>
+              <p><strong>Estado:</strong> {{ mascota.estado }}</p>
+              <p><strong>Especial:</strong> {{ "Sí" if mascota.especial else "No" }}</p>
+            </div>
+
+            <!-- Botón alimentar dentro del modal -->
+            {% if tiene_alimento %}
+              <form action="{{ url_for('alimentar_mascota', id_mascota=mascota.id_mascota) }}" method="post">
+                <button type="submit" class="btn-alimentar">Alimentar</button>
+              </form>
+            {% else %}
+              <button type="button" class="btn-disabled" disabled>Sin alimento</button>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="mensaje-vacio-seccion mensaje-vip">
+        <p><i class="fa-solid fa-star estrella"></i> Compra VIP en la tienda y consigue recompensas exclusivas.</p>
+      </div>
+    {% endif %}
   {% else %}
     <div class="mensaje-vacio">
       ⚠️ No tienes mascotas aún
     </div>
   {% endif %}
-  <div class="mensaje-vacio" id="mensajeNoResultados" style="display:none;">
+  <div class="mensaje-sin-resultados" id="mensajeNoResultados" style="display:none;">
     ⚠️ No se encontraron mascotas
   </div>
 </div>

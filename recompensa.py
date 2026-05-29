@@ -26,6 +26,8 @@ class Recompensa:
                 bonus_vip = round(self.valor * usuario.ventajas_vip.get("bonus_xp", 0))
             bonus_total = bonus_fuerza + bonus_vip
             total = self.valor + bonus_total
+            total *= usuario.buff_xp
+            usuario.buff_xp = 1
 
             usuario.sumar_xp(total)
 
@@ -38,6 +40,8 @@ class Recompensa:
                 bonus_vip = round(self.valor * usuario.ventajas_vip.get("bonus_coins", 0))
             bonus_total = bonus_velocidad + bonus_vip
             total = self.valor + bonus_total
+            total *= usuario.buff_coins
+            usuario.buff_coins = 1
 
             usuario.sumar_coins(total)
 

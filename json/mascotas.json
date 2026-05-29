@@ -2,7 +2,7 @@
     {
         "id_mascota": 1,
         "nombre": "Michi",
-        "descripcion": "Un gato curioso que acompaña tus aventuras",
+        "descripcion": "Un gato curioso que acompaña tus aventuras.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -14,7 +14,7 @@
     {
         "id_mascota": 2,
         "nombre": "Firulais",
-        "descripcion": "Un perro leal que protege al jugador",
+        "descripcion": "Un perro leal que protege al jugador.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -26,7 +26,7 @@
     {
         "id_mascota": 3,
         "nombre": "Conejín",
-        "descripcion": "Un conejo veloz que salta obstáculos",
+        "descripcion": "Un conejo veloz que salta obstáculos.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -38,7 +38,7 @@
     {
         "id_mascota": 4,
         "nombre": "Tortuga Zen",
-        "descripcion": "Una tortuga sabia que aporta calma",
+        "descripcion": "Una tortuga sabia que aporta calma.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -50,7 +50,7 @@
     {
         "id_mascota": 5,
         "nombre": "Canario",
-        "descripcion": "Un pájaro alegre que canta melodías",
+        "descripcion": "Un pájaro alegre que canta melodías.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -62,7 +62,7 @@
     {
         "id_mascota": 6,
         "nombre": "Caballito",
-        "descripcion": "Un pequeño caballo que sueña con ser montura",
+        "descripcion": "Un pequeño caballo que sueña con ser montura.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -74,7 +74,7 @@
     {
         "id_mascota": 7,
         "nombre": "Ratón Valiente",
-        "descripcion": "Un ratón que nunca se rinde",
+        "descripcion": "Un ratón que nunca se rinde.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -86,7 +86,7 @@
     {
         "id_mascota": 8,
         "nombre": "Zorrito",
-        "descripcion": "Astuto y ágil, siempre alerta",
+        "descripcion": "Astuto y ágil, siempre alerta.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -98,7 +98,7 @@
     {
         "id_mascota": 9,
         "nombre": "Panda",
-        "descripcion": "Un oso tierno que inspira ternura",
+        "descripcion": "Un oso tierno que inspira ternura.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -110,7 +110,7 @@
     {
         "id_mascota": 10,
         "nombre": "Koala",
-        "descripcion": "Un compañero tranquilo que duerme mucho",
+        "descripcion": "Un compañero tranquilo que duerme mucho.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -122,7 +122,7 @@
     {
         "id_mascota": 11,
         "nombre": "Cabra Montesa",
-        "descripcion": "Escala montañas con facilidad",
+        "descripcion": "Escala montañas con facilidad.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -134,7 +134,7 @@
     {
         "id_mascota": 12,
         "nombre": "Loro",
-        "descripcion": "Repite frases y anima al grupo",
+        "descripcion": "Repite frases y anima al grupo.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -146,7 +146,7 @@
     {
         "id_mascota": 13,
         "nombre": "Erizo",
-        "descripcion": "Pequeño y espinoso, pero adorable",
+        "descripcion": "Pequeño y espinoso, pero adorable.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -158,7 +158,7 @@
     {
         "id_mascota": 14,
         "nombre": "Mapache",
-        "descripcion": "Travieso y curioso, roba comida",
+        "descripcion": "Travieso y curioso, roba comida.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -170,7 +170,7 @@
     {
         "id_mascota": 15,
         "nombre": "Canguro",
-        "descripcion": "Salta grandes distancias con energía",
+        "descripcion": "Salta grandes distancias con energía.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -182,7 +182,7 @@
     {
         "id_mascota": 16,
         "nombre": "Pingüino",
-        "descripcion": "Camina gracioso y nada con estilo",
+        "descripcion": "Camina gracioso y nada con estilo.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -194,7 +194,7 @@
     {
         "id_mascota": 17,
         "nombre": "Caballo",
-        "descripcion": "Fuerte y noble, listo para montar",
+        "descripcion": "Fuerte y noble, listo para montar.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -206,7 +206,7 @@
     {
         "id_mascota": 18,
         "nombre": "Gallo",
-        "descripcion": "Canta al amanecer para despertar",
+        "descripcion": "Canta al amanecer para despertar.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -218,7 +218,7 @@
     {
         "id_mascota": 19,
         "nombre": "Burro",
-        "descripcion": "Paciente y trabajador incansable",
+        "descripcion": "Paciente y trabajador incansable.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -230,7 +230,7 @@
     {
         "id_mascota": 20,
         "nombre": "Oveja",
-        "descripcion": "Su lana es suave y cálida",
+        "descripcion": "Su lana es suave y cálida.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -242,7 +242,7 @@
     {
         "id_mascota": 21,
         "nombre": "Caballito de Mar",
-        "descripcion": "Pequeño guardián de los mares",
+        "descripcion": "Pequeño guardián de los mares.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -254,7 +254,7 @@
     {
         "id_mascota": 22,
         "nombre": "Delfín",
-        "descripcion": "Inteligente y juguetón en el agua",
+        "descripcion": "Inteligente y juguetón en el agua.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -266,7 +266,7 @@
     {
         "id_mascota": 23,
         "nombre": "Ballena Azul",
-        "descripcion": "Gigante pacífico de los océanos",
+        "descripcion": "Gigante pacífico de los océanos.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -278,7 +278,7 @@
     {
         "id_mascota": 24,
         "nombre": "Pulpo",
-        "descripcion": "Maestro del disfraz y la astucia",
+        "descripcion": "Maestro del disfraz y la astucia.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -290,7 +290,7 @@
     {
         "id_mascota": 25,
         "nombre": "Cangrejo",
-        "descripcion": "Camina de lado con pinzas fuertes",
+        "descripcion": "Camina de lado con pinzas fuertes.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -303,7 +303,7 @@
     {
         "id_mascota": 26,
         "nombre": "Gato Negro",
-        "descripcion": "Misterioso y elegante",
+        "descripcion": "Misterioso y elegante.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -315,7 +315,7 @@
     {
         "id_mascota": 27,
         "nombre": "Perro Pastor",
-        "descripcion": "Guía y protege al rebaño",
+        "descripcion": "Guía y protege al rebaño.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -327,7 +327,7 @@
     {
         "id_mascota": 28,
         "nombre": "Caballo Blanco",
-        "descripcion": "Símbolo de pureza y nobleza",
+        "descripcion": "Símbolo de pureza y nobleza.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -339,7 +339,7 @@
     {
         "id_mascota": 29,
         "nombre": "Mono",
-        "descripcion": "Travieso y divertido",
+        "descripcion": "Travieso y divertido.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -351,7 +351,7 @@
     {
         "id_mascota": 30,
         "nombre": "Elefante",
-        "descripcion": "Sabio y fuerte, con gran memoria",
+        "descripcion": "Sabio y fuerte, con gran memoria.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -363,7 +363,7 @@
     {
         "id_mascota": 31,
         "nombre": "León",
-        "descripcion": "Rey de la selva",
+        "descripcion": "Rey de la selva.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -375,7 +375,7 @@
     {
         "id_mascota": 32,
         "nombre": "Tigre",
-        "descripcion": "Feroz y ágil cazador",
+        "descripcion": "Feroz y ágil cazador.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -387,7 +387,7 @@
     {
         "id_mascota": 33,
         "nombre": "Oso Pardo",
-        "descripcion": "Fuerte y protector",
+        "descripcion": "Fuerte y protector.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -399,7 +399,7 @@
     {
         "id_mascota": 34,
         "nombre": "Ciervo",
-        "descripcion": "Elegante y veloz",
+        "descripcion": "Elegante y veloz.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -411,7 +411,7 @@
     {
         "id_mascota": 35,
         "nombre": "Jirafa",
-        "descripcion": "Alcanza las alturas con gracia",
+        "descripcion": "Alcanza las alturas con gracia.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -423,7 +423,7 @@
     {
         "id_mascota": 36,
         "nombre": "Hipopótamo",
-        "descripcion": "Poderoso en el agua",
+        "descripcion": "Poderoso en el agua.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -435,7 +435,7 @@
     {
         "id_mascota": 37,
         "nombre": "Rinoceronte",
-        "descripcion": "Imponente y fuerte",
+        "descripcion": "Imponente y fuerte.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -447,7 +447,7 @@
     {
         "id_mascota": 38,
         "nombre": "Camello",
-        "descripcion": "Resiste largas travesías en el desierto",
+        "descripcion": "Resiste largas travesías en el desierto.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -459,7 +459,7 @@
     {
         "id_mascota": 39,
         "nombre": "Águila",
-        "descripcion": "Vuela alto y vigila desde el cielo",
+        "descripcion": "Vuela alto y vigila desde el cielo.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -471,7 +471,7 @@
     {
         "id_mascota": 40,
         "nombre": "Halcón",
-        "descripcion": "Cazador veloz y preciso",
+        "descripcion": "Cazador veloz y preciso.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -483,7 +483,7 @@
     {
         "id_mascota": 41,
         "nombre": "Búho",
-        "descripcion": "Sabio guardián nocturno",
+        "descripcion": "Sabio guardián nocturno.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -495,7 +495,7 @@
     {
         "id_mascota": 42,
         "nombre": "Murciélago",
-        "descripcion": "Explora la noche con ecolocación",
+        "descripcion": "Explora la noche con ecolocación.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -507,7 +507,7 @@
     {
         "id_mascota": 43,
         "nombre": "Serpiente",
-        "descripcion": "Sigilosa y misteriosa",
+        "descripcion": "Sigilosa y misteriosa.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -519,7 +519,7 @@
     {
         "id_mascota": 44,
         "nombre": "Lagarto",
-        "descripcion": "Ágil y resistente",
+        "descripcion": "Ágil y resistente.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -531,7 +531,7 @@
     {
         "id_mascota": 45,
         "nombre": "Iguana",
-        "descripcion": "Reptil tranquilo y observador",
+        "descripcion": "Reptil tranquilo y observador.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -543,7 +543,7 @@
     {
         "id_mascota": 46,
         "nombre": "Caballo de Mar Dorado",
-        "descripcion": "Un raro guardián marino",
+        "descripcion": "Un raro guardián marino.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -555,7 +555,7 @@
     {
         "id_mascota": 47,
         "nombre": "Zebra",
-        "descripcion": "Rayas únicas y veloces",
+        "descripcion": "Rayas únicas y veloces.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -567,7 +567,7 @@
     {
         "id_mascota": 48,
         "nombre": "Gacela",
-        "descripcion": "Corre con gracia y rapidez",
+        "descripcion": "Corre con gracia y rapidez.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -579,7 +579,7 @@
     {
         "id_mascota": 49,
         "nombre": "Ardilla",
-        "descripcion": "Recolecta nueces con energía",
+        "descripcion": "Recolecta nueces con energía.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -591,7 +591,7 @@
     {
         "id_mascota": 50,
         "nombre": "Castor",
-        "descripcion": "Constructor incansable de diques",
+        "descripcion": "Constructor incansable de diques.",
         "especial": false,
         "progresion": {
         "huevo": "bebé",
@@ -604,7 +604,7 @@
     {
         "id_mascota": 51,
         "nombre": "Dragón Dorado",
-        "descripcion": "Criatura legendaria que solo los VIP pueden tener",
+        "descripcion": "Criatura legendaria que solo los VIP pueden tener.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -616,7 +616,7 @@
     {
         "id_mascota": 52,
         "nombre": "Fénix",
-        "descripcion": "Ave mítica que renace de sus cenizas",
+        "descripcion": "Ave mítica que renace de sus cenizas.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -628,7 +628,7 @@
     {
         "id_mascota": 53,
         "nombre": "Grifo",
-        "descripcion": "Mitad águila, mitad león, guardián de tesoros",
+        "descripcion": "Mitad águila, mitad león, guardián de tesoros.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -640,7 +640,7 @@
     {
         "id_mascota": 54,
         "nombre": "Pegaso",
-        "descripcion": "Caballo alado que surca los cielos",
+        "descripcion": "Caballo alado que surca los cielos.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -652,7 +652,7 @@
     {
         "id_mascota": 55,
         "nombre": "Quimera",
-        "descripcion": "Criatura híbrida de múltiples bestias",
+        "descripcion": "Criatura híbrida de múltiples bestias.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -664,7 +664,7 @@
     {
         "id_mascota": 56,
         "nombre": "Lobo de Hielo",
-        "descripcion": "Un lobo místico que controla el frío",
+        "descripcion": "Un lobo místico que controla el frío.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -676,7 +676,7 @@
     {
         "id_mascota": 57,
         "nombre": "Tigre de Fuego",
-        "descripcion": "Un tigre ardiente que ruge con llamas",
+        "descripcion": "Un tigre ardiente que ruge con llamas.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -688,7 +688,7 @@
     {
         "id_mascota": 58,
         "nombre": "Serpiente Cósmica",
-        "descripcion": "Un reptil que brilla con estrellas",
+        "descripcion": "Un reptil que brilla con estrellas.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -700,7 +700,7 @@
     {
         "id_mascota": 59,
         "nombre": "Dragón de Cristal",
-        "descripcion": "Un dragón transparente con poder mágico",
+        "descripcion": "Un dragón transparente con poder mágico.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -712,7 +712,7 @@
     {
         "id_mascota": 60,
         "nombre": "León Celestial",
-        "descripcion": "Un león divino que protege a los elegidos",
+        "descripcion": "Un león divino que protege a los elegidos.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -724,7 +724,7 @@
     {
         "id_mascota": 61,
         "nombre": "Ave del Trueno",
-        "descripcion": "Un pájaro mítico que controla las tormentas",
+        "descripcion": "Un pájaro mítico que controla las tormentas.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -736,7 +736,7 @@
     {
         "id_mascota": 62,
         "nombre": "Caballo de Sombras",
-        "descripcion": "Un corcel oscuro que viaja entre dimensiones",
+        "descripcion": "Un corcel oscuro que viaja entre dimensiones.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -748,7 +748,7 @@
     {
         "id_mascota": 63,
         "nombre": "Dragón de Hielo",
-        "descripcion": "Un dragón que escupe ventiscas heladas",
+        "descripcion": "Un dragón que escupe ventiscas heladas.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -760,7 +760,7 @@
     {
         "id_mascota": 64,
         "nombre": "Fénix Oscuro",
-        "descripcion": "Renace de las sombras con poder tenebroso",
+        "descripcion": "Renace de las sombras con poder tenebroso.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -772,7 +772,7 @@
     {
         "id_mascota": 65,
         "nombre": "Grifo Real",
-        "descripcion": "Un grifo majestuoso que guarda reinos",
+        "descripcion": "Un grifo majestuoso que guarda reinos.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -784,7 +784,7 @@
     {
         "id_mascota": 66,
         "nombre": "Pegaso Estelar",
-        "descripcion": "Un caballo alado que brilla como constelación",
+        "descripcion": "Un caballo alado que brilla como constelación.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -796,7 +796,7 @@
     {
         "id_mascota": 67,
         "nombre": "Dragón Espectral",
-        "descripcion": "Un dragón fantasma que cruza mundos",
+        "descripcion": "Un dragón fantasma que cruza mundos.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -808,7 +808,7 @@
     {
         "id_mascota": 68,
         "nombre": "Lobo Dorado",
-        "descripcion": "Un lobo legendario que guía a los héroes",
+        "descripcion": "Un lobo legendario que guía a los héroes.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -820,7 +820,7 @@
     {
         "id_mascota": 69,
         "nombre": "Tigre Blanco",
-        "descripcion": "Un tigre sagrado símbolo de pureza",
+        "descripcion": "Un tigre sagrado símbolo de pureza.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",
@@ -832,7 +832,7 @@
     {
         "id_mascota": 70,
         "nombre": "Serpiente de Jade",
-        "descripcion": "Un reptil místico que trae fortuna",
+        "descripcion": "Un reptil místico que trae fortuna.",
         "especial": true,
         "progresion": {
         "huevo": "bebé",

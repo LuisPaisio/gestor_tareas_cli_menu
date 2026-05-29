@@ -31,8 +31,8 @@ html, body {
 }
 
 .login-text {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
     color: #fff;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
     line-height: 1.4;
@@ -63,7 +63,7 @@ html, body {
 
 .login-container .error {
     color: #e74c3c;
-    font-weight: bold;
+    font-weight: var(--fw-bold);
     margin-bottom: 15px;
 }
 
@@ -79,7 +79,7 @@ html, body {
 
 .bajo-register {
     text-align: left;
-    font-size: 14px;
+    font-size: var(--fs-base);
     margin: 10px 0;
 }
 
@@ -100,7 +100,7 @@ html, body {
 .hero-section p {
     max-width: 800px;
     margin: 0 auto;
-    font-size: 18px;
+    font-size: var(--fs-lg);
     line-height: 1.6;
 }
 
@@ -130,12 +130,12 @@ html, body {
 
 .feature h3 {
     margin-bottom: 15px;
-    font-size: 22px;
+    font-size: var(--fs-2xl);
     text-shadow: 1px 1px 4px rgba(0,0,0,0.6);
 }
 
 .feature p {
-    font-size: 16px;
+    font-size: var(--fs-md);
     line-height: 1.5;
 }
 
@@ -190,7 +190,7 @@ html, body {
 }
 
 .unete {
-    font-size: 18px;
+    font-size: var(--fs-lg);
     height: 50px;
     width: 400px;
     text-decoration: none;
@@ -310,7 +310,7 @@ footer::after {
 }
 
 .footer-section h4 {
-    font-size: 18px;
+    font-size: var(--fs-lg);
     color: #b341e0;
     margin-bottom: 10px;
 }
@@ -326,12 +326,12 @@ footer::after {
 
 .footer-section a {
   text-decoration: none;
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: #eee;
 }
 
 .footer-bottom p {
-  font-size: 16px;
+  font-size: var(--fs-md);
   color: #ddd;
 }
 

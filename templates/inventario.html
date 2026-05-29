@@ -46,9 +46,13 @@
         {% endif %}
 
         {% if item.tipo == "huevo" %}
-          <form action="{{ url_for('eclosionar_huevo') }}" method="post">
-            <button type="submit" class="btn-eclosionar">Eclosionar</button>
-          </form>
+          {% if tiene_pocion %}
+            <form action="{{ url_for('eclosionar_huevo') }}" method="post">
+              <button type="submit" class="btn-eclosionar">Eclosionar</button>
+            </form>
+          {% else %}
+            <button type="button" class="btn-disabled" disabled>Sin poción</button>
+          {% endif %}
         {% endif %}
     </div>
 
@@ -58,13 +62,15 @@
         <span class="close-inventario" onclick="cerrarModalInventario('{{ item.id_item }}')">&times;</span>
         <h3>{{ item.nombre }}</h3>
         <img src="{{ url_for('static', filename='images/items/' ~ item.imagen) }}" alt="{{ item.nombre }}">
-        <p>{{ item.descripcion }}</p>
-        <p><strong>Slot:</strong> {{ item.slot if item.slot else 'N/A' }}</p>
-        <ul>
-          {% for stat, valor in item.efecto.items() %}
-            <li>{{ stat }}: {{ valor }}</li>
-          {% endfor %}
-        </ul>
+        <div class="section-box">
+          <p>{{ item.descripcion }}</p>
+          <p><strong>Slot:</strong> {{ item.slot if item.slot else 'N/A' }}</p>
+          <ul>
+            {% for stat, valor in item.efecto.items() %}
+              <li>{{ stat }}: {{ valor }}</li>
+            {% endfor %}
+          </ul>
+        </div>
 
         <!-- Botones de acción dentro del modal -->
         {% if item.tipo == "equipable" %}
@@ -86,9 +92,13 @@
         {% endif %}
 
         {% if item.tipo == "huevo" %}
-          <form action="{{ url_for('eclosionar_huevo') }}" method="post">
-            <button type="submit" class="btn-eclosionar">Eclosionar</button>
-          </form>
+          {% if tiene_pocion %}
+            <form action="{{ url_for('eclosionar_huevo') }}" method="post">
+              <button type="submit" class="btn-eclosionar">Eclosionar</button>
+            </form>
+          {% else %}
+            <button type="button" class="btn-disabled" disabled>Sin poción</button>
+          {% endif %}
         {% endif %}
       </div>
     </div>

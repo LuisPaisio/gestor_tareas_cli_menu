@@ -4,6 +4,23 @@
   text-align: center;
 }
 
+/* Barra de búsqueda */
+.mascotas-search {
+  margin-bottom: 15px;
+  text-align: right;
+}
+.mascotas-search input {
+  padding: 6px 10px;
+  border: 2px solid #b341e0;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+}
+.mascotas-search input:focus {
+  outline: none;
+  border-color: #b341e0;
+}
+
 .mascotas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -41,16 +58,16 @@
 }
 
 .mascota-titulo {
-  font-weight: bold;
+    font-weight: var(--fw-bold);
   color: #b341e0;
   margin-bottom: 4px;
 }
 
 .mascota-nivel,
 .mascota-estado {
-  font-size: 13px;
+    font-size: var(--fs-sm);
   margin-bottom: 4px;
-  font-weight: bold;
+    font-weight: var(--fw-bold);
 }
 
 .card-actions {
@@ -67,7 +84,7 @@
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+    font-size: var(--fs-base);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
@@ -93,7 +110,7 @@
 .input-nombre {
   width: 100%;
   padding: 4px;
-  font-size: 13px;
+    font-size: var(--fs-sm);
   border: 1px solid #b341e0;
   border-radius: 4px;
   margin-bottom: 6px;
@@ -116,15 +133,15 @@
 }
 
 .modal-content-mascota {
-  background: #fff;
+  background: #4B0082;
   margin: 10% auto;
-  padding: 20px;
-  border: 3px solid #b341e0;
-  border-radius: 8px;
+  padding: 25px 30px;
+  border: none;
+  border-radius: 10px;
   width: 420px;
-  color: #333;
+  color: #fff;
   text-align: center;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
 }
 
 .modal-content-mascota img {
@@ -133,30 +150,94 @@
 }
 
 .modal-content-mascota h3 {
-  color: #b341e0;
+  color: #fff;
   margin-bottom: 10px;
 }
 
 .modal-content-mascota ul {
-  list-style-type: disc;       /* bullets normales */
-  padding-left: 20px;          /* espacio a la izquierda */
-  text-align: left;            /* texto alineado a la izquierda */
-  margin: 10px 0;              /* separación arriba/abajo */
+  list-style-type: disc;
+  padding-left: 20px;
+  text-align: left;
+  margin: 10px 0;
 }
 
 .close-mascota {
   float: right;
-  font-size: 24px;
+    font-size: var(--fs-3xl);
+    font-weight: var(--fw-bold);
   cursor: pointer;
+  color: #fff;
+}
+
+.close-mascota:hover {
+  color: #b341e0;
+}
+
+.section-box {
+  background-color: rgba(179,65,224,0.15);
+  border: 1px solid #b341e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 15px 0;
+}
+
+.seccion-titulo {
+    font-size: var(--fs-lg);
   color: #333;
+  margin: 25px 0 15px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #333;
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.seccion-titulo-vip {
+    font-size: var(--fs-lg);
+  color: #f1c40f;
+  margin: 25px 0 15px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f1c40f;
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.mensaje-vacio-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-base);
+  color: #ccc;
+  background: rgba(179,65,224,0.08);
+  border: 2px dashed rgba(179,65,224,0.4);
+  border-radius: 6px;
+  height: 120px;
+  text-align: center;
+  grid-column: 1 / -1;
+  width: auto;
+  padding: 0 20px;
+}
+
+.mensaje-vip {
+  color: #f1c40f;
+  border-color: rgba(241,196,15,0.4);
+  background: rgba(241,196,15,0.06);
+}
+
+.mensaje-sin-resultados {
+  text-align: center;
+  color: #333;
+    font-size: var(--fs-base);
+  padding: 20px;
+  grid-column: 1 / -1;
 }
 
 .mensaje-vacio {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  font-size: 14px;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-base);
   color: #333;
   background: #fff;
   border: 2px dashed #b341e0;
@@ -176,13 +257,13 @@
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+    font-size: var(--fs-base);
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
 /* Mensaje informativo dentro de la card */
 .mensaje-info {
-  font-size: 12px;
+    font-size: var(--fs-sm);
   color: #b341e0;
   font-style: italic;
   margin-top: 4px;
@@ -214,10 +295,10 @@
 }
 
 .mascota-xp-valor {
-  font-size: 11px;
+    font-size: var(--fs-xs);
   color: #333;
   white-space: nowrap;
-  font-weight: bold;
+    font-weight: var(--fw-bold);
 }
 
 .btn-info {
@@ -229,10 +310,14 @@
   border-radius: 50%;
   width: 22px;
   height: 22px;
-  font-size: 14px;
+    font-size: var(--fs-base);
   line-height: 20px;
   text-align: center;
   cursor: pointer;
   color: #fff;
   transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.mascotas-descripcion {
+    font-weight: var(--fw-bold);
 }

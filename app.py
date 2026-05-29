@@ -271,10 +271,12 @@ def ver_inventario():
     gestor_inv = GestorInventario(usuario_obj)
     inventario = gestor_inv.inventario_usuario()
     items = inventario.mostrar_web()
+    tiene_pocion = gestor_inv.tiene_item("Poción de Eclosión")
 
     return render_template(
         "inventario.html",
         items=items,
+        tiene_pocion=tiene_pocion,
         **contexto_comun(usuario_obj)   # ahora ya incluye notificaciones
     )
 

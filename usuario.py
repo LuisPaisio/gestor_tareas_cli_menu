@@ -35,7 +35,8 @@ class Usuario:
                 ventajas_vip=None, fuerza=0, defensa=0, velocidad=0,
                 ultima_fecha_bonus=None, fecha_compra_vip=None, contador_vip=0,
                 tags=None, mana_usuario=0, fecha_expiracion_vip=None, clase_nombre=None, cooldown_equipamiento=None, correo_electronico=None,
-                defensa_temporal=0, velocidad_temporal=0, turnos_defensa_temporal=0, turnos_velocidad_temporal=0, foto_personaje=None):
+                defensa_temporal=0, velocidad_temporal=0, turnos_defensa_temporal=0, turnos_velocidad_temporal=0, foto_personaje=None,
+                buff_xp=1, buff_coins=1):
         
         self.id_usuario = id_usuario
         self.usuario = usuario
@@ -64,10 +65,8 @@ class Usuario:
         self.turnos_defensa_temporal = turnos_defensa_temporal
         self.turnos_velocidad_temporal = turnos_velocidad_temporal
         self.foto_personaje = foto_personaje
-        
-        # Buffs temporales para poderes
-        self.buff_xp = 1
-        self.buff_coins = 1
+        self.buff_xp = buff_xp
+        self.buff_coins = buff_coins
 
         # Inicializar slots
         self.slots = slots if slots is not None else {
@@ -138,6 +137,8 @@ class Usuario:
             "velocidad_temporal": self.velocidad_temporal,
             "turnos_defensa_temporal": self.turnos_defensa_temporal,
             "turnos_velocidad_temporal": self.turnos_velocidad_temporal,
+            "buff_xp": self.buff_xp,
+            "buff_coins": self.buff_coins,
             "foto_personaje": self.foto_personaje
         }
 
@@ -189,6 +190,8 @@ class Usuario:
             velocidad_temporal=int(data.get("velocidad_temporal", 0)),
             turnos_defensa_temporal=int(data.get("turnos_defensa_temporal", 0)),
             turnos_velocidad_temporal=int(data.get("turnos_velocidad_temporal", 0)),
+            buff_xp=data.get("buff_xp", 1),
+            buff_coins=data.get("buff_coins", 1),
             foto_personaje=data.get("foto_personaje")
         )
 

@@ -179,6 +179,38 @@ Acción web → ruta Flask → gestor → modelo (lógica interna) → gestor (p
 
 ---
 
+## Sistema tipográfico
+
+### Fuente
+
+`Nunito` (Google Fonts) con pesos 400, 600 y 700.
+
+### Tokens
+
+| Token | Valor | Uso |
+|-------|-------|-----|
+| `--fs-xs` | 11px | Badges, XP de mascota, maná en tooltip |
+| `--fs-sm` | 13px | Precios, cantidad, nivel/estado |
+| `--fs-base` | 14px | Cuerpo, botones, inputs, títulos de items |
+| `--fs-md` | 16px | Tareas, monedas, footer |
+| `--fs-lg` | 18px | Títulos de sección, íconos de barra |
+| `--fs-xl` | 20px | Títulos de card |
+| `--fs-2xl` | 24px | Modales, botones hábito, features |
+| `--fs-3xl` | 28px | Botón cerrar modal (×) |
+| `--fs-4xl` | 32px | Hero home (solo landing) |
+
+| Token | Peso | Uso |
+|-------|------|-----|
+| `--fw-normal` | 400 | Descripciones, cuerpo |
+| `--fw-semibold` | 600 | Botones, valores importantes |
+| `--fw-bold` | 700 | Títulos, labels, tags |
+
+### Arquitectura
+
+Los tokens se definen en `:root` en `style.css` y se consumen vía `var(--token)` en todos los CSS del proyecto. Esto garantiza consistencia visual y facilita cambios globales (una sola línea para modificar un tamaño en toda la app).
+
+---
+
 ## Configuración inicial
 
 1. Copiar `.env.example` a `.env` y ajustar valores:

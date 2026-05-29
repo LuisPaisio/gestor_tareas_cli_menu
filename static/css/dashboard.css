@@ -35,7 +35,7 @@ main {
     padding: 8px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 15px;
+    font-size: var(--fs-base);
 }
 
 .search-bar select,
@@ -45,7 +45,7 @@ main {
     border: 1px solid #ccc;
     background: #fff;
     cursor: pointer;
-    font-size: 15px;
+    font-size: var(--fs-base);
 }
 
 .card {
@@ -60,8 +60,8 @@ main {
 .card h3 {
     margin-bottom: 10px;
     margin-top: 10px;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
 }
 
 .card input[type="text"] {
@@ -71,7 +71,7 @@ main {
     margin-bottom: 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 17px;
+    font-size: var(--fs-md);
 }
 
 /* Bloques de tareas y recompensas */
@@ -84,7 +84,7 @@ main {
     justify-content: space-between;
     min-height: 55px;
     font-family: inherit;
-    font-size: 16px;
+    font-size: var(--fs-md);
     color: #333;
 }
 
@@ -95,7 +95,7 @@ main {
     align-items: center;       /* centra verticalmente el texto */
     justify-content: center;   /* centra horizontalmente */
     text-align: center;
-    font-weight: bold;
+    font-weight: var(--fw-bold);
 }
 
 .tarea-item .titulo-texto {
@@ -111,8 +111,8 @@ main {
     border: none;
     width: 45px;
     height: 100%;
-    font-size: 22px;
-    font-weight: bold;
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
     cursor: pointer;
     display: block;            /* se comportan como bloques */
 }
@@ -173,7 +173,7 @@ main {
 /* Tildecito al marcar */
 .accion-izq input[type="checkbox"]:checked::after {
     content: "✔";
-    font-size: 20px;
+    font-size: var(--fs-xl);
     color: #fff;
 }
 
@@ -181,8 +181,8 @@ main {
 .monedas {
     background-color: #f1c40f;   /* dorado */
     color: #fff;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-md);
     padding: 0 8px;
     border: 2px solid #d4ac0d;
     box-sizing: border-box;
@@ -197,7 +197,7 @@ main {
 
 /* Ícono de monedas */
 .monedas i {
-    font-size: 16px;
+    font-size: var(--fs-md);
 }
 
 .placeholder-btn {
@@ -213,8 +213,8 @@ main {
 .contador {
     background-color: #4B0082;   /* mismo violeta del título */
     color: #fff;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
     padding: 2px 8px;
     border-radius: 12px;
     margin-left: 8px;
@@ -244,7 +244,7 @@ main {
 
 /* Ajuste de labels */
 .section-box label {
-  font-weight: bold;
+  font-weight: var(--fw-bold);
   color: #fff;
   margin-bottom: 6px;
   display: block;
@@ -258,7 +258,7 @@ main {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: var(--fs-base);
   margin-top: 6px;
   box-sizing: border-box;
 }
@@ -286,7 +286,7 @@ main {
   display: block;
   margin-top: 12px;
   margin-bottom: 6px;
-  font-weight: bold;
+  font-weight: var(--fw-bold);
 }
 
 #taskForm input[type="date"] {
@@ -296,7 +296,7 @@ main {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: var(--fs-base);
   display: block;
 }
 
@@ -308,7 +308,7 @@ main {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: var(--fs-base);
   display: block; /* asegura que cada uno quede en su línea */
 }
 
@@ -345,8 +345,8 @@ main {
 .close {
   color: #fff;
   float: right;
-  font-size: 28px;
-  font-weight: bold;
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
   cursor: pointer;
 }
 
@@ -360,7 +360,7 @@ select, .fecha {
     border: 1px solid #ccc;
     background: #fff;
     cursor: pointer;
-    font-size: 15px;
+    font-size: var(--fs-base);
 }
 
 /* Botón guardar abajo del todo */
@@ -384,8 +384,8 @@ select, .fecha {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
     color: #555;
     text-align: center;
     margin: 0;
@@ -395,8 +395,8 @@ select, .fecha {
 #modalClase button {
   background-color: #5dade2;   /* celeste */
   color: #fff;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-md);
   padding: 10px 20px;
   margin: 8px;
   border: none;
@@ -413,8 +413,8 @@ select, .fecha {
 #modalPrestigio button {
   background-color: #e74c3c;   /* rojo */
   color: #fff;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-md);
   padding: 12px 24px;
   margin: 12px;
   border: none;
@@ -438,7 +438,7 @@ select, .fecha {
 }
 
 #modalMuerte h2 {
-  font-size: 24px;
+    font-size: var(--fs-2xl);
   margin-bottom: 20px;
   color: #ff4d4d;              /* rojo para resaltar el título de muerte */
   text-shadow: 2px 2px 4px #000;
@@ -452,7 +452,7 @@ select, .fecha {
 
 #modalMuerte ul li {
   margin: 8px 0;
-  font-size: 16px;
+  font-size: var(--fs-md);
   text-align: left;
   padding-left: 10px;
 }
@@ -471,8 +471,8 @@ select, .fecha {
 #modalMuerte .btn-cancelar {
   background-color: #e74c3c;   /* rojo intenso */
   color: #fff;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-md);
   padding: 10px 20px;
   margin-top: 15px;
   border: none;
@@ -503,13 +503,13 @@ select, .fecha {
 
 .tarea-item.tarea-inactiva input[type="checkbox"]:checked::after {
   content: "✔";
-  font-size: 20px;
+  font-size: var(--fs-xl);
   color: #666;               /* tilde gris apagado */
 }
 
 .menu-tarea {
   cursor: pointer;
-  font-size: 19px;
+    font-size: var(--fs-lg);
   padding: 0 6px;
   color: #000;
   margin-left: 8px;
@@ -525,7 +525,7 @@ select, .fecha {
   display: block;
   margin-top: 12px;
   margin-bottom: 6px;
-  font-weight: bold;
+  font-weight: var(--fw-bold);
 }
 
 #modalEdicion .modal-actions {
@@ -541,7 +541,7 @@ select, .fecha {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: var(--fw-semibold);
 }
 
 #modalEdicion .modal-actions button[type="submit"] {
@@ -564,7 +564,7 @@ select, .fecha {
 }
 
 #modalEdicion .section-box label {
-  font-weight: bold;
+  font-weight: var(--fw-bold);
   color: #fff;
   margin-bottom: 6px;
   display: block;
@@ -576,7 +576,7 @@ select, .fecha {
   padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: var(--fs-base);
   margin-top: 6px;
   box-sizing: border-box;
 }
@@ -593,7 +593,7 @@ select, .fecha {
 #tareasVencidasModal .section-box h4 {
   margin-top: 0;
   margin-bottom: 10px;
-  font-weight: bold;
+  font-weight: var(--fw-bold);
   color: #fff;
 }
 
@@ -602,19 +602,17 @@ select, .fecha {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 650px;
-  min-width: 300px;
-  width: auto;
+  width: 360px;
   border-radius: 12px 12px 0 0;
   background-color: #333;
   color: #fff;
   z-index: 999;
-  font-size: 14px;
+  font-size: var(--fs-base);
   box-shadow: 0 -2px 8px rgba(0,0,0,0.3);
 }
 
 .barra-icono {
-  font-size: 14px;
+  font-size: var(--fs-base);
   vertical-align: middle;
 }
 
@@ -647,17 +645,19 @@ select, .fecha {
 }
 
 .poderes-clase-nombre {
-  font-weight: bold;
-  font-size: 15px;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-base);
 }
 
 .poderes-mana {
-  font-size: 13px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
   opacity: 0.9;
+  color: #3498db;
 }
 
 .poderes-toggle {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   transition: transform 0.2s ease;
   cursor: pointer;
 }
@@ -674,7 +674,7 @@ select, .fecha {
 
 .poderes-content.show {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
@@ -685,8 +685,8 @@ select, .fecha {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 10px 6px;
-  background: #3a3a3a;
+  padding: 8px 4px;
+  background: #fff;
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease;
@@ -695,26 +695,27 @@ select, .fecha {
 
 .poder-card:hover {
   transform: scale(1.05);
-  background: #444;
+  background: #eee;
 }
 
 .poder-card-img {
-  max-width: 48px;
-  max-height: 48px;
+  max-width: 36px;
+  max-height: 36px;
   object-fit: contain;
 }
 
-.poder-card-nombre {
-  font-size: 11px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 1.2;
-  color: #fff;
+.poder-card-mana {
+    font-size: var(--fs-xs);
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .poder-card-mana {
-  font-size: 11px;
-  color: #aaa;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: #3498db;
   display: flex;
   align-items: center;
   gap: 3px;
@@ -730,7 +731,7 @@ select, .fecha {
   color: #fff;
   padding: 10px 12px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--fs-sm);
   line-height: 1.4;
   width: 200px;
   text-align: center;
@@ -742,7 +743,7 @@ select, .fecha {
 .poder-card-tooltip strong {
   display: block;
   margin-bottom: 6px;
-  font-size: 13px;
+    font-size: var(--fs-sm);
 }
 
 .poder-card-tooltip p {
@@ -750,8 +751,24 @@ select, .fecha {
 }
 
 .poder-card-tooltip-coste {
-  font-size: 11px;
+    font-size: var(--fs-xs);
   color: #aaa;
+}
+
+.poder-card-tooltip strong {
+  display: block;
+  margin-bottom: 6px;
+    font-size: var(--fs-sm);
+}
+
+.poder-card-tooltip p {
+  margin: 0 0 6px;
+}
+
+.poder-card-tooltip-coste {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: #3498db;
 }
 
 .poder-card:hover .poder-card-tooltip {

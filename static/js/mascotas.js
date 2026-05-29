@@ -50,5 +50,5 @@ document.getElementById("buscarItem").addEventListener("keyup", function() {
   });
 
   const mensaje = document.getElementById("mensajeNoResultados");
-  mensaje.style.display = coincidencias === 0 ? "flex" : "none";
+  mensaje.style.display = coincidencias === 0 ? "block" : "none";
 });
