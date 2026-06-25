@@ -177,6 +177,15 @@ def dashboard():
     diarias_vencidas = vencidas["diarias_vencidas"]
     pendientes_vencidas = vencidas["pendientes_vencidas"]
 
+    # Resetear tareas diarias completadas de días anteriores
+    hoy_ddmm = datetime.date.today().strftime("%d-%m-%Y")
+    for tarea in gestor_tareas.tareas:
+        if tarea.tipo == 2 and int(tarea.id_usuario) == usuario_obj.id_usuario:
+            if tarea.completada and tarea.fecha_creacion != hoy_ddmm:
+                tarea.completada = False
+                tarea.fecha_creacion = hoy_ddmm
+                gestor_tareas.actualizar_tarea(tarea)
+
     # 🔹 Bonus diario VIP
     bonus = usuario_obj.aplicar_bonus_diario()
     if bonus:
@@ -906,12 +915,6 @@ def procesar_vencidas():
 
     gestor.actualizar_usuario(usuario_obj)
     return ("", 204)
-
-@app.route("/simular_nuevo_dia")
-def simular_nuevo_dia():
-    session["ultimo_procesado"] = "28-04-2026"  # cualquier fecha distinta de hoy
-    session["mostrar_modal"] = True
-    return "Simulación de nuevo día aplicada."
 
 @app.route("/editar_tarea/<int:tarea_id>", methods=["POST"])
 def editar_tarea(tarea_id):
